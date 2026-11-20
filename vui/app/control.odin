@@ -283,7 +283,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 	case "info":
 		unknown := vui.unknown_classes(ctx)
 		sb := strings.builder_make(context.temp_allocator)
-		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma)
+		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend)
 		for u, i in unknown {
 			if i > 0 {
 				strings.write_string(&sb, ",")
@@ -398,7 +398,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 // Called after rendering (before swap): screenshots and frame-count waits.
 control_after_frame :: proc(app: ^App) {
 	if len(app.screenshot_requests) > 0 && len(app.synthetic) == 0 {
-		pixels, w, h := read_pixels(&app.renderer, context.temp_allocator)
+		pixels, w, h := read_frame(app, context.temp_allocator)
 		for req in app.screenshot_requests {
 			root, _ := json.parse(transmute([]u8)req.line, allocator = context.temp_allocator)
 			obj, _ := root.(json.Object)

@@ -32,6 +32,11 @@ Config :: struct {
 	vsync:        bool,
 }
 
+Backend :: enum u8 {
+	GPU, // SDL3 GPU API: Vulkan on Linux (Metal/D3D12 elsewhere)
+	GL, // OpenGL 3.3 fallback
+}
+
 Synthetic_Kind :: enum u8 {
 	Move,
 	Down,
@@ -57,7 +62,9 @@ App :: struct {
 	ctx:           ^vui.Context,
 	window:        ^sdl.Window,
 	gl_ctx:        sdl.GLContext,
-	renderer:      Renderer,
+	backend:       Backend,
+	renderer:      Renderer, // OpenGL fallback
+	gpu:           Gpu_Renderer, // SDL GPU (Vulkan)
 	running:       bool,
 	input:         vui.Input,
 	mouse:         [2]f32,
@@ -147,34 +154,61 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		fmt.eprintln("vui: SDL_Init failed:", sdl.GetError())
 		return false
 	}
-	_ = sdl.GL_SetAttribute(.CONTEXT_MAJOR_VERSION, 3)
-	_ = sdl.GL_SetAttribute(.CONTEXT_MINOR_VERSION, 3)
-	_ = sdl.GL_SetAttribute(.CONTEXT_PROFILE_MASK, i32(transmute(u32)sdl.GL_CONTEXT_PROFILE_CORE))
-	_ = sdl.GL_SetAttribute(.DOUBLEBUFFER, 1)
-	_ = sdl.GL_SetAttribute(.DEPTH_SIZE, 0)
-	flags: sdl.WindowFlags = {.OPENGL, .RESIZABLE, .HIGH_PIXEL_DENSITY}
-	if cfg.hidden {
-		flags += {.HIDDEN}
+	// Prefer the SDL GPU API (Vulkan); fall back to OpenGL 3.3. VUI_BACKEND=gl forces GL.
+	want_gl := os.get_env("VUI_BACKEND", context.temp_allocator) == "gl"
+	dev: ^sdl.GPUDevice
+	if !want_gl {
+		dev = sdl.CreateGPUDevice({.SPIRV}, false, nil)
 	}
+	app.backend = dev != nil ? .GPU : .GL
 	title := strings.clone_to_cstring(cfg.title != "" ? cfg.title : "vinland-ui", context.temp_allocator)
-	app.window = sdl.CreateWindow(title, app.cfg.size.x, app.cfg.size.y, flags)
-	if app.window == nil {
-		fmt.eprintln("vui: CreateWindow failed:", sdl.GetError())
-		return false
+	for attempt in 0 ..< 2 {
+		flags: sdl.WindowFlags = {.RESIZABLE, .HIGH_PIXEL_DENSITY}
+		if cfg.hidden {
+			flags += {.HIDDEN}
+		}
+		if app.backend == .GL {
+			_ = sdl.GL_SetAttribute(.CONTEXT_MAJOR_VERSION, 3)
+			_ = sdl.GL_SetAttribute(.CONTEXT_MINOR_VERSION, 3)
+			_ = sdl.GL_SetAttribute(.CONTEXT_PROFILE_MASK, i32(transmute(u32)sdl.GL_CONTEXT_PROFILE_CORE))
+			_ = sdl.GL_SetAttribute(.DOUBLEBUFFER, 1)
+			_ = sdl.GL_SetAttribute(.DEPTH_SIZE, 0)
+			flags += {.OPENGL}
+		}
+		app.window = sdl.CreateWindow(title, app.cfg.size.x, app.cfg.size.y, flags)
+		if app.window == nil {
+			fmt.eprintln("vui: CreateWindow failed:", sdl.GetError())
+			return false
+		}
+		if app.backend == .GPU {
+			if sdl.ClaimWindowForGPUDevice(dev, app.window) && gpu_init(&app.gpu, dev, app.window, !cfg.hidden) {
+				break
+			}
+			fmt.eprintln("vui: GPU backend unavailable, falling back to OpenGL:", sdl.GetError())
+			sdl.DestroyWindow(app.window)
+			sdl.DestroyGPUDevice(dev)
+			app.backend = .GL
+			_ = attempt
+			continue
+		}
+		app.gl_ctx = sdl.GL_CreateContext(app.window)
+		if app.gl_ctx == nil {
+			fmt.eprintln("vui: GL context failed:", sdl.GetError())
+			return false
+		}
+		_ = sdl.GL_MakeCurrent(app.window, app.gl_ctx)
+		gl.load_up_to(3, 3, sdl.gl_set_proc_address)
+		_ = sdl.GL_SetSwapInterval(app.cfg.hidden ? 0 : 1)
+		if !renderer_init(&app.renderer) {
+			return false
+		}
+		break
 	}
 	if cfg.min_size != {0, 0} {
 		_ = sdl.SetWindowMinimumSize(app.window, cfg.min_size.x, cfg.min_size.y)
 	}
-	app.gl_ctx = sdl.GL_CreateContext(app.window)
-	if app.gl_ctx == nil {
-		fmt.eprintln("vui: GL context failed:", sdl.GetError())
-		return false
-	}
-	_ = sdl.GL_MakeCurrent(app.window, app.gl_ctx)
-	gl.load_up_to(3, 3, sdl.gl_set_proc_address)
-	_ = sdl.GL_SetSwapInterval(app.cfg.hidden ? 0 : 1)
-	if !renderer_init(&app.renderer) {
-		return false
+	if os.get_env("VUI_QUIET", context.temp_allocator) == "" {
+		fmt.eprintfln("vui: renderer %v%s", app.backend, app.backend == .GPU ? fmt.tprintf(" (%s)", app.gpu.driver) : "")
 	}
 	app.running = true
 	app.start_tick = sdl.GetTicksNS()
@@ -194,7 +228,11 @@ shutdown :: proc(app: ^App) {
 	if app.control != nil {
 		control_stop(app.control)
 	}
-	renderer_destroy(&app.renderer)
+	if app.backend == .GPU {
+		gpu_destroy(&app.gpu, app.ctx)
+	} else {
+		renderer_destroy(&app.renderer)
+	}
 	for c in app.cursors {
 		if c != nil {
 			sdl.DestroyCursor(c)
@@ -204,7 +242,9 @@ shutdown :: proc(app: ^App) {
 	delete(app.synthetic)
 	delete(app.screenshot_requests)
 	delete(app.wait_requests)
-	_ = sdl.GL_DestroyContext(app.gl_ctx)
+	if app.backend == .GL {
+		_ = sdl.GL_DestroyContext(app.gl_ctx)
+	}
 	sdl.DestroyWindow(app.window)
 	sdl.Quit()
 }
@@ -507,7 +547,11 @@ end_frame :: proc(app: ^App) {
 	if clear.a == 0 {
 		clear = d.clear.a > 0 ? d.clear : (ctx.dark ? vui.Color{0.01, 0.03, 0.07, 1} : vui.WHITE)
 	}
-	render(&app.renderer, ctx, d, app.pixels.x, app.pixels.y, clear)
+	if app.backend == .GPU {
+		gpu_render(&app.gpu, ctx, d, app.pixels.x, app.pixels.y, clear, !app.cfg.hidden)
+	} else {
+		render(&app.renderer, ctx, d, app.pixels.x, app.pixels.y, clear)
+	}
 	app.frame_ms = f32(sdl.GetTicksNS() - t0) / 1e6
 
 	// cursor
@@ -536,7 +580,9 @@ end_frame :: proc(app: ^App) {
 		control_after_frame(app)
 	}
 	if !app.cfg.hidden {
-		_ = sdl.GL_SwapWindow(app.window)
+		if app.backend == .GL {
+			_ = sdl.GL_SwapWindow(app.window)
+		}
 	} else {
 		// no vsync offscreen: pace animations at ~60 fps
 		sdl.Delay(app.ctx.animating ? 16 : 1)
@@ -554,4 +600,12 @@ wake :: proc(app: ^App) {
 
 request_redraw :: proc(app: ^App) {
 	app.dirty_frames = max(app.dirty_frames, 2)
+}
+
+// Reads the last rendered frame as RGBA8 (top-down, straight alpha).
+read_frame :: proc(app: ^App, allocator := context.allocator) -> (pixels: []u8, w, h: i32) {
+	if app.backend == .GPU {
+		return gpu_read_pixels(&app.gpu, allocator)
+	}
+	return read_pixels(&app.renderer, allocator)
 }
