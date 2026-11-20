@@ -249,8 +249,17 @@ shutdown :: proc(app: ^App) {
 	sdl.Quit()
 }
 
+// Largest framebuffer edge we render (offscreen targets for agents/tests are capped so a
+// careless resize cannot exhaust the GPU memory shared with the desktop compositor).
+MAX_FRAMEBUFFER :: 4096
+
 @(private)
 update_metrics :: proc(app: ^App) {
+	defer {
+		app.pixels.x = min(app.pixels.x, MAX_FRAMEBUFFER)
+		app.pixels.y = min(app.pixels.y, MAX_FRAMEBUFFER)
+		app.logical = {f32(app.pixels.x) / app.scale, f32(app.pixels.y) / app.scale}
+	}
 	pw, ph: i32
 	_ = sdl.GetWindowSizeInPixels(app.window, &pw, &ph)
 	app.pixels = {pw, ph}

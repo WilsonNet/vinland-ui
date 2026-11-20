@@ -3,6 +3,7 @@ package showroom
 
 import "core:fmt"
 import "core:os"
+import "core:strconv"
 import "core:strings"
 import ui "../vui"
 import "../vui/app"
@@ -130,6 +131,16 @@ on_command :: proc(a: ^app.App, cmd: string, args: map[string]string) -> string 
 	case "sidebar":
 		s.sidebar_open = args["open"] != "false"
 		return `{"ok":true}`
+	case "export":
+		return export_page()
+	case "scroll_content":
+		y, _ := strconv.parse_f32(args["y"])
+		ui.scroll_to(s.scroll_id, y)
+		if st, ok := ui.ctx_get().states[s.scroll_id]; ok {
+			st.scroll.y = clamp(y, 0, st.scroll_max.y)
+			st.scroll_target.y = st.scroll.y
+		}
+		return `{"ok":true}`
 	case "anchor":
 		s.pending_anchor = strings.clone(args["id"])
 		return `{"ok":true}`
@@ -152,4 +163,55 @@ navigate :: proc(i: int) {
 			st.scroll_target = {}
 		}
 	}
+}
+
+// JSON description of the page rendered last frame (structure + example rects).
+export_page :: proc() -> string {
+	sb := strings.builder_make(context.temp_allocator)
+	p := PAGES[s.page]
+	strings.write_string(&sb, `{"ok":true,"slug":`)
+	ui.json_str(&sb, p.slug)
+	strings.write_string(&sb, `,"title":`)
+	ui.json_str(&sb, p.title)
+	strings.write_string(&sb, `,"group":`)
+	ui.json_str(&sb, p.group)
+	strings.write_string(&sb, `,"desc":`)
+	ui.json_str(&sb, p.desc)
+	cont := ui.rect_of(s.scroll_id)
+	fmt.sbprintf(&sb, `,"content_bottom":%.1f,"blocks":[`, cont.y + ui.ctx_get().states[s.scroll_id].scroll_max.y + cont.h)
+	for b, i in doc {
+		if i > 0 {
+			strings.write_string(&sb, ",")
+		}
+		fmt.sbprintf(&sb, `{{"kind":"%v"`, b.kind)
+		if b.text != "" {
+			strings.write_string(&sb, `,"text":`)
+			ui.json_str(&sb, b.text)
+		}
+		if b.code != "" {
+			strings.write_string(&sb, `,"code":`)
+			ui.json_str(&sb, b.code)
+		}
+		if b.kind == .Table {
+			strings.write_string(&sb, `,"rows":[`)
+			for r, j in b.rows {
+				if j > 0 {
+					strings.write_string(&sb, ",")
+				}
+				strings.write_string(&sb, "[")
+				ui.json_str(&sb, r.class)
+				strings.write_string(&sb, ",")
+				ui.json_str(&sb, r.style)
+				strings.write_string(&sb, "]")
+			}
+			strings.write_string(&sb, "]")
+		}
+		if b.kind == .Example {
+			r := ui.rect_of(b.id)
+			fmt.sbprintf(&sb, `,"rect":[%.2f,%.2f,%.2f,%.2f]`, r.x, r.y, r.w, r.h)
+		}
+		strings.write_string(&sb, "}")
+	}
+	strings.write_string(&sb, "]}")
+	return strings.to_string(sb)
 }

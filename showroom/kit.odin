@@ -67,11 +67,34 @@ Toc_Entry :: struct {
 
 toc: [dynamic]Toc_Entry
 
+// Document structure of the current page, recorded while it renders (used by the static
+// website exporter through the `export` control command).
+Doc_Kind :: enum u8 {
+	H2,
+	H3,
+	Para,
+	Code,
+	Example,
+	Table,
+	Note,
+}
+
+Doc_Block :: struct {
+	kind:  Doc_Kind,
+	text:  string, // heading / paragraph / note text (with `inline code` backticks)
+	code:  string,
+	rows:  []Row,
+	id:    ui.Id, // example preview element
+}
+
+doc: [dynamic]Doc_Block
+
 // Section heading (h2): large gap above, entry in "On this page".
 h2 :: proc(title: string, loc := #caller_location) {
 	ui.key(title)
 	ui.text(title, "mt-16 text-xl font-semibold tracking-tight text-ink", loc = loc)
 	append(&toc, Toc_Entry{title, 2, ui.last().id})
+	append(&doc, Doc_Block{kind = .H2, text = title})
 }
 
 // Example heading (h3).
@@ -79,10 +102,12 @@ h3 :: proc(title: string, loc := #caller_location) {
 	ui.key(title)
 	ui.text(title, "mt-10 text-base font-semibold text-ink", loc = loc)
 	append(&toc, Toc_Entry{title, 3, ui.last().id})
+	append(&doc, Doc_Block{kind = .H3, text = title})
 }
 
 // Paragraph with `inline code` support.
 para :: proc(text: string, class := "mt-4", loc := #caller_location) {
+	append(&doc, Doc_Block{kind = .Para, text = text})
 	if ui.p(ui.cx("text-base/7 text-ink-muted", class), loc = loc) {
 		rich(text)
 	}
@@ -122,6 +147,11 @@ Row :: struct {
 }
 
 ref_table :: proc(rows: []Row, loc := #caller_location) {
+	{
+		cp := make([]Row, len(rows), ui.ctx_get().frame_alloc)
+		copy(cp, rows)
+		append(&doc, Doc_Block{kind = .Table, rows = cp})
+	}
 	if ui.div("mt-10", loc = loc) {
 		if ui.div("grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] border-b border-rule") {
 			ui.text("Class", "py-2.5 pr-4 pl-2 text-sm font-semibold text-ink")
@@ -201,6 +231,7 @@ example :: proc(class := "p-8", center := true, loc := #caller_location) -> bool
 	ui.push_id(int(loc.line))
 	ui.open("mt-6 flex flex-col gap-1 rounded-xl bg-gray-950/5 p-1 inset-ring inset-ring-gray-950/5 dark:bg-white/10 dark:inset-ring-white/10")
 	ui.open("relative overflow-hidden rounded-lg bg-white dark:bg-gray-950/80")
+	append(&doc, Doc_Block{kind = .Example, id = ui.current_id(), code = snippet_for(loc)})
 	ui.open(ui.cx(center ? "flex flex-col items-center" : "", class))
 	return true
 }
@@ -216,6 +247,7 @@ example_end :: proc() {
 
 // Static code block (no preview).
 code :: proc(src: string, lang := "odin") {
+	append(&doc, Doc_Block{kind = .Code, code = src})
 	if ui.div("mt-6 rounded-xl bg-gray-950/5 p-1 inset-ring inset-ring-gray-950/5 dark:bg-white/10 dark:inset-ring-white/10") {
 		code_panel(src)
 	}
@@ -254,6 +286,7 @@ tile :: proc(label: string, class := "", loc := #caller_location) {
 }
 
 note :: proc(text: string, loc := #caller_location) {
+	append(&doc, Doc_Block{kind = .Note, text = text})
 	if ui.div("mt-6 flex gap-3 rounded-lg bg-accent-soft px-4 py-3", loc = loc) {
 		ui.icon(IC.information_circle, "mt-0.5 size-5 shrink-0 text-accent")
 		if ui.p("text-sm/6 text-ink-muted") {

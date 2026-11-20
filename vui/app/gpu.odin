@@ -29,6 +29,8 @@ Gpu_Renderer :: struct {
 	smp_mip:     ^sdl.GPUSampler,
 	target:      ^sdl.GPUTexture,
 	target_size: [2]i32,
+	readback:    ^sdl.GPUTransferBuffer,
+	readback_cap: int,
 	driver:      string,
 }
 
@@ -157,6 +159,9 @@ gpu_destroy :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context) {
 	if r.target != nil {
 		sdl.ReleaseGPUTexture(dev, r.target)
 	}
+	if r.readback != nil {
+		sdl.ReleaseGPUTransferBuffer(dev, r.readback)
+	}
 	sdl.ReleaseGPUTexture(dev, r.white)
 	sdl.ReleaseGPUSampler(dev, r.smp_linear)
 	sdl.ReleaseGPUSampler(dev, r.smp_mip)
@@ -246,6 +251,7 @@ ensure_target :: proc(r: ^Gpu_Renderer, w, h: i32) {
 		return
 	}
 	if r.target != nil {
+		_ = sdl.WaitForGPUIdle(r.dev)
 		sdl.ReleaseGPUTexture(r.dev, r.target)
 	}
 	r.target = make_texture(r.dev, int(w), int(h), TARGET_FORMAT, {.COLOR_TARGET, .SAMPLER})
@@ -292,7 +298,7 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 		clear_color = {cc.r * cc.a, cc.g * cc.a, cc.b * cc.a, cc.a},
 		load_op     = .CLEAR,
 		store_op    = .STORE,
-		cycle       = true,
+		cycle       = false, // cycling would allocate extra full-size targets
 	}
 	pass := sdl.BeginGPURenderPass(cmd, &target, 1, nil)
 	if n > 0 {
@@ -347,8 +353,17 @@ gpu_read_pixels :: proc(r: ^Gpu_Renderer, allocator := context.allocator) -> (pi
 		return
 	}
 	size := int(w * h * 4)
-	xfer := sdl.CreateGPUTransferBuffer(r.dev, {usage = .DOWNLOAD, size = u32(size)})
-	defer sdl.ReleaseGPUTransferBuffer(r.dev, xfer)
+	if r.readback == nil || r.readback_cap < size {
+		if r.readback != nil {
+			sdl.ReleaseGPUTransferBuffer(r.dev, r.readback)
+		}
+		r.readback = sdl.CreateGPUTransferBuffer(r.dev, {usage = .DOWNLOAD, size = u32(size)})
+		r.readback_cap = size
+	}
+	xfer := r.readback
+	if xfer == nil {
+		return nil, 0, 0
+	}
 	cmd := sdl.AcquireGPUCommandBuffer(r.dev)
 	cp := sdl.BeginGPUCopyPass(cmd)
 	sdl.DownloadFromGPUTexture(cp, {texture = r.target, w = u32(w), h = u32(h), d = 1}, {transfer_buffer = xfer, pixels_per_row = u32(w), rows_per_layer = u32(h)})

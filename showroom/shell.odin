@@ -18,6 +18,7 @@ frame :: proc() {
 		s.sidebar_open = false
 	}
 	clear(&toc)
+	clear(&doc)
 
 	if ui.div("flex h-full flex-col bg-canvas font-sans text-ink antialiased selection:bg-accent-soft") {
 		topbar()
