@@ -230,6 +230,11 @@ text_input :: proc(buf: ^[dynamic]u8, class: string = "", placeholder: string = 
 	if n.style.overflow_x == .Visible {
 		n.style.overflow_x = .Hidden
 	}
+	// like a native field, center the single line vertically
+	if n.style.display == .Block {
+		n.style.display = .Flex
+		n.style.align_items = .Center
+	}
 	st := n.state
 	ed := &st.edit
 	s := string(buf[:])

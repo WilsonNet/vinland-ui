@@ -662,13 +662,13 @@ layout_flex :: proc(ctx: ^Context, ni: i32, inner_w, inner_h: f32, cb_h: f32, fi
 				if row {
 					iw := intrinsic(ctx, it.ni)
 					spec := iw.x
-					if v, ok2 := resolve(ctx, cs.width, main_size); ok2 {
-						spec = min(spec, v + extra)
+					if wv, ok2 := resolve(ctx, cs.width, main_size); ok2 {
+						spec = min(spec, wv + extra)
 					}
 					it.min_main = spec
 				} else {
-					if v, ok2 := resolve(ctx, cs.height, cb_h); ok2 {
-						it.min_main = min(base, v + extra)
+					if hv, ok2 := resolve(ctx, cs.height, cb_h); ok2 {
+						it.min_main = min(base, hv + extra)
 					} else {
 						it.min_main = cs.basis.kind == .Percent && cs.basis.v == 0 ? 0 : base
 						if cs.basis.kind != .Auto || cs.grow > 0 || cs.shrink > 0 {
@@ -1080,7 +1080,6 @@ layout_grid :: proc(ctx: ^Context, ni: i32, inner_w, inner_h: f32, cb_h: f32, fi
 	s := n.style
 	pb := pad_border(&s)
 	origin := [2]f32{pb[3], pb[0]}
-	cb := [2]f32{inner_w, cb_h}
 	col_flow := s.grid_flow == .Column || s.grid_flow == .Column_Dense
 
 	ncols := int(s.grid_cols.count)

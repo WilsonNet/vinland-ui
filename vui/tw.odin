@@ -1867,9 +1867,9 @@ parse_utility :: proc(b: ^Builder, u: string, neg: bool) -> bool {
 		}
 		mask, _ := corner_mask(corner)
 		v: f32
-		if r, ok := t.radius[rest]; ok {
+		if r, rok := t.radius[rest]; rok {
 			v = r
-		} else if a, ok := arbitrary(rest); ok {
+		} else if a, aok := arbitrary(rest); aok {
 			lv, lok := parse_length(a)
 			if !lok {
 				return false

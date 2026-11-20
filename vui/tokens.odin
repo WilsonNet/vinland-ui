@@ -62,6 +62,7 @@ Theme :: struct {
 	default_duration_ms: f32,
 	default_easing:      Easing,
 	version:       u64,
+	owned:         [dynamic]string, // heap strings used as keys/values, freed by theme_destroy
 }
 
 rem :: proc "contextless" (r: f32) -> f32 {
@@ -102,6 +103,7 @@ theme_default :: proc(allocator := context.allocator) -> Theme {
 	for fam in PALETTE {
 		for shade, i in PALETTE_SHADES {
 			name := fmt.aprintf("%s-%d", fam.name, shade)
+			append(&t.owned, name)
 			c := rgb(fam.shades[i])
 			t.colors[name] = {c, c}
 		}
@@ -227,11 +229,10 @@ theme_default :: proc(allocator := context.allocator) -> Theme {
 }
 
 theme_destroy :: proc(t: ^Theme) {
-	for k in t.colors {
-		// keys for palette entries were allocated; literal keys are static. Leak-safe enough
-		// for a process-lifetime object; explicit cleanup frees maps only.
-		_ = k
+	for s in t.owned {
+		delete(s)
 	}
+	delete(t.owned)
 	delete(t.colors)
 	delete(t.radius)
 	delete(t.shadows)
@@ -255,6 +256,7 @@ theme_set_color :: proc(t: ^Theme, name: string, light: Color, dark: Maybe(Color
 	key := name
 	if name not_in t.colors {
 		key = strings.clone(name)
+		append(&t.owned, key)
 	}
 	t.colors[key] = {light, has ? d : light}
 	t.version += 1
@@ -326,6 +328,7 @@ theme_apply_json :: proc(t: ^Theme, data: []byte) -> (err: string) {
 	}
 	if name, nok := obj["name"].(json.String); nok {
 		t.name = strings.clone(name)
+		append(&t.owned, t.name)
 	}
 	if s, sok := num(obj["spacing"]); sok {
 		t.spacing = s
@@ -336,37 +339,41 @@ theme_apply_json :: proc(t: ^Theme, data: []byte) -> (err: string) {
 				key := k
 				if k not_in t.colors {
 					key = strings.clone(k)
+					append(&t.owned, key)
 				}
 				t.colors[key] = tok
 			}
 		}
 	}
-	float_map :: proc(dst: ^map[string]f32, v: json.Value) {
+	float_map :: proc(dst: ^map[string]f32, v: json.Value, owned: ^[dynamic]string) {
 		if o, ok := v.(json.Object); ok {
 			for k, x in o {
 				if f, fok := num(x); fok {
 					key := k
 					if k not_in dst^ {
 						key = strings.clone(k)
+						append(owned, key)
 					}
 					dst[key] = f
 				}
 			}
 		}
 	}
-	float_map(&t.radius, obj["radius"])
-	float_map(&t.breakpoints, obj["breakpoints"])
-	float_map(&t.containers, obj["containers"])
-	float_map(&t.tracking, obj["tracking"])
-	float_map(&t.leading, obj["leading"])
+	float_map(&t.radius, obj["radius"], &t.owned)
+	float_map(&t.breakpoints, obj["breakpoints"], &t.owned)
+	float_map(&t.containers, obj["containers"], &t.owned)
+	float_map(&t.tracking, obj["tracking"], &t.owned)
+	float_map(&t.leading, obj["leading"], &t.owned)
 	if fonts, fok := obj["fonts"].(json.Object); fok {
 		for k, v in fonts {
 			if s, sok := v.(json.String); sok {
 				key := k
 				if k not_in t.fonts {
 					key = strings.clone(k)
+					append(&t.owned, key)
 				}
 				t.fonts[key] = strings.clone(s)
+				append(&t.owned, t.fonts[key])
 			}
 		}
 	}
@@ -378,6 +385,7 @@ theme_apply_json :: proc(t: ^Theme, data: []byte) -> (err: string) {
 				key := k
 				if k not_in t.text_sizes {
 					key = strings.clone(k)
+					append(&t.owned, key)
 				}
 				t.text_sizes[key] = {s, l}
 			}

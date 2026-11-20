@@ -82,6 +82,7 @@ App :: struct {
 	user_data:     rawptr,
 	clear_color:   vui.Color,
 	screenshot_requests: [dynamic]^Control_Request,
+	synthetic_mods: bool, // a synthetic key set modifiers; clear them next frame
 	wait_requests: [dynamic]Wait_Request,
 }
 
@@ -110,8 +111,8 @@ clipboard_set :: proc(s: string) {
 	_ = sdl.SetClipboardText(cs)
 }
 
-init :: proc(app: ^App, cfg: Config, ctx: ^vui.Context) -> bool {
-	app.cfg = cfg
+init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
+	app.cfg = config
 	app.ctx = ctx
 	g_app = app
 	// environment overrides (handy for agents and CI)
@@ -407,6 +408,7 @@ apply_synthetic :: proc(app: ^App) -> bool {
 	case .Key:
 		in_.keys_pressed += {s.key}
 		in_.mods = s.mods
+		app.synthetic_mods = true
 	}
 	return true
 }
@@ -424,6 +426,10 @@ next_frame :: proc(app: ^App) -> bool {
 	app.input.keys_pressed = {}
 	app.input.text = ""
 	strings.builder_reset(&app.text_buf)
+	if app.synthetic_mods {
+		app.input.mods = {}
+		app.synthetic_mods = false
+	}
 
 	busy := ctx.animating || app.dirty_frames > 0 || len(app.synthetic) > 0 || len(app.wait_requests) > 0 || len(app.screenshot_requests) > 0
 	e: sdl.Event

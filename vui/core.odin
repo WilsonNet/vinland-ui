@@ -333,7 +333,7 @@ Scroll_Request :: struct {
 // Lifecycle
 // ---------------------------------------------------------------------------
 
-@(private)
+@(private, thread_local)
 g_ctx: ^Context
 
 ctx_get :: proc "contextless" () -> ^Context {

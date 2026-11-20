@@ -11,4 +11,5 @@ mkdir -p build
 odin build tools/vui-ctl  -out:build/vui-ctl  $flags
 odin build showroom       -out:build/showroom $flags
 odin build examples/hello -out:build/hello    $flags
+odin test tests >/dev/null && echo "tests: ok"
 echo "built: build/showroom build/vui-ctl build/hello ($mode)"
