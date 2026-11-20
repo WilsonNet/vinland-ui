@@ -1,5 +1,6 @@
 package vui
 
+import "core:slice"
 import "core:strconv"
 import "core:strings"
 
@@ -239,6 +240,13 @@ parse_classes :: proc(t: ^Theme, src: string, allocator := context.allocator) ->
 	for tok in strings.fields_iterator(&s) {
 		parse_token(&b, tok)
 	}
+	// Order like Tailwind's generated CSS: variant rules beat base rules regardless of
+	// their position in the class string; later breakpoints beat earlier ones; dark last.
+	slice.stable_sort_by(b.rules[:], proc(a, b: Rule) -> bool {
+		ra := rule_rank(a)
+		rb := rule_rank(b)
+		return ra < rb
+	})
 	cs := new(Class_Set)
 	cs.source = strings.clone(src)
 	cs.rules = b.rules[:]
@@ -270,6 +278,44 @@ class_set_destroy :: proc(cs: ^Class_Set) {
 	}
 	delete(cs.unknown)
 	free(cs)
+}
+
+@(private)
+rule_rank :: proc(r: Rule) -> f32 {
+	rank: f32 = 0
+	for v in r.variants {
+		k: f32
+		switch v {
+		case .Children, .Placeholder, .Selection, .First, .Last, .Odd, .Even, .Only, .Not_First, .Not_Last, .Empty:
+			k = 1
+		case .Group_Hover, .Group_Focus, .Group_Active, .Group_Selected:
+			k = 2
+		case .Selected, .Checked, .Open:
+			k = 3
+		case .Hover:
+			k = 4
+		case .Focus, .Focus_Within:
+			k = 5
+		case .Focus_Visible:
+			k = 6
+		case .Active:
+			k = 7
+		case .Enabled, .Disabled:
+			k = 8
+		case .Light:
+			k = 9
+		case .Dark:
+			k = 40
+		}
+		rank = max(rank, k)
+	}
+	if r.bp_min > 0 && r.bp_min < 1e8 {
+		rank = max(rank, 10 + r.bp_min / 1000) // 10.64 (sm) ... 11.54 (2xl)
+	}
+	if r.bp_max > 0 {
+		rank = max(rank, 9.5)
+	}
+	return rank + f32(card(r.variants)) * 0.001
 }
 
 @(private)

@@ -1396,7 +1396,7 @@ layout_grid :: proc(ctx: ^Context, ni: i32, inner_w, inner_h: f32, cb_h: f32, fi
 			ah := ch - cs.margin[0] - cs.margin[2]
 			fw: f32 = -1
 			fh: f32 = -1
-			if ji == .Stretch && cs.width.kind == .Auto && cs.aspect == 0 {
+			if ji == .Stretch && cs.width.kind == .Auto {
 				fw = max(0, aw)
 			}
 			if (ai == .Stretch || ai == .Auto) && cs.height.kind == .Auto && cs.aspect == 0 {

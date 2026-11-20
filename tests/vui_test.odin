@@ -245,3 +245,16 @@ tokens_from_json :: proc(t: ^testing.T) {
 	defer ui.class_set_destroy(cs)
 	testing.expect_value(t, len(cs.unknown), 0)
 }
+
+@(test)
+variant_rules_win_over_base_regardless_of_order :: proc(t: ^testing.T) {
+	th := ui.theme_default()
+	defer ui.theme_destroy(&th)
+	cs := ui.parse_classes(&th, "hover:bg-black md:p-8 bg-white p-2 lg:p-4")
+	defer ui.class_set_destroy(cs)
+	s := ui.style_default()
+	m := ui.Match_State{flags = {.Hover}, viewport = 1100}
+	ui.apply_class_set(&s, cs, &m, false)
+	testing.expect_value(t, s.bg, ui.BLACK)
+	testing.expect_value(t, s.padding[0], 16) // lg beats md and base
+}
