@@ -1,0 +1,884 @@
+[
+ {
+  "g": "Getting started",
+  "links": [
+   {
+    "t": "Installation",
+    "h": "/docs/installation"
+   },
+   {
+    "t": "Editor setup",
+    "h": "/docs/editor-setup"
+   },
+   {
+    "t": "Compatibility",
+    "h": "/docs/compatibility"
+   },
+   {
+    "t": "Upgrade guide",
+    "h": "/docs/upgrade-guide"
+   }
+  ]
+ },
+ {
+  "g": "Core concepts",
+  "links": [
+   {
+    "t": "Styling with utility classes",
+    "h": "/docs/styling-with-utility-classes"
+   },
+   {
+    "t": "Hover, focus, and other states",
+    "h": "/docs/hover-focus-and-other-states"
+   },
+   {
+    "t": "Responsive design",
+    "h": "/docs/responsive-design"
+   },
+   {
+    "t": "Dark mode",
+    "h": "/docs/dark-mode"
+   },
+   {
+    "t": "Theme variables",
+    "h": "/docs/theme"
+   },
+   {
+    "t": "Colors",
+    "h": "/docs/colors"
+   },
+   {
+    "t": "Adding custom styles",
+    "h": "/docs/adding-custom-styles"
+   },
+   {
+    "t": "Detecting classes in source files",
+    "h": "/docs/detecting-classes-in-source-files"
+   },
+   {
+    "t": "Functions and directives",
+    "h": "/docs/functions-and-directives"
+   }
+  ]
+ },
+ {
+  "g": "Base styles",
+  "links": [
+   {
+    "t": "Preflight",
+    "h": "/docs/preflight"
+   }
+  ]
+ },
+ {
+  "g": "Layout",
+  "links": [
+   {
+    "t": "aspect-ratio",
+    "h": "/docs/aspect-ratio"
+   },
+   {
+    "t": "columns",
+    "h": "/docs/columns"
+   },
+   {
+    "t": "break-after",
+    "h": "/docs/break-after"
+   },
+   {
+    "t": "break-before",
+    "h": "/docs/break-before"
+   },
+   {
+    "t": "break-inside",
+    "h": "/docs/break-inside"
+   },
+   {
+    "t": "box-decoration-break",
+    "h": "/docs/box-decoration-break"
+   },
+   {
+    "t": "box-sizing",
+    "h": "/docs/box-sizing"
+   },
+   {
+    "t": "display",
+    "h": "/docs/display"
+   },
+   {
+    "t": "float",
+    "h": "/docs/float"
+   },
+   {
+    "t": "clear",
+    "h": "/docs/clear"
+   },
+   {
+    "t": "isolation",
+    "h": "/docs/isolation"
+   },
+   {
+    "t": "object-fit",
+    "h": "/docs/object-fit"
+   },
+   {
+    "t": "object-position",
+    "h": "/docs/object-position"
+   },
+   {
+    "t": "overflow",
+    "h": "/docs/overflow"
+   },
+   {
+    "t": "overscroll-behavior",
+    "h": "/docs/overscroll-behavior"
+   },
+   {
+    "t": "position",
+    "h": "/docs/position"
+   },
+   {
+    "t": "top / right / bottom / left",
+    "h": "/docs/top-right-bottom-left"
+   },
+   {
+    "t": "visibility",
+    "h": "/docs/visibility"
+   },
+   {
+    "t": "z-index",
+    "h": "/docs/z-index"
+   }
+  ]
+ },
+ {
+  "g": "Flexbox & Grid",
+  "links": [
+   {
+    "t": "flex-basis",
+    "h": "/docs/flex-basis"
+   },
+   {
+    "t": "flex-direction",
+    "h": "/docs/flex-direction"
+   },
+   {
+    "t": "flex-wrap",
+    "h": "/docs/flex-wrap"
+   },
+   {
+    "t": "flex",
+    "h": "/docs/flex"
+   },
+   {
+    "t": "flex-grow",
+    "h": "/docs/flex-grow"
+   },
+   {
+    "t": "flex-shrink",
+    "h": "/docs/flex-shrink"
+   },
+   {
+    "t": "order",
+    "h": "/docs/order"
+   },
+   {
+    "t": "grid-template-columns",
+    "h": "/docs/grid-template-columns"
+   },
+   {
+    "t": "grid-column",
+    "h": "/docs/grid-column"
+   },
+   {
+    "t": "grid-template-rows",
+    "h": "/docs/grid-template-rows"
+   },
+   {
+    "t": "grid-row",
+    "h": "/docs/grid-row"
+   },
+   {
+    "t": "grid-auto-flow",
+    "h": "/docs/grid-auto-flow"
+   },
+   {
+    "t": "grid-auto-columns",
+    "h": "/docs/grid-auto-columns"
+   },
+   {
+    "t": "grid-auto-rows",
+    "h": "/docs/grid-auto-rows"
+   },
+   {
+    "t": "gap",
+    "h": "/docs/gap"
+   },
+   {
+    "t": "justify-content",
+    "h": "/docs/justify-content"
+   },
+   {
+    "t": "justify-items",
+    "h": "/docs/justify-items"
+   },
+   {
+    "t": "justify-self",
+    "h": "/docs/justify-self"
+   },
+   {
+    "t": "align-content",
+    "h": "/docs/align-content"
+   },
+   {
+    "t": "align-items",
+    "h": "/docs/align-items"
+   },
+   {
+    "t": "align-self",
+    "h": "/docs/align-self"
+   },
+   {
+    "t": "place-content",
+    "h": "/docs/place-content"
+   },
+   {
+    "t": "place-items",
+    "h": "/docs/place-items"
+   },
+   {
+    "t": "place-self",
+    "h": "/docs/place-self"
+   }
+  ]
+ },
+ {
+  "g": "Spacing",
+  "links": [
+   {
+    "t": "padding",
+    "h": "/docs/padding"
+   },
+   {
+    "t": "margin",
+    "h": "/docs/margin"
+   }
+  ]
+ },
+ {
+  "g": "Sizing",
+  "links": [
+   {
+    "t": "width",
+    "h": "/docs/width"
+   },
+   {
+    "t": "min-width",
+    "h": "/docs/min-width"
+   },
+   {
+    "t": "max-width",
+    "h": "/docs/max-width"
+   },
+   {
+    "t": "height",
+    "h": "/docs/height"
+   },
+   {
+    "t": "min-height",
+    "h": "/docs/min-height"
+   },
+   {
+    "t": "max-height",
+    "h": "/docs/max-height"
+   },
+   {
+    "t": "inline-size",
+    "h": "/docs/inline-size"
+   },
+   {
+    "t": "min-inline-size",
+    "h": "/docs/min-inline-size"
+   },
+   {
+    "t": "max-inline-size",
+    "h": "/docs/max-inline-size"
+   },
+   {
+    "t": "block-size",
+    "h": "/docs/block-size"
+   },
+   {
+    "t": "min-block-size",
+    "h": "/docs/min-block-size"
+   },
+   {
+    "t": "max-block-size",
+    "h": "/docs/max-block-size"
+   }
+  ]
+ },
+ {
+  "g": "Typography",
+  "links": [
+   {
+    "t": "font-family",
+    "h": "/docs/font-family"
+   },
+   {
+    "t": "font-size",
+    "h": "/docs/font-size"
+   },
+   {
+    "t": "font-smoothing",
+    "h": "/docs/font-smoothing"
+   },
+   {
+    "t": "font-style",
+    "h": "/docs/font-style"
+   },
+   {
+    "t": "font-weight",
+    "h": "/docs/font-weight"
+   },
+   {
+    "t": "font-stretch",
+    "h": "/docs/font-stretch"
+   },
+   {
+    "t": "font-variant-numeric",
+    "h": "/docs/font-variant-numeric"
+   },
+   {
+    "t": "font-feature-settings",
+    "h": "/docs/font-feature-settings"
+   },
+   {
+    "t": "letter-spacing",
+    "h": "/docs/letter-spacing"
+   },
+   {
+    "t": "line-clamp",
+    "h": "/docs/line-clamp"
+   },
+   {
+    "t": "line-height",
+    "h": "/docs/line-height"
+   },
+   {
+    "t": "list-style-image",
+    "h": "/docs/list-style-image"
+   },
+   {
+    "t": "list-style-position",
+    "h": "/docs/list-style-position"
+   },
+   {
+    "t": "list-style-type",
+    "h": "/docs/list-style-type"
+   },
+   {
+    "t": "text-align",
+    "h": "/docs/text-align"
+   },
+   {
+    "t": "color",
+    "h": "/docs/color"
+   },
+   {
+    "t": "text-decoration-line",
+    "h": "/docs/text-decoration-line"
+   },
+   {
+    "t": "text-decoration-color",
+    "h": "/docs/text-decoration-color"
+   },
+   {
+    "t": "text-decoration-style",
+    "h": "/docs/text-decoration-style"
+   },
+   {
+    "t": "text-decoration-thickness",
+    "h": "/docs/text-decoration-thickness"
+   },
+   {
+    "t": "text-underline-offset",
+    "h": "/docs/text-underline-offset"
+   },
+   {
+    "t": "text-transform",
+    "h": "/docs/text-transform"
+   },
+   {
+    "t": "text-overflow",
+    "h": "/docs/text-overflow"
+   },
+   {
+    "t": "text-wrap",
+    "h": "/docs/text-wrap"
+   },
+   {
+    "t": "text-indent",
+    "h": "/docs/text-indent"
+   },
+   {
+    "t": "tab-size",
+    "h": "/docs/tab-size"
+   },
+   {
+    "t": "vertical-align",
+    "h": "/docs/vertical-align"
+   },
+   {
+    "t": "white-space",
+    "h": "/docs/white-space"
+   },
+   {
+    "t": "word-break",
+    "h": "/docs/word-break"
+   },
+   {
+    "t": "overflow-wrap",
+    "h": "/docs/overflow-wrap"
+   },
+   {
+    "t": "hyphens",
+    "h": "/docs/hyphens"
+   },
+   {
+    "t": "content",
+    "h": "/docs/content"
+   }
+  ]
+ },
+ {
+  "g": "Backgrounds",
+  "links": [
+   {
+    "t": "background-attachment",
+    "h": "/docs/background-attachment"
+   },
+   {
+    "t": "background-clip",
+    "h": "/docs/background-clip"
+   },
+   {
+    "t": "background-color",
+    "h": "/docs/background-color"
+   },
+   {
+    "t": "background-image",
+    "h": "/docs/background-image"
+   },
+   {
+    "t": "background-origin",
+    "h": "/docs/background-origin"
+   },
+   {
+    "t": "background-position",
+    "h": "/docs/background-position"
+   },
+   {
+    "t": "background-repeat",
+    "h": "/docs/background-repeat"
+   },
+   {
+    "t": "background-size",
+    "h": "/docs/background-size"
+   }
+  ]
+ },
+ {
+  "g": "Borders",
+  "links": [
+   {
+    "t": "border-radius",
+    "h": "/docs/border-radius"
+   },
+   {
+    "t": "border-width",
+    "h": "/docs/border-width"
+   },
+   {
+    "t": "border-color",
+    "h": "/docs/border-color"
+   },
+   {
+    "t": "border-style",
+    "h": "/docs/border-style"
+   },
+   {
+    "t": "outline-width",
+    "h": "/docs/outline-width"
+   },
+   {
+    "t": "outline-color",
+    "h": "/docs/outline-color"
+   },
+   {
+    "t": "outline-style",
+    "h": "/docs/outline-style"
+   },
+   {
+    "t": "outline-offset",
+    "h": "/docs/outline-offset"
+   }
+  ]
+ },
+ {
+  "g": "Effects",
+  "links": [
+   {
+    "t": "box-shadow",
+    "h": "/docs/box-shadow"
+   },
+   {
+    "t": "text-shadow",
+    "h": "/docs/text-shadow"
+   },
+   {
+    "t": "opacity",
+    "h": "/docs/opacity"
+   },
+   {
+    "t": "mix-blend-mode",
+    "h": "/docs/mix-blend-mode"
+   },
+   {
+    "t": "background-blend-mode",
+    "h": "/docs/background-blend-mode"
+   },
+   {
+    "t": "mask-clip",
+    "h": "/docs/mask-clip"
+   },
+   {
+    "t": "mask-composite",
+    "h": "/docs/mask-composite"
+   },
+   {
+    "t": "mask-image",
+    "h": "/docs/mask-image"
+   },
+   {
+    "t": "mask-mode",
+    "h": "/docs/mask-mode"
+   },
+   {
+    "t": "mask-origin",
+    "h": "/docs/mask-origin"
+   },
+   {
+    "t": "mask-position",
+    "h": "/docs/mask-position"
+   },
+   {
+    "t": "mask-repeat",
+    "h": "/docs/mask-repeat"
+   },
+   {
+    "t": "mask-size",
+    "h": "/docs/mask-size"
+   },
+   {
+    "t": "mask-type",
+    "h": "/docs/mask-type"
+   }
+  ]
+ },
+ {
+  "g": "Filters",
+  "links": [
+   {
+    "t": "filter",
+    "h": "/docs/filter"
+   },
+   {
+    "t": "blur",
+    "h": "/docs/filter-blur"
+   },
+   {
+    "t": "brightness",
+    "h": "/docs/filter-brightness"
+   },
+   {
+    "t": "contrast",
+    "h": "/docs/filter-contrast"
+   },
+   {
+    "t": "drop-shadow",
+    "h": "/docs/filter-drop-shadow"
+   },
+   {
+    "t": "grayscale",
+    "h": "/docs/filter-grayscale"
+   },
+   {
+    "t": "hue-rotate",
+    "h": "/docs/filter-hue-rotate"
+   },
+   {
+    "t": "invert",
+    "h": "/docs/filter-invert"
+   },
+   {
+    "t": "saturate",
+    "h": "/docs/filter-saturate"
+   },
+   {
+    "t": "sepia",
+    "h": "/docs/filter-sepia"
+   },
+   {
+    "t": "backdrop-filter",
+    "h": "/docs/backdrop-filter"
+   },
+   {
+    "t": "blur",
+    "h": "/docs/backdrop-filter-blur"
+   },
+   {
+    "t": "brightness",
+    "h": "/docs/backdrop-filter-brightness"
+   },
+   {
+    "t": "contrast",
+    "h": "/docs/backdrop-filter-contrast"
+   },
+   {
+    "t": "grayscale",
+    "h": "/docs/backdrop-filter-grayscale"
+   },
+   {
+    "t": "hue-rotate",
+    "h": "/docs/backdrop-filter-hue-rotate"
+   },
+   {
+    "t": "invert",
+    "h": "/docs/backdrop-filter-invert"
+   },
+   {
+    "t": "opacity",
+    "h": "/docs/backdrop-filter-opacity"
+   },
+   {
+    "t": "saturate",
+    "h": "/docs/backdrop-filter-saturate"
+   },
+   {
+    "t": "sepia",
+    "h": "/docs/backdrop-filter-sepia"
+   }
+  ]
+ },
+ {
+  "g": "Tables",
+  "links": [
+   {
+    "t": "border-collapse",
+    "h": "/docs/border-collapse"
+   },
+   {
+    "t": "border-spacing",
+    "h": "/docs/border-spacing"
+   },
+   {
+    "t": "table-layout",
+    "h": "/docs/table-layout"
+   },
+   {
+    "t": "caption-side",
+    "h": "/docs/caption-side"
+   }
+  ]
+ },
+ {
+  "g": "Transitions & Animation",
+  "links": [
+   {
+    "t": "transition-property",
+    "h": "/docs/transition-property"
+   },
+   {
+    "t": "transition-behavior",
+    "h": "/docs/transition-behavior"
+   },
+   {
+    "t": "transition-duration",
+    "h": "/docs/transition-duration"
+   },
+   {
+    "t": "transition-timing-function",
+    "h": "/docs/transition-timing-function"
+   },
+   {
+    "t": "transition-delay",
+    "h": "/docs/transition-delay"
+   },
+   {
+    "t": "animation",
+    "h": "/docs/animation"
+   }
+  ]
+ },
+ {
+  "g": "Transforms",
+  "links": [
+   {
+    "t": "backface-visibility",
+    "h": "/docs/backface-visibility"
+   },
+   {
+    "t": "perspective",
+    "h": "/docs/perspective"
+   },
+   {
+    "t": "perspective-origin",
+    "h": "/docs/perspective-origin"
+   },
+   {
+    "t": "rotate",
+    "h": "/docs/rotate"
+   },
+   {
+    "t": "scale",
+    "h": "/docs/scale"
+   },
+   {
+    "t": "skew",
+    "h": "/docs/skew"
+   },
+   {
+    "t": "transform",
+    "h": "/docs/transform"
+   },
+   {
+    "t": "transform-origin",
+    "h": "/docs/transform-origin"
+   },
+   {
+    "t": "transform-style",
+    "h": "/docs/transform-style"
+   },
+   {
+    "t": "translate",
+    "h": "/docs/translate"
+   },
+   {
+    "t": "zoom",
+    "h": "/docs/zoom"
+   }
+  ]
+ },
+ {
+  "g": "Interactivity",
+  "links": [
+   {
+    "t": "accent-color",
+    "h": "/docs/accent-color"
+   },
+   {
+    "t": "appearance",
+    "h": "/docs/appearance"
+   },
+   {
+    "t": "caret-color",
+    "h": "/docs/caret-color"
+   },
+   {
+    "t": "color-scheme",
+    "h": "/docs/color-scheme"
+   },
+   {
+    "t": "cursor",
+    "h": "/docs/cursor"
+   },
+   {
+    "t": "field-sizing",
+    "h": "/docs/field-sizing"
+   },
+   {
+    "t": "pointer-events",
+    "h": "/docs/pointer-events"
+   },
+   {
+    "t": "resize",
+    "h": "/docs/resize"
+   },
+   {
+    "t": "scroll-behavior",
+    "h": "/docs/scroll-behavior"
+   },
+   {
+    "t": "scrollbar-color",
+    "h": "/docs/scrollbar-color"
+   },
+   {
+    "t": "scrollbar-width",
+    "h": "/docs/scrollbar-width"
+   },
+   {
+    "t": "scrollbar-gutter",
+    "h": "/docs/scrollbar-gutter"
+   },
+   {
+    "t": "scroll-margin",
+    "h": "/docs/scroll-margin"
+   },
+   {
+    "t": "scroll-padding",
+    "h": "/docs/scroll-padding"
+   },
+   {
+    "t": "scroll-snap-align",
+    "h": "/docs/scroll-snap-align"
+   },
+   {
+    "t": "scroll-snap-stop",
+    "h": "/docs/scroll-snap-stop"
+   },
+   {
+    "t": "scroll-snap-type",
+    "h": "/docs/scroll-snap-type"
+   },
+   {
+    "t": "touch-action",
+    "h": "/docs/touch-action"
+   },
+   {
+    "t": "user-select",
+    "h": "/docs/user-select"
+   },
+   {
+    "t": "will-change",
+    "h": "/docs/will-change"
+   }
+  ]
+ },
+ {
+  "g": "SVG",
+  "links": [
+   {
+    "t": "fill",
+    "h": "/docs/fill"
+   },
+   {
+    "t": "stroke",
+    "h": "/docs/stroke"
+   },
+   {
+    "t": "stroke-width",
+    "h": "/docs/stroke-width"
+   }
+  ]
+ },
+ {
+  "g": "Accessibility",
+  "links": [
+   {
+    "t": "forced-color-adjust",
+    "h": "/docs/forced-color-adjust"
+   }
+  ]
+ }
+]

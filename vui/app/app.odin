@@ -1,0 +1,551 @@
+package vui_app
+
+import "core:fmt"
+import "core:math"
+import "core:mem"
+import "core:os"
+import "core:strconv"
+import "core:strings"
+import "core:time"
+import gl "vendor:OpenGL"
+import sdl "vendor:sdl3"
+import vui ".."
+
+// SDL3 + OpenGL host for vui. Owns the window, translates input, renders and runs the
+// optional control server (see control.odin).
+//
+//     app: vui_app.App
+//     vui_app.init(&app, {title = "Hello", size = {1200, 800}}, &ctx)
+//     for vui_app.next_frame(&app) {
+//         if ui.div("p-8") { ui.text("Hello", "text-2xl font-semibold") }
+//         vui_app.end_frame(&app)
+//     }
+//     vui_app.shutdown(&app)
+
+Config :: struct {
+	title:        string,
+	size:         [2]i32, // logical size
+	min_size:     [2]i32,
+	hidden:       bool, // render offscreen only (agents / tests)
+	scale:        f32, // force UI scale (0 = use display scale)
+	control_port: int, // 0 = disabled
+	vsync:        bool,
+}
+
+Synthetic_Kind :: enum u8 {
+	Move,
+	Down,
+	Up,
+	Wheel,
+	Text,
+	Key,
+}
+
+Synthetic :: struct {
+	kind:   Synthetic_Kind,
+	pos:    [2]f32,
+	button: vui.Mouse_Button,
+	wheel:  [2]f32,
+	text:   string,
+	key:    vui.Key,
+	mods:   vui.Mods,
+	clicks: int,
+}
+
+App :: struct {
+	cfg:           Config,
+	ctx:           ^vui.Context,
+	window:        ^sdl.Window,
+	gl_ctx:        sdl.GLContext,
+	renderer:      Renderer,
+	running:       bool,
+	input:         vui.Input,
+	mouse:         [2]f32,
+	mouse_inside:  bool,
+	buttons:       vui.Mouse_Buttons,
+	text_buf:      strings.Builder,
+	scale:         f32,
+	logical:       [2]f32,
+	pixels:        [2]i32,
+	start_tick:    u64,
+	dirty_frames:  int,
+	cursors:       [vui.Cursor]^sdl.Cursor,
+	cur_cursor:    vui.Cursor,
+	text_input_on: bool,
+	synthetic:     [dynamic]Synthetic,
+	control:       ^Control,
+	frame_ms:      f32,
+	last_frame_t:  u64,
+	user_event:    u32,
+	// app hook for custom control commands: return JSON (or "" if unknown)
+	on_command:    proc(app: ^App, cmd: string, args: map[string]string) -> string,
+	user_data:     rawptr,
+	clear_color:   vui.Color,
+	screenshot_requests: [dynamic]^Control_Request,
+	wait_requests: [dynamic]Wait_Request,
+}
+
+Wait_Request :: struct {
+	req:    ^Control_Request,
+	frames: int,
+}
+
+@(private)
+g_app: ^App
+
+@(private)
+clipboard_get :: proc(allocator: mem.Allocator) -> string {
+	t := sdl.GetClipboardText()
+	if t == nil {
+		return ""
+	}
+	s := strings.clone(string(cstring(t)), allocator)
+	sdl.free(rawptr(t))
+	return s
+}
+
+@(private)
+clipboard_set :: proc(s: string) {
+	cs := strings.clone_to_cstring(s, context.temp_allocator)
+	_ = sdl.SetClipboardText(cs)
+}
+
+init :: proc(app: ^App, cfg: Config, ctx: ^vui.Context) -> bool {
+	app.cfg = cfg
+	app.ctx = ctx
+	g_app = app
+	// environment overrides (handy for agents and CI)
+	if v := os.get_env("VUI_HIDDEN", context.temp_allocator); v == "1" || v == "true" {
+		app.cfg.hidden = true
+	}
+	if v := os.get_env("VUI_SCALE", context.temp_allocator); v != "" {
+		if f, ok := strconv.parse_f32(v); ok {
+			app.cfg.scale = f
+		}
+	}
+	if v := os.get_env("VUI_PORT", context.temp_allocator); v != "" {
+		if n, ok := strconv.parse_int(v); ok {
+			app.cfg.control_port = n
+		}
+	}
+	if v := os.get_env("VUI_SIZE", context.temp_allocator); v != "" {
+		if x := strings.index_byte(v, 'x'); x > 0 {
+			w, _ := strconv.parse_int(v[:x])
+			h, _ := strconv.parse_int(v[x + 1:])
+			if w > 0 && h > 0 {
+				app.cfg.size = {i32(w), i32(h)}
+			}
+		}
+	}
+	cfg := app.cfg
+	if app.cfg.size == {0, 0} {
+		app.cfg.size = {1280, 800}
+	}
+	_ = sdl.SetHint(sdl.HINT_VIDEO_WAYLAND_SCALE_TO_DISPLAY, "0")
+	if !sdl.Init({.VIDEO, .EVENTS}) {
+		fmt.eprintln("vui: SDL_Init failed:", sdl.GetError())
+		return false
+	}
+	_ = sdl.GL_SetAttribute(.CONTEXT_MAJOR_VERSION, 3)
+	_ = sdl.GL_SetAttribute(.CONTEXT_MINOR_VERSION, 3)
+	_ = sdl.GL_SetAttribute(.CONTEXT_PROFILE_MASK, i32(transmute(u32)sdl.GL_CONTEXT_PROFILE_CORE))
+	_ = sdl.GL_SetAttribute(.DOUBLEBUFFER, 1)
+	_ = sdl.GL_SetAttribute(.DEPTH_SIZE, 0)
+	flags: sdl.WindowFlags = {.OPENGL, .RESIZABLE, .HIGH_PIXEL_DENSITY}
+	if cfg.hidden {
+		flags += {.HIDDEN}
+	}
+	title := strings.clone_to_cstring(cfg.title != "" ? cfg.title : "vinland-ui", context.temp_allocator)
+	app.window = sdl.CreateWindow(title, app.cfg.size.x, app.cfg.size.y, flags)
+	if app.window == nil {
+		fmt.eprintln("vui: CreateWindow failed:", sdl.GetError())
+		return false
+	}
+	if cfg.min_size != {0, 0} {
+		_ = sdl.SetWindowMinimumSize(app.window, cfg.min_size.x, cfg.min_size.y)
+	}
+	app.gl_ctx = sdl.GL_CreateContext(app.window)
+	if app.gl_ctx == nil {
+		fmt.eprintln("vui: GL context failed:", sdl.GetError())
+		return false
+	}
+	_ = sdl.GL_MakeCurrent(app.window, app.gl_ctx)
+	gl.load_up_to(3, 3, sdl.gl_set_proc_address)
+	_ = sdl.GL_SetSwapInterval(app.cfg.hidden ? 0 : 1)
+	if !renderer_init(&app.renderer) {
+		return false
+	}
+	app.running = true
+	app.start_tick = sdl.GetTicksNS()
+	app.text_buf = strings.builder_make()
+	app.user_event = sdl.RegisterEvents(1)
+	ctx.clipboard_get = clipboard_get
+	ctx.clipboard_set = clipboard_set
+	update_metrics(app)
+	if cfg.control_port > 0 {
+		app.control = control_start(app, cfg.control_port)
+	}
+	app.dirty_frames = 3
+	return true
+}
+
+shutdown :: proc(app: ^App) {
+	if app.control != nil {
+		control_stop(app.control)
+	}
+	renderer_destroy(&app.renderer)
+	for c in app.cursors {
+		if c != nil {
+			sdl.DestroyCursor(c)
+		}
+	}
+	strings.builder_destroy(&app.text_buf)
+	delete(app.synthetic)
+	delete(app.screenshot_requests)
+	delete(app.wait_requests)
+	_ = sdl.GL_DestroyContext(app.gl_ctx)
+	sdl.DestroyWindow(app.window)
+	sdl.Quit()
+}
+
+@(private)
+update_metrics :: proc(app: ^App) {
+	pw, ph: i32
+	_ = sdl.GetWindowSizeInPixels(app.window, &pw, &ph)
+	app.pixels = {pw, ph}
+	scale := sdl.GetWindowDisplayScale(app.window)
+	if scale <= 0 {
+		scale = 1
+	}
+	if app.cfg.scale > 0 {
+		scale = app.cfg.scale
+	}
+	if app.cfg.hidden && app.cfg.scale > 0 {
+		// hidden windows may report density 1: size the framebuffer explicitly
+		ww, wh: i32
+		_ = sdl.GetWindowSize(app.window, &ww, &wh)
+		density := sdl.GetWindowPixelDensity(app.window)
+		_ = density
+		app.pixels = {i32(math.round(f32(ww) * scale)), i32(math.round(f32(wh) * scale))}
+		app.logical = {f32(ww), f32(wh)}
+		app.scale = scale
+		return
+	}
+	app.scale = scale
+	app.logical = {f32(pw) / scale, f32(ph) / scale}
+}
+
+// window point -> logical px
+@(private)
+to_logical :: proc(app: ^App, x, y: f32) -> [2]f32 {
+	density := sdl.GetWindowPixelDensity(app.window)
+	if density <= 0 {
+		density = 1
+	}
+	return {x * density / app.scale, y * density / app.scale}
+}
+
+@(private)
+map_key :: proc(k: sdl.Keycode) -> (vui.Key, bool) {
+	switch k {
+	case sdl.K_TAB:
+		return .Tab, true
+	case sdl.K_RETURN, sdl.K_KP_ENTER:
+		return .Enter, true
+	case sdl.K_ESCAPE:
+		return .Escape, true
+	case sdl.K_BACKSPACE:
+		return .Backspace, true
+	case sdl.K_DELETE:
+		return .Delete, true
+	case sdl.K_LEFT:
+		return .Left, true
+	case sdl.K_RIGHT:
+		return .Right, true
+	case sdl.K_UP:
+		return .Up, true
+	case sdl.K_DOWN:
+		return .Down, true
+	case sdl.K_HOME:
+		return .Home, true
+	case sdl.K_END:
+		return .End, true
+	case sdl.K_PAGEUP:
+		return .Page_Up, true
+	case sdl.K_PAGEDOWN:
+		return .Page_Down, true
+	case sdl.K_SPACE:
+		return .Space, true
+	case sdl.K_A:
+		return .A, true
+	case sdl.K_C:
+		return .C, true
+	case sdl.K_V:
+		return .V, true
+	case sdl.K_X:
+		return .X, true
+	case sdl.K_Z:
+		return .Z, true
+	case sdl.K_Y:
+		return .Y, true
+	case sdl.K_K:
+		return .K, true
+	case sdl.K_F1:
+		return .F1, true
+	case sdl.K_F5:
+		return .F5, true
+	case sdl.K_F12:
+		return .F12, true
+	case sdl.K_SLASH:
+		return .Slash, true
+	}
+	return .Tab, false
+}
+
+@(private)
+map_mods :: proc(m: sdl.Keymod) -> vui.Mods {
+	r: vui.Mods
+	if .LSHIFT in m || .RSHIFT in m {
+		r += {.Shift}
+	}
+	if .LCTRL in m || .RCTRL in m {
+		r += {.Ctrl}
+	}
+	if .LALT in m || .RALT in m {
+		r += {.Alt}
+	}
+	if .LGUI in m || .RGUI in m {
+		r += {.Super}
+	}
+	return r
+}
+
+@(private)
+handle_event :: proc(app: ^App, e: ^sdl.Event) {
+	in_ := &app.input
+	#partial switch e.type {
+	case .QUIT, .WINDOW_CLOSE_REQUESTED:
+		app.running = false
+	case .WINDOW_RESIZED, .WINDOW_PIXEL_SIZE_CHANGED, .WINDOW_DISPLAY_SCALE_CHANGED:
+		update_metrics(app)
+	case .WINDOW_MOUSE_LEAVE:
+		app.mouse_inside = false
+	case .WINDOW_MOUSE_ENTER:
+		app.mouse_inside = true
+	case .MOUSE_MOTION:
+		app.mouse = to_logical(app, e.motion.x, e.motion.y)
+		app.mouse_inside = true
+	case .MOUSE_BUTTON_DOWN, .MOUSE_BUTTON_UP:
+		app.mouse = to_logical(app, e.button.x, e.button.y)
+		b: vui.Mouse_Button
+		switch e.button.button {
+		case 1:
+			b = .Left
+		case 2:
+			b = .Middle
+		case 3:
+			b = .Right
+		case:
+			return
+		}
+		if e.button.down {
+			app.buttons += {b}
+			in_.pressed += {b}
+			in_.click_count = int(e.button.clicks)
+		} else {
+			app.buttons -= {b}
+			in_.released += {b}
+		}
+	case .MOUSE_WHEEL:
+		dir: f32 = e.wheel.direction == .FLIPPED ? -1 : 1
+		in_.wheel += {-e.wheel.x * 48 * dir, -e.wheel.y * 48 * dir}
+	case .KEY_DOWN:
+		if k, ok := map_key(e.key.key); ok {
+			in_.keys_pressed += {k}
+			in_.keys_down += {k}
+		}
+		in_.mods = map_mods(e.key.mod)
+	case .KEY_UP:
+		if k, ok := map_key(e.key.key); ok {
+			in_.keys_down -= {k}
+		}
+		in_.mods = map_mods(e.key.mod)
+	case .TEXT_INPUT:
+		strings.write_string(&app.text_buf, string(e.text.text))
+	}
+}
+
+@(private)
+apply_synthetic :: proc(app: ^App) -> bool {
+	if len(app.synthetic) == 0 {
+		return false
+	}
+	s := app.synthetic[0]
+	ordered_remove(&app.synthetic, 0)
+	in_ := &app.input
+	switch s.kind {
+	case .Move:
+		app.mouse = s.pos
+		app.mouse_inside = true
+	case .Down:
+		app.mouse = s.pos
+		app.mouse_inside = true
+		app.buttons += {s.button}
+		in_.pressed += {s.button}
+		in_.click_count = max(s.clicks, 1)
+	case .Up:
+		app.mouse = s.pos
+		app.buttons -= {s.button}
+		in_.released += {s.button}
+	case .Wheel:
+		app.mouse = s.pos
+		app.mouse_inside = true
+		in_.wheel += s.wheel
+	case .Text:
+		strings.write_string(&app.text_buf, s.text)
+		delete(s.text)
+	case .Key:
+		in_.keys_pressed += {s.key}
+		in_.mods = s.mods
+	}
+	return true
+}
+
+now_seconds :: proc(app: ^App) -> f64 {
+	return f64(sdl.GetTicksNS() - app.start_tick) / 1e9
+}
+
+// Pumps events and starts a UI frame. Returns false when the app should quit.
+next_frame :: proc(app: ^App) -> bool {
+	ctx := app.ctx
+	app.input.pressed = {}
+	app.input.released = {}
+	app.input.wheel = {}
+	app.input.keys_pressed = {}
+	app.input.text = ""
+	strings.builder_reset(&app.text_buf)
+
+	busy := ctx.animating || app.dirty_frames > 0 || len(app.synthetic) > 0 || len(app.wait_requests) > 0 || len(app.screenshot_requests) > 0
+	e: sdl.Event
+	got := false
+	if !busy {
+		// idle: block until something happens (saves CPU), but wake periodically
+		if sdl.WaitEventTimeout(&e, 500) {
+			handle_event(app, &e)
+			got = true
+		}
+	}
+	for sdl.PollEvent(&e) {
+		handle_event(app, &e)
+		got = true
+	}
+	if app.control != nil {
+		control_poll(app)
+	}
+	if apply_synthetic(app) {
+		got = true
+	}
+	if got {
+		app.dirty_frames = max(app.dirty_frames, 2)
+	}
+	if app.dirty_frames > 0 {
+		app.dirty_frames -= 1
+	}
+
+	app.input.mouse = app.mouse
+	app.input.mouse_inside = app.mouse_inside
+	app.input.buttons = app.buttons
+	app.input.text = strings.to_string(app.text_buf)
+	if app.input.mods == {} {
+		app.input.mods = map_mods(sdl.GetModState())
+	}
+	vui.begin_frame(ctx, app.input, app.logical, app.scale, now_seconds(app))
+	return app.running
+}
+
+@(private)
+sdl_cursor :: proc(c: vui.Cursor) -> sdl.SystemCursor {
+	#partial switch c {
+	case .Pointer:
+		return .POINTER
+	case .Text:
+		return .TEXT
+	case .Move, .Grab, .Grabbing:
+		return .MOVE
+	case .Wait:
+		return .WAIT
+	case .Progress:
+		return .PROGRESS
+	case .Not_Allowed:
+		return .NOT_ALLOWED
+	case .Crosshair:
+		return .CROSSHAIR
+	case .Col_Resize, .EW_Resize:
+		return .EW_RESIZE
+	case .Row_Resize, .NS_Resize:
+		return .NS_RESIZE
+	case .NESW_Resize:
+		return .NESW_RESIZE
+	case .NWSE_Resize:
+		return .NWSE_RESIZE
+	}
+	return .DEFAULT
+}
+
+// Lays out, renders and presents the frame.
+end_frame :: proc(app: ^App) {
+	ctx := app.ctx
+	t0 := sdl.GetTicksNS()
+	d := vui.end_frame(ctx)
+	clear := app.clear_color
+	if clear.a == 0 {
+		clear = d.clear.a > 0 ? d.clear : (ctx.dark ? vui.Color{0.01, 0.03, 0.07, 1} : vui.WHITE)
+	}
+	render(&app.renderer, ctx, d, app.pixels.x, app.pixels.y, clear)
+	app.frame_ms = f32(sdl.GetTicksNS() - t0) / 1e6
+
+	// cursor
+	if ctx.cursor != app.cur_cursor {
+		app.cur_cursor = ctx.cursor
+		if ctx.cursor == .None {
+			_ = sdl.HideCursor()
+		} else {
+			if app.cursors[ctx.cursor] == nil {
+				app.cursors[ctx.cursor] = sdl.CreateSystemCursor(sdl_cursor(ctx.cursor))
+			}
+			_ = sdl.ShowCursor()
+			_ = sdl.SetCursor(app.cursors[ctx.cursor])
+		}
+	}
+	// text input (IME)
+	if ctx.text_input_wanted != app.text_input_on {
+		app.text_input_on = ctx.text_input_wanted
+		if app.text_input_on {
+			_ = sdl.StartTextInput(app.window)
+		} else {
+			_ = sdl.StopTextInput(app.window)
+		}
+	}
+	if app.control != nil {
+		control_after_frame(app)
+	}
+	if !app.cfg.hidden {
+		_ = sdl.GL_SwapWindow(app.window)
+	} else {
+		// no vsync offscreen: pace animations at ~60 fps
+		sdl.Delay(app.ctx.animating ? 16 : 1)
+	}
+	free_all(context.temp_allocator)
+	_ = time.Duration(0)
+}
+
+// Wakes the event loop (thread-safe).
+wake :: proc(app: ^App) {
+	e: sdl.Event
+	e.type = sdl.EventType(app.user_event)
+	_ = sdl.PushEvent(&e)
+}
+
+request_redraw :: proc(app: ^App) {
+	app.dirty_frames = max(app.dirty_frames, 2)
+}

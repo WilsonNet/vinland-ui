@@ -1,0 +1,8 @@
+build/
+*.png
+!assets/**/*.png
+!docs/**/*.png
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/review/
+*.log
