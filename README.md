@@ -96,11 +96,19 @@ odin build my_app -collection:vinland=path/to/vinland-ui
 
 ## Website
 
-https://wilsonnet.github.io/vinland-ui/ is the showroom published as an Astro Starlight site:
-every page's text, tables and code are real HTML, and every example runs live in the browser:
-the showroom itself is compiled to WebAssembly + WebGL2 and renders each example into its canvas
-(native screenshots show until the wasm loads).
-See [`website/README.md`](website/README.md).
+https://wilsonnet.github.io/vinland-ui/ is the showroom published as a static site that mirrors
+the desktop app (same sidebar, hatched gutters, previews and code panels): every page's text,
+tables and code are real HTML, previews are screenshots captured from the native showroom
+(light and dark), and the component showcase runs live through WebAssembly + WebGL2.
+
+```bash
+./build.sh release
+python3 tools/site/build.py build/site        # sandboxed capture + HTML into build/site
+# validate with Playwright, then publish build/site to the gh-pages branch
+```
+
+GitHub Pages serves the `gh-pages` branch. (`website/` holds an experimental Astro Starlight
+version that is not deployed.)
 
 ## The showroom
 
