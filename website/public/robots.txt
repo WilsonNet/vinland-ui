@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wilsonnet.github.io/vinland-ui/sitemap-index.xml
