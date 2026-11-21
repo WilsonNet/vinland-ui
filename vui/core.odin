@@ -281,7 +281,8 @@ Context :: struct {
 	class_cache:  map[string]^Class_Set,
 	cache_version: u64,
 	states:       map[Id]^Elem_State,
-	arena:        virtual.Arena,
+	arena:        virtual.Arena, // native: growing virtual-memory arena
+	dyn_arena:    mem.Dynamic_Arena, // wasm: no virtual memory, use a block arena
 	frame_alloc:  mem.Allocator,
 	nodes:        [dynamic]Node,
 	paras:        [dynamic]Paragraph,
@@ -346,8 +347,13 @@ init :: proc(ctx: ^Context, theme := Theme{}) {
 	if ctx.theme.spacing == 0 {
 		ctx.theme = theme_default()
 	}
-	_ = virtual.arena_init_growing(&ctx.arena)
-	ctx.frame_alloc = virtual.arena_allocator(&ctx.arena)
+	when ODIN_OS == .JS {
+		mem.dynamic_arena_init(&ctx.dyn_arena, block_size = 1 << 20)
+		ctx.frame_alloc = mem.dynamic_arena_allocator(&ctx.dyn_arena)
+	} else {
+		_ = virtual.arena_init_growing(&ctx.arena)
+		ctx.frame_alloc = virtual.arena_allocator(&ctx.arena)
+	}
 	atlas_init(&ctx.atlas)
 	ctx.scale = 1
 	ctx.text_gamma = 1
@@ -389,7 +395,11 @@ destroy :: proc(ctx: ^Context) {
 	delete(ctx.scroll_requests)
 	draw_list_destroy(&ctx.draw)
 	theme_destroy(&ctx.theme)
-	virtual.arena_destroy(&ctx.arena)
+	when ODIN_OS == .JS {
+		mem.dynamic_arena_destroy(&ctx.dyn_arena)
+	} else {
+		virtual.arena_destroy(&ctx.arena)
+	}
 	if g_ctx == ctx {
 		g_ctx = nil
 	}
@@ -466,7 +476,11 @@ begin_frame :: proc(ctx: ^Context, input: Input, viewport: [2]f32, scale: f32, t
 		atlas_clear(&ctx.atlas)
 	}
 
-	virtual.arena_free_all(&ctx.arena)
+	when ODIN_OS == .JS {
+		mem.dynamic_arena_free_all(&ctx.dyn_arena)
+	} else {
+		virtual.arena_free_all(&ctx.arena)
+	}
 	fa := ctx.frame_alloc
 	ctx.nodes = make([dynamic]Node, 0, 512, fa)
 	ctx.paras = make([dynamic]Paragraph, 0, 128, fa)

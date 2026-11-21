@@ -181,6 +181,8 @@ def page_html(doc, pages, groups, prev_p, next_p):
     body = []
     toc = []
     k = 0
+    last_heading = title
+    live = slug == "showcase"
     blocks = doc["blocks"]
     if blocks and blocks[0]["kind"] == "Para" and blocks[0].get("text") == desc:
         blocks = blocks[1:]
@@ -189,10 +191,12 @@ def page_html(doc, pages, groups, prev_p, next_p):
         if kind == "H2":
             a = slugify(b["text"])
             toc.append((2, b["text"], a))
+            last_heading = b["text"]
             body.append(f'<h2 id="{a}">{html.escape(b["text"])}</h2>')
         elif kind == "H3":
             a = slugify(b["text"])
             toc.append((3, b["text"], a))
+            last_heading = b["text"]
             body.append(f'<h3 id="{a}">{html.escape(b["text"])}</h3>')
         elif kind == "Para":
             body.append(f'<p>{rich(b["text"])}</p>')
@@ -210,8 +214,11 @@ def page_html(doc, pages, groups, prev_p, next_p):
             img = ""
             if not b.get("skip") and b.get("size"):
                 w, h = b["size"]
-                alt = f"{title}: rendered example {k + 1}"
-                img = (f'<div class="preview"><img class="only-light" src="img/{slug}-{k}-light.webp" width="{w:.0f}" height="{h:.0f}" alt="{html.escape(alt)}" loading="lazy">'
+                alt = f"{title}: {last_heading} (rendered by vinland-ui)"
+                canvas = ""
+                if live:
+                    canvas = f'<canvas id="vui-{slugify(last_heading)}" tabindex="0" style="height:{h:.0f}px" aria-label="Live demo: {html.escape(last_heading)}"></canvas>'
+                img = (f'<div class="preview">{canvas}<img class="only-light" src="img/{slug}-{k}-light.webp" width="{w:.0f}" height="{h:.0f}" alt="{html.escape(alt)}" loading="lazy">'
                        f'<img class="only-dark" src="img/{slug}-{k}-dark.webp" width="{w:.0f}" height="{h:.0f}" alt="{html.escape(alt)}" loading="lazy"></div>')
             body.append(f'<figure class="fig">{img}<pre class="code"><code>{highlight(b.get("code", ""))}</code></pre></figure>')
             k += 1
@@ -227,19 +234,49 @@ def page_html(doc, pages, groups, prev_p, next_p):
     footer += f'<a href="{prev_p["slug"]}.html">← {html.escape(prev_p["title"])}</a>' if prev_p else "<span></span>"
     footer += f'<a href="{next_p["slug"]}.html">{html.escape(next_p["title"])} →</a>' if next_p else ""
     footer += "</nav>"
-    page_title = "vinland-ui: utility-first UI for Odin" if slug == "introduction" else f"{title} - vinland-ui"
-    canonical = BASE_URL + ("" if slug == "introduction" else f"{slug}.html")
+    is_home = slug == "introduction"
+    page_title = "vinland-ui: utility-first UI framework for Odin" if is_home else f"{title} - {doc['group']} - vinland-ui (Odin UI framework)"
+    meta_desc = desc if is_home else f"{desc.rstrip('.')}. vinland-ui brings Tailwind-style {title} utilities to native Odin apps, with live examples and copyable code."
+    canonical = BASE_URL + ("" if is_home else f"{slug}.html")
+    ld = [{
+        "@context": "https://schema.org", "@type": "TechArticle", "headline": title,
+        "description": meta_desc, "url": canonical, "inLanguage": "en",
+        "isPartOf": {"@type": "WebSite", "name": "vinland-ui", "url": BASE_URL},
+        "about": {"@type": "SoftwareSourceCode", "name": "vinland-ui", "codeRepository": REPO, "programmingLanguage": "Odin", "license": "https://opensource.org/licenses/MIT"},
+    }, {
+        "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Docs", "item": BASE_URL},
+            {"@type": "ListItem", "position": 2, "name": doc["group"], "item": canonical},
+            {"@type": "ListItem", "position": 3, "name": title, "item": canonical},
+        ],
+    }]
+    ld_json = json.dumps(ld).replace("</", "<\\/")
+    live_script = '<script src="odin.js" defer></script><script src="live.js" defer></script>' if live else ""
     return f"""<!doctype html>
-<html lang="en">
+<html lang="en" id="vui-root">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(page_title)}</title>
-<meta name="description" content="{html.escape(desc)}">
+<meta name="description" content="{html.escape(meta_desc)}">
 <link rel="canonical" href="{canonical}">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="{'website' if is_home else 'article'}">
+<meta property="og:site_name" content="vinland-ui">
+<meta property="og:url" content="{canonical}">
 <meta property="og:title" content="{html.escape(page_title)}">
-<meta property="og:description" content="{html.escape(desc)}">
+<meta property="og:description" content="{html.escape(meta_desc)}">
 <meta property="og:image" content="{BASE_URL}img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="750">
+<meta property="og:image:alt" content="vinland-ui showroom: documentation rendered natively by the framework">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{html.escape(page_title)}">
+<meta name="twitter:description" content="{html.escape(meta_desc)}">
+<meta name="twitter:image" content="{BASE_URL}img/og.png">
+<script type="application/ld+json">{ld_json}</script>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/Inter-Regular.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="site.css">
@@ -261,7 +298,7 @@ def page_html(doc, pages, groups, prev_p, next_p):
   <div class="gutter"></div>
   <main>
     <article>
-      <h1>{html.escape(title)}</h1>
+      <h1>{html.escape("vinland-ui: utility-first UI for Odin" if is_home else title)}</h1>
       <p class="lede">{rich(desc)}</p>
       {"".join(body)}
       {footer}
@@ -271,6 +308,7 @@ def page_html(doc, pages, groups, prev_p, next_p):
 </div>
 <div class="palette" hidden><div class="scrim"></div><div class="panel"><div class="field"><svg viewBox="0 0 20 20"><path fill="currentColor" fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"/></svg><input type="search" placeholder="Search utilities and guides…" aria-label="Search"><kbd>Esc</kbd></div><ul class="results"></ul></div></div>
 <script src="site.js" defer></script>
+{live_script}
 </body>
 </html>
 """
@@ -297,7 +335,7 @@ def build(out_dir: str, only: set, shots: bool):
                 f.write(out)
     # assets
     here = os.path.dirname(os.path.abspath(__file__))
-    for name in ("site.css", "site.js", "favicon.svg"):
+    for name in ("site.css", "site.js", "favicon.svg", "live.js"):
         shutil.copy(os.path.join(here, name), os.path.join(out_dir, name))
     fdir = os.path.join(out_dir, "fonts")
     os.makedirs(fdir, exist_ok=True)
@@ -312,11 +350,24 @@ def build(out_dir: str, only: set, shots: bool):
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
         for p in order:
             loc = BASE_URL + ("" if p["slug"] == "introduction" else p["slug"] + ".html")
-            f.write(f"  <url><loc>{loc}</loc></url>\n")
+            f.write(f"  <url><loc>{loc}</loc><lastmod>{time.strftime('%Y-%m-%d')}</lastmod><changefreq>weekly</changefreq><priority>{'1.0' if p['slug'] == 'introduction' else '0.7'}</priority></url>\n")
         f.write("</urlset>\n")
     with open(os.path.join(out_dir, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {BASE_URL}sitemap.xml\n")
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
+    with open(os.path.join(out_dir, "index.html")) as f:
+        idx = f.read()
+    nf = re.sub(r"<article>.*?</article>", '<article><h1>Page not found</h1><p class="lede">This page does not exist. Use the navigation or search (Ctrl K) to find a utility.</p><p><a href="index.html">Back to the introduction</a></p></article>', idx, flags=re.S)
+    nf = nf.replace('<meta name="robots" content="index, follow">', '<meta name="robots" content="noindex">')
+    nf = re.sub(r'<base[^>]*>', '', nf).replace('<head>', '<head>\n<base href="/vinland-ui/">', 1)
+    with open(os.path.join(out_dir, "404.html"), "w") as f:
+        f.write(nf)
+    # live demos: wasm + Odin's JS runtime
+    wasm = os.path.join(ROOT, "build/demos.wasm")
+    if os.path.exists(wasm):
+        shutil.copy(wasm, os.path.join(out_dir, "demos.wasm"))
+        odin_root = subprocess.run(["odin", "root"], capture_output=True, text=True).stdout.strip()
+        shutil.copy(os.path.join(odin_root, "core/sys/wasm/js/odin.js"), os.path.join(out_dir, "odin.js"))
     print(f"wrote {len(order)} pages to {out_dir}")
 
 

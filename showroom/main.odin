@@ -9,6 +9,7 @@ import ui "../vui"
 import "../vui/app"
 import "../vui/fonts"
 import icons "../vui/icons"
+import "demos"
 
 VERSION :: "0.1"
 
@@ -48,6 +49,7 @@ main :: proc() {
 	defer ui.destroy(&ctx)
 	fonts.register(&ctx)
 	IC = icons.register(&ctx)
+	demos.IC = IC
 	LOGO = ui.icon_register(&ctx, "vinland-logo", {32, 32}, LOGO_PATHS[:])
 	GITHUB = ui.icon_register(&ctx, "github", {24, 24}, GITHUB_PATHS[:])
 	theme_setup(&ctx.theme)

@@ -126,3 +126,10 @@ html.dark .show-all { background: #364153; }
 @media (max-width: 767px) { .links { display: none; } .search kbd, .search { font-size: 0; } .search kbd { display: none; } article { padding-top: 40px; } }
 @media (max-width: 639px) { .gh { display: none; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* live WebAssembly demos: canvas replaces the screenshot once mounted */
+.preview { position: relative; }
+.preview canvas { display: none; width: 100%; outline: none; }
+.preview canvas[style*="block"] ~ img { display: none !important; }
+.crumbs { display: flex; gap: 8px; margin-bottom: 12px; font-size: 14px; color: var(--ink-soft); }
+.crumbs a:hover { color: var(--ink); }

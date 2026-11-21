@@ -21,6 +21,7 @@ SOURCES := [?]Src {
 	{"pages_visual.odin", #load("pages_visual.odin", string)},
 	{"pages_motion.odin", #load("pages_motion.odin", string)},
 	{"pages_interactivity.odin", #load("pages_interactivity.odin", string)},
+	{"demos.odin", #load("demos/demos.odin", string)},
 }
 
 @(private = "file")
@@ -78,6 +79,12 @@ snippet_for :: proc(loc: runtime.Source_Code_Location) -> string {
 		}
 	}
 	res := strings.to_string(out)
+	// `demos.name()` bodies point at a shared component: show the component's source instead
+	if strings.has_prefix(res, "demos.") && strings.has_suffix(res, "()") && !strings.contains(res, "\n") {
+		if body, ok := proc_body("demos.odin", res[6:len(res) - 2]); ok {
+			res = body
+		}
+	}
 	snippet_cache[strings.clone(key)] = res
 	return res
 }
@@ -173,4 +180,42 @@ highlight_line :: proc(line: string) {
 			}
 		}
 	}
+}
+
+// Body of a top-level `name :: proc() {` in an embedded source file, dedented once.
+proc_body :: proc(file, name: string) -> (string, bool) {
+	text := ""
+	for src in SOURCES {
+		if src.name == file {
+			text = src.text
+		}
+	}
+	head := strings.concatenate({name, " :: proc() {"}, context.temp_allocator)
+	lines := strings.split_lines(text, context.temp_allocator)
+	out := strings.builder_make()
+	for l, i in lines {
+		if l != head {
+			continue
+		}
+		first := true
+		for j in i + 1 ..< len(lines) {
+			b := lines[j]
+			if b == "}" {
+				return strings.to_string(out), true
+			}
+			if !first {
+				strings.write_byte(&out, '\n')
+			}
+			first = false
+			body := strings.trim_prefix(b, "\t")
+			for c in body {
+				if c == '\t' {
+					strings.write_string(&out, "    ")
+				} else {
+					strings.write_rune(&out, c)
+				}
+			}
+		}
+	}
+	return "", false
 }

@@ -2,7 +2,6 @@ package vui
 
 import "core:encoding/json"
 import "core:fmt"
-import "core:os"
 import "core:strconv"
 import "core:strings"
 
@@ -284,14 +283,6 @@ theme_lookup_color :: proc(t: ^Theme, s: string) -> (Color_Token, bool) {
 //   "breakpoints": { "md": 760 }
 // }
 // Color values may reference other tokens. Unknown keys are ignored.
-theme_load_json :: proc(t: ^Theme, path: string) -> (err: string) {
-	data, rerr := os.read_entire_file(path, context.temp_allocator)
-	if rerr != nil {
-		return fmt.tprintf("cannot read %s", path)
-	}
-	return theme_apply_json(t, data)
-}
-
 theme_apply_json :: proc(t: ^Theme, data: []byte) -> (err: string) {
 	root, jerr := json.parse(data, allocator = context.temp_allocator)
 	if jerr != nil {
