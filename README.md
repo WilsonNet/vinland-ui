@@ -147,7 +147,20 @@ site generator) runs on SDL's offscreen video driver with Mesa's llvmpipe softwa
 compositor connection, no GPU memory, no `/dev/dri` handles, the same isolation headless browsers
 get from SwiftShader. The app refuses to start headless on a hardware renderer, and `vui-test`
 refuses to drive an app that is not sandboxed. `VUI_HIDDEN_GPU=1` opts into the GPU deliberately.
-Visible windows keep at most one frame in flight on the GPU.
+Visible windows keep at most one frame in flight on the GPU, and occluded windows are paced.
+
+Why this matters: on APUs with a small VRAM carveout (e.g. Radeon 680M, 2 GB), an app that queues
+GPU work faster than it retires can fill VRAM until the compositor cannot pin its scanout buffer
+(`amdgpu: Not enough memory for command submission`, `prepare_fb bind failed: -ENOSPC`) and
+crashes. For deliberate GPU benchmarks, wrap the run in the watchdog:
+
+```bash
+tools/gpu-guard.sh --limit 150 -- env VUI_HIDDEN=1 VUI_HIDDEN_GPU=1 ./build/showroom
+# gpu-guard: vram carveout 2048 MB | start 1003 MB | after warmup 1134 MB | peak 1134 MB (+131) | OK
+```
+
+Measured (tracker, continuous rendering, 1770×1140): GPU 1.1 ms/frame with flat memory
+(+115 MB, 800 frames); sandboxed llvmpipe 5 ms/frame with zero GPU memory.
 
 ## Layout of the repo
 

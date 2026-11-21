@@ -73,7 +73,9 @@ test "save flow"
 
 Look at the screenshots (report.html) after each run; never claim a UI works without them.
 Never run a GUI app on the real GPU from an agent: always `VUI_HIDDEN=1` (sandboxed) and never
-set `VUI_HIDDEN_GPU`.
+set `VUI_HIDDEN_GPU`, except for an explicit GPU benchmark wrapped in
+`vinland-ui/tools/gpu-guard.sh --limit 150 -- <cmd>` (kills runaway GPU memory before the
+compositor starves).
 
 ## Minimal app
 
