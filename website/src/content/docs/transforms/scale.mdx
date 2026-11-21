@@ -1,0 +1,50 @@
+---
+title: "scale"
+description: "Utilities for scaling elements. Tailwind-style scale utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for scaling elements.
+
+| Class | Effect |
+| --- | --- |
+| `scale-none` | `scale: none;` |
+| `scale-<number>` | `scale: <number>% <number>%;` |
+| `-scale-<number>` | `scale: calc(<number>% * -1) calc(<number>% * -1);` |
+| `scale-[<value>]` | `scale: <value>;` |
+| `scale-x-<number>` | `scale: <number>% var(--tw-scale-y);` |
+| `-scale-x-<number>` | `scale: calc(<number>% * -1) var(--tw-scale-y);` |
+| `scale-x-[<value>]` | `scale: <value> var(--tw-scale-y);` |
+| `scale-y-<number>` | `scale: var(--tw-scale-x) <number>%;` |
+| `-scale-y-<number>` | `scale: var(--tw-scale-x) calc(<number>% * -1);` |
+| `scale-y-[<value>]` | `scale: var(--tw-scale-x) <value>;` |
+| `scale-z-<number>` | `scale: var(--tw-scale-x) var(--tw-scale-y) <number>%;` |
+| `-scale-z-<number>` | `scale: var(--tw-scale-x) var(--tw-scale-y) calc(<number>% * -1);` |
+| `scale-z-[<value>]` | `scale: var(--tw-scale-x) var(--tw-scale-y) <value>;` |
+| `scale-3d` | `scale: var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z);` |
+
+## Examples
+
+### Basic example
+
+<Preview src="scale-0" width={608} height={224} alt="scale: Basic example" />
+
+```odin
+if ui.div("flex gap-10") {
+    for c in ([]string{"scale-75", "scale-100", "scale-125"}) {
+        ui.key(c)
+        transform_tile(c, c)
+    }
+}
+```
+
+### Applying on hover
+
+<Preview src="scale-1" width={608} height={132} alt="scale: Applying on hover" />
+
+```odin
+ui.button("Hover me", "rounded-lg bg-violet-500 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:scale-110 active:scale-95")
+```

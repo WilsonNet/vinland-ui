@@ -1,0 +1,21 @@
+---
+title: "scroll-snap-align"
+description: "Utilities for controlling the scroll snap alignment of an element. Tailwind-style scroll-snap-align utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the scroll snap alignment of an element.
+
+| Class | Effect |
+| --- | --- |
+| `snap-start` | `scroll-snap-align: start;` |
+| `snap-end` | `scroll-snap-align: end;` |
+| `snap-center` | `scroll-snap-align: center;` |
+| `snap-align-none` | `scroll-snap-align: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

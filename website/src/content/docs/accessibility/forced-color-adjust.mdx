@@ -1,0 +1,19 @@
+---
+title: "forced-color-adjust"
+description: "Utilities for opting in and out of forced colors. Tailwind-style forced-color-adjust utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for opting in and out of forced colors.
+
+| Class | Effect |
+| --- | --- |
+| `forced-color-adjust-auto` | `forced-color-adjust: auto;` |
+| `forced-color-adjust-none` | `forced-color-adjust: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

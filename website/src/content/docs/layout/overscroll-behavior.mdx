@@ -1,0 +1,26 @@
+---
+title: "overscroll-behavior"
+description: "Utilities for controlling how the browser behaves when reaching the boundary of a scrolling area. Tailwind-style overscroll-behavior utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how the browser behaves when reaching the boundary of a scrolling area.
+
+| Class | Effect |
+| --- | --- |
+| `overscroll-auto` | `overscroll-behavior: auto;` |
+| `overscroll-contain` | `overscroll-behavior: contain;` |
+| `overscroll-none` | `overscroll-behavior: none;` |
+| `overscroll-x-auto` | `overscroll-behavior-x: auto;` |
+| `overscroll-x-contain` | `overscroll-behavior-x: contain;` |
+| `overscroll-x-none` | `overscroll-behavior-x: none;` |
+| `overscroll-y-auto` | `overscroll-behavior-y: auto;` |
+| `overscroll-y-contain` | `overscroll-behavior-y: contain;` |
+| `overscroll-y-none` | `overscroll-behavior-y: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

@@ -1,0 +1,23 @@
+---
+title: "mask-repeat"
+description: "Utilities for controlling the repetition of an element's mask image. Tailwind-style mask-repeat utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the repetition of an element's mask image.
+
+| Class | Effect |
+| --- | --- |
+| `mask-repeat` | `mask-repeat: repeat;` |
+| `mask-no-repeat` | `mask-repeat: no-repeat;` |
+| `mask-repeat-x` | `mask-repeat: repeat-x;` |
+| `mask-repeat-y` | `mask-repeat: repeat-y;` |
+| `mask-repeat-space` | `mask-repeat: space;` |
+| `mask-repeat-round` | `mask-repeat: round;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

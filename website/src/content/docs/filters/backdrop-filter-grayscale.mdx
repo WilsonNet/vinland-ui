@@ -1,0 +1,20 @@
+---
+title: "grayscale"
+description: "Utilities for applying backdrop grayscale filters to an element. Tailwind-style grayscale utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying backdrop grayscale filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `backdrop-grayscale` | `backdrop-filter: grayscale(100%);` |
+| `backdrop-grayscale-<number>` | `backdrop-filter: grayscale(<number>%);` |
+| `backdrop-grayscale-[<value>]` | `backdrop-filter: grayscale(<value>);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

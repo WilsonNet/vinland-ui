@@ -1,0 +1,19 @@
+---
+title: "opacity"
+description: "Utilities for applying backdrop opacity filters to an element. Tailwind-style opacity utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 18
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying backdrop opacity filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `backdrop-opacity-<number>` | `backdrop-filter: opacity(<number>%);` |
+| `backdrop-opacity-[<value>]` | `backdrop-filter: opacity(<value>);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

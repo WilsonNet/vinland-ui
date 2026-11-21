@@ -1,0 +1,21 @@
+---
+title: "resize"
+description: "Utilities for controlling how an element can be resized. Tailwind-style resize utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an element can be resized.
+
+| Class | Effect |
+| --- | --- |
+| `resize-none` | `resize: none;` |
+| `resize` | `resize: both;` |
+| `resize-y` | `resize: vertical;` |
+| `resize-x` | `resize: horizontal;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

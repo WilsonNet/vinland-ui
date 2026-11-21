@@ -1,0 +1,43 @@
+---
+title: vinland-ui
+description: A utility-first UI framework for Odin. Tailwind-style classes, design tokens, crisp GPU text at real pixel density, Vulkan with OpenGL fallback, and a CLI so agents can drive your app.
+template: splash
+hero:
+  tagline: Write native UI in Odin, style it with Tailwind CSS class names that resolve through design tokens, and let a small GPU renderer draw it at your display's real pixel density.
+  image:
+    file: ../../assets/logo.svg
+  actions:
+    - text: Get started
+      link: getting-started/introduction/
+      icon: right-arrow
+    - text: Component showcase
+      link: getting-started/showcase/
+      variant: minimal
+    - text: View on GitHub
+      link: https://github.com/WilsonNet/vinland-ui
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Crisp text" icon="pencil">
+    Glyphs are rasterized for the exact physical size and snapped to whole-pixel baselines, so fractional scales like 1.333 look as sharp as a browser.
+  </Card>
+  <Card title="Tailwind vocabulary" icon="seti:css">
+    `flex`, `gap-4`, `rounded-xl`, `shadow-lg`, `hover:`, `dark:`, `md:`, `group-hover:`. The palette and scales are Tailwind CSS v4's.
+  </Card>
+  <Card title="Design tokens" icon="setting">
+    Colors, spacing, radii, shadows, type and breakpoints live in a Theme. Tokens carry light and dark values and load from JSON.
+  </Card>
+  <Card title="Vulkan first" icon="rocket">
+    SDL3's GPU API renders on Vulkan, with OpenGL 3.3 as an automatic fallback, and WebGL2 for the live demos on this site.
+  </Card>
+  <Card title="Real layout" icon="list-format">
+    Block flow, flexbox, grid, absolute and fixed positioning, and smooth scroll containers.
+  </Card>
+  <Card title="Agent-drivable" icon="laptop">
+    `vui-ctl` clicks, types, scrolls, toggles dark mode, dumps the element tree and takes screenshots of a running app.
+  </Card>
+</CardGrid>

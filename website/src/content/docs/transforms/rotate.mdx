@@ -1,0 +1,41 @@
+---
+title: "rotate"
+description: "Utilities for rotating elements. Tailwind-style rotate utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for rotating elements.
+
+| Class | Effect |
+| --- | --- |
+| `rotate-none` | `rotate: none;` |
+| `rotate-<number>` | `rotate: <number>deg;` |
+| `-rotate-<number>` | `rotate: calc(<number>deg * -1);` |
+| `rotate-[<value>]` | `rotate: <value>;` |
+| `rotate-x-<number>` | `transform: rotateX(<number>deg) var(--tw-rotate-y);` |
+| `-rotate-x-<number>` | `transform: rotateX(-<number>deg) var(--tw-rotate-y);` |
+| `rotate-x-[<value>]` | `transform: rotateX(<value>) var(--tw-rotate-y);` |
+| `rotate-y-<number>` | `transform: var(--tw-rotate-x) rotateY(<number>deg);` |
+| `-rotate-y-<number>` | `transform: var(--tw-rotate-x) rotateY(-<number>deg);` |
+| `rotate-y-[<value>]` | `transform: var(--tw-rotate-x) rotateY(<value>);` |
+| `rotate-z-<number>` | `transform: var(--tw-rotate-x) var(--tw-rotate-y) rotateZ(<number>deg);` |
+| `-rotate-z-<number>` | `transform: var(--tw-rotate-x) var(--tw-rotate-y) rotateZ(-<number>deg);` |
+| `rotate-z-[<value>]` | `transform: var(--tw-rotate-x) var(--tw-rotate-y) rotateZ(<value>);` |
+
+## Examples
+
+### Basic example
+
+<Preview src="rotate-0" width={608} height={224} alt="rotate: Basic example" />
+
+```odin
+if ui.div("flex gap-10") {
+    for c in ([]string{"rotate-45", "rotate-90", "rotate-210", "-rotate-12"}) {
+        ui.key(c)
+        transform_tile(c, c)
+    }
+}
+```

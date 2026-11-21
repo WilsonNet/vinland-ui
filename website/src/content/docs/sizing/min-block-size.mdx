@@ -1,0 +1,34 @@
+---
+title: "min-block-size"
+description: "Utilities for setting the minimum block size of an element. Tailwind-style min-block-size utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the minimum block size of an element.
+
+| Class | Effect |
+| --- | --- |
+| `min-block-<number>` | `min-block-size: calc(var(--spacing) * <number>);` |
+| `min-block-<fraction>` | `min-block-size: calc(<fraction> * 100%);` |
+| `min-block-px` | `min-block-size: 1px;` |
+| `min-block-full` | `min-block-size: 100%;` |
+| `min-block-screen` | `min-block-size: 100vh;` |
+| `min-block-dvh` | `min-block-size: 100dvh;` |
+| `min-block-dvw` | `min-block-size: 100dvw;` |
+| `min-block-lvh` | `min-block-size: 100lvh;` |
+| `min-block-lvw` | `min-block-size: 100lvw;` |
+| `min-block-svw` | `min-block-size: 100svw;` |
+| `min-block-svh` | `min-block-size: 100svh;` |
+| `min-block-auto` | `min-block-size: auto;` |
+| `min-block-min` | `min-block-size: min-content;` |
+| `min-block-max` | `min-block-size: max-content;` |
+| `min-block-fit` | `min-block-size: fit-content;` |
+| `min-block-lh` | `min-block-size: 1lh;` |
+| `min-block-[<value>]` | `min-block-size: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

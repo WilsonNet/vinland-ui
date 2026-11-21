@@ -1,0 +1,52 @@
+---
+title: "gap"
+description: "Utilities for controlling gutters between grid and flexbox items. Tailwind-style gap utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling gutters between grid and flexbox items.
+
+| Class | Effect |
+| --- | --- |
+| `gap-<number>` | `gap: calc(var(--spacing) * <value>);` |
+| `gap-px` | `gap: 1px;` |
+| `gap-[<value>]` | `gap: <value>;` |
+| `gap-x-<number>` | `column-gap: calc(var(--spacing) * <value>);` |
+| `gap-x-px` | `column-gap: 1px;` |
+| `gap-x-[<value>]` | `column-gap: <value>;` |
+| `gap-y-<number>` | `row-gap: calc(var(--spacing) * <value>);` |
+| `gap-y-px` | `row-gap: 1px;` |
+| `gap-y-[<value>]` | `row-gap: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `gap-<number>` to change the gutter between rows and columns.
+
+<Preview src="gap-0" width={608} height={184} alt="gap: Basic example" />
+
+```odin
+if ui.div("grid grid-cols-2 gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+    tile("04")
+}
+```
+
+### Changing row and column gaps independently
+
+<Preview src="gap-1" width={608} height={184} alt="gap: Changing row and column gaps independently" />
+
+```odin
+if ui.div("grid grid-cols-3 gap-x-8 gap-y-4") {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```

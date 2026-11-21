@@ -1,0 +1,203 @@
+---
+title: "border-color"
+description: "Utilities for controlling the color of an element's borders. Tailwind-style border-color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the color of an element's borders.
+
+| Class | Effect |
+| --- | --- |
+| `border-inherit` | `border-color: inherit;` |
+| `border-current` | `border-color: currentColor;` |
+| `border-transparent` | `border-color: transparent;` |
+| `border-black` | `border-color: #000;` |
+| `border-white` | `border-color: #fff;` |
+| `border-red-50` | `border-color: color-red-50 token;` |
+| `border-red-100` | `border-color: color-red-100 token;` |
+| `border-red-200` | `border-color: color-red-200 token;` |
+| `border-red-300` | `border-color: color-red-300 token;` |
+| `border-red-400` | `border-color: color-red-400 token;` |
+| `border-red-500` | `border-color: color-red-500 token;` |
+| `border-red-600` | `border-color: color-red-600 token;` |
+| `border-red-700` | `border-color: color-red-700 token;` |
+| `border-red-800` | `border-color: color-red-800 token;` |
+| `border-red-900` | `border-color: color-red-900 token;` |
+| `border-red-950` | `border-color: color-red-950 token;` |
+| `border-orange-50` | `border-color: color-orange-50 token;` |
+| `border-orange-100` | `border-color: color-orange-100 token;` |
+| `border-orange-200` | `border-color: color-orange-200 token;` |
+| `border-orange-300` | `border-color: color-orange-300 token;` |
+| `border-orange-400` | `border-color: color-orange-400 token;` |
+| `border-orange-500` | `border-color: color-orange-500 token;` |
+| `border-orange-600` | `border-color: color-orange-600 token;` |
+| `border-orange-700` | `border-color: color-orange-700 token;` |
+| `border-orange-800` | `border-color: color-orange-800 token;` |
+| `border-orange-900` | `border-color: color-orange-900 token;` |
+| `border-orange-950` | `border-color: color-orange-950 token;` |
+| `border-amber-50` | `border-color: color-amber-50 token;` |
+| `border-amber-100` | `border-color: color-amber-100 token;` |
+| `border-amber-200` | `border-color: color-amber-200 token;` |
+| `border-amber-300` | `border-color: color-amber-300 token;` |
+| `border-amber-400` | `border-color: color-amber-400 token;` |
+| `border-amber-500` | `border-color: color-amber-500 token;` |
+| `border-amber-600` | `border-color: color-amber-600 token;` |
+| `border-amber-700` | `border-color: color-amber-700 token;` |
+| `border-amber-800` | `border-color: color-amber-800 token;` |
+| `border-amber-900` | `border-color: color-amber-900 token;` |
+| `border-amber-950` | `border-color: color-amber-950 token;` |
+| `border-yellow-50` | `border-color: color-yellow-50 token;` |
+| `border-yellow-100` | `border-color: color-yellow-100 token;` |
+| `border-yellow-200` | `border-color: color-yellow-200 token;` |
+| `border-yellow-300` | `border-color: color-yellow-300 token;` |
+| `border-yellow-400` | `border-color: color-yellow-400 token;` |
+| `border-yellow-500` | `border-color: color-yellow-500 token;` |
+| `border-yellow-600` | `border-color: color-yellow-600 token;` |
+| `border-yellow-700` | `border-color: color-yellow-700 token;` |
+| `border-yellow-800` | `border-color: color-yellow-800 token;` |
+| `border-yellow-900` | `border-color: color-yellow-900 token;` |
+| `border-yellow-950` | `border-color: color-yellow-950 token;` |
+| `border-lime-50` | `border-color: color-lime-50 token;` |
+| `border-lime-100` | `border-color: color-lime-100 token;` |
+| `border-lime-200` | `border-color: color-lime-200 token;` |
+| `border-lime-300` | `border-color: color-lime-300 token;` |
+| `border-lime-400` | `border-color: color-lime-400 token;` |
+| `border-lime-500` | `border-color: color-lime-500 token;` |
+| `border-lime-600` | `border-color: color-lime-600 token;` |
+| `border-lime-700` | `border-color: color-lime-700 token;` |
+| `border-lime-800` | `border-color: color-lime-800 token;` |
+| `border-lime-900` | `border-color: color-lime-900 token;` |
+| `border-lime-950` | `border-color: color-lime-950 token;` |
+| `border-green-50` | `border-color: color-green-50 token;` |
+| `border-green-100` | `border-color: color-green-100 token;` |
+| `border-green-200` | `border-color: color-green-200 token;` |
+| `border-green-300` | `border-color: color-green-300 token;` |
+| `border-green-400` | `border-color: color-green-400 token;` |
+| `border-green-500` | `border-color: color-green-500 token;` |
+| `border-green-600` | `border-color: color-green-600 token;` |
+| `border-green-700` | `border-color: color-green-700 token;` |
+| `border-green-800` | `border-color: color-green-800 token;` |
+| `border-green-900` | `border-color: color-green-900 token;` |
+| `border-green-950` | `border-color: color-green-950 token;` |
+| `border-emerald-50` | `border-color: color-emerald-50 token;` |
+| `border-emerald-100` | `border-color: color-emerald-100 token;` |
+| `border-emerald-200` | `border-color: color-emerald-200 token;` |
+| `border-emerald-300` | `border-color: color-emerald-300 token;` |
+| `border-emerald-400` | `border-color: color-emerald-400 token;` |
+| `border-emerald-500` | `border-color: color-emerald-500 token;` |
+| `border-emerald-600` | `border-color: color-emerald-600 token;` |
+| `border-emerald-700` | `border-color: color-emerald-700 token;` |
+| `border-emerald-800` | `border-color: color-emerald-800 token;` |
+| `border-emerald-900` | `border-color: color-emerald-900 token;` |
+| `border-emerald-950` | `border-color: color-emerald-950 token;` |
+| `border-teal-50` | `border-color: color-teal-50 token;` |
+| `border-teal-100` | `border-color: color-teal-100 token;` |
+| `border-teal-200` | `border-color: color-teal-200 token;` |
+| `border-teal-300` | `border-color: color-teal-300 token;` |
+| `border-teal-400` | `border-color: color-teal-400 token;` |
+| `border-teal-500` | `border-color: color-teal-500 token;` |
+| `border-teal-600` | `border-color: color-teal-600 token;` |
+| `border-teal-700` | `border-color: color-teal-700 token;` |
+| `border-teal-800` | `border-color: color-teal-800 token;` |
+| `border-teal-900` | `border-color: color-teal-900 token;` |
+| `border-teal-950` | `border-color: color-teal-950 token;` |
+| `border-cyan-50` | `border-color: color-cyan-50 token;` |
+| `border-cyan-100` | `border-color: color-cyan-100 token;` |
+| `border-cyan-200` | `border-color: color-cyan-200 token;` |
+| `border-cyan-300` | `border-color: color-cyan-300 token;` |
+| `border-cyan-400` | `border-color: color-cyan-400 token;` |
+| `border-cyan-500` | `border-color: color-cyan-500 token;` |
+| `border-cyan-600` | `border-color: color-cyan-600 token;` |
+| `border-cyan-700` | `border-color: color-cyan-700 token;` |
+| `border-cyan-800` | `border-color: color-cyan-800 token;` |
+| `border-cyan-900` | `border-color: color-cyan-900 token;` |
+| `border-cyan-950` | `border-color: color-cyan-950 token;` |
+| `border-sky-50` | `border-color: color-sky-50 token;` |
+| `border-sky-100` | `border-color: color-sky-100 token;` |
+| `border-sky-200` | `border-color: color-sky-200 token;` |
+| `border-sky-300` | `border-color: color-sky-300 token;` |
+| `border-sky-400` | `border-color: color-sky-400 token;` |
+| `border-sky-500` | `border-color: color-sky-500 token;` |
+| `border-sky-600` | `border-color: color-sky-600 token;` |
+| `border-sky-700` | `border-color: color-sky-700 token;` |
+| `border-sky-800` | `border-color: color-sky-800 token;` |
+| `border-sky-900` | `border-color: color-sky-900 token;` |
+| `border-sky-950` | `border-color: color-sky-950 token;` |
+| `border-blue-50` | `border-color: color-blue-50 token;` |
+| `border-blue-100` | `border-color: color-blue-100 token;` |
+| `border-blue-200` | `border-color: color-blue-200 token;` |
+| `border-blue-300` | `border-color: color-blue-300 token;` |
+| `border-blue-400` | `border-color: color-blue-400 token;` |
+| `border-blue-500` | `border-color: color-blue-500 token;` |
+| `border-blue-600` | `border-color: color-blue-600 token;` |
+| `border-blue-700` | `border-color: color-blue-700 token;` |
+| `border-blue-800` | `border-color: color-blue-800 token;` |
+| `border-blue-900` | `border-color: color-blue-900 token;` |
+| `border-blue-950` | `border-color: color-blue-950 token;` |
+| `border-indigo-50` | `border-color: color-indigo-50 token;` |
+| `border-indigo-100` | `border-color: color-indigo-100 token;` |
+| `border-indigo-200` | `border-color: color-indigo-200 token;` |
+| `border-indigo-300` | `border-color: color-indigo-300 token;` |
+| `border-indigo-400` | `border-color: color-indigo-400 token;` |
+| `border-indigo-500` | `border-color: color-indigo-500 token;` |
+| `border-indigo-600` | `border-color: color-indigo-600 token;` |
+| `border-indigo-700` | `border-color: color-indigo-700 token;` |
+| `border-indigo-800` | `border-color: color-indigo-800 token;` |
+| `border-indigo-900` | `border-color: color-indigo-900 token;` |
+| `border-indigo-950` | `border-color: color-indigo-950 token;` |
+| `border-violet-50` | `border-color: color-violet-50 token;` |
+| `border-violet-100` | `border-color: color-violet-100 token;` |
+| `border-violet-200` | `border-color: color-violet-200 token;` |
+| `border-violet-300` | `border-color: color-violet-300 token;` |
+| `border-violet-400` | `border-color: color-violet-400 token;` |
+| `border-violet-500` | `border-color: color-violet-500 token;` |
+| `border-violet-600` | `border-color: color-violet-600 token;` |
+| `border-violet-700` | `border-color: color-violet-700 token;` |
+| `border-violet-800` | `border-color: color-violet-800 token;` |
+| `border-violet-900` | `border-color: color-violet-900 token;` |
+| `border-violet-950` | `border-color: color-violet-950 token;` |
+| `border-purple-50` | `border-color: color-purple-50 token;` |
+| `border-purple-100` | `border-color: color-purple-100 token;` |
+| `border-purple-200` | `border-color: color-purple-200 token;` |
+| `border-purple-300` | `border-color: color-purple-300 token;` |
+| `border-purple-400` | `border-color: color-purple-400 token;` |
+| `border-purple-500` | `border-color: color-purple-500 token;` |
+| `border-purple-600` | `border-color: color-purple-600 token;` |
+| `border-purple-700` | `border-color: color-purple-700 token;` |
+| `border-purple-800` | `border-color: color-purple-800 token;` |
+| `border-purple-900` | `border-color: color-purple-900 token;` |
+| `border-purple-950` | `border-color: color-purple-950 token;` |
+| `border-fuchsia-50` | `border-color: color-fuchsia-50 token;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="border-color-0" width={608} height={144} alt="border-color: Basic example" />
+
+```odin
+if ui.div("flex gap-6") {
+    ui.el("size-20 rounded-lg border-4 border-indigo-500")
+    ui.el("size-20 rounded-lg border-4 border-purple-500")
+    ui.el("size-20 rounded-lg border-4 border-sky-500")
+}
+```
+
+### Individual sides
+
+<Preview src="border-color-1" width={608} height={160} alt="border-color: Individual sides" />
+
+```odin
+ui.el("size-24 border-8 border-t-indigo-500 border-r-indigo-300 border-b-indigo-500 border-l-indigo-300")
+```
+
+### Applying on focus
+
+<Preview src="border-color-2" width={608} height={104} alt="border-color: Applying on focus" />
+
+```odin
+ui.text_input(&s.demo.email, "w-72 rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-sm text-gray-950 transition-colors focus:border-violet-500 dark:border-white/15 dark:bg-gray-900 dark:text-white", "you@example.com")
+```

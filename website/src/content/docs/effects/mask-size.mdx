@@ -1,0 +1,21 @@
+---
+title: "mask-size"
+description: "Utilities for controlling the size of an element's mask image. Tailwind-style mask-size utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 13
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the size of an element's mask image.
+
+| Class | Effect |
+| --- | --- |
+| `mask-auto` | `mask-size: auto;` |
+| `mask-cover` | `mask-size: cover;` |
+| `mask-contain` | `mask-size: contain;` |
+| `mask-size-[<value>]` | `mask-size: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

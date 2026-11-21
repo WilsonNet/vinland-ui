@@ -1,0 +1,20 @@
+---
+title: "mask-mode"
+description: "Utilities for controlling an element's mask mode. Tailwind-style mask-mode utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling an element's mask mode.
+
+| Class | Effect |
+| --- | --- |
+| `mask-alpha` | `mask-mode: alpha;` |
+| `mask-luminance` | `mask-mode: luminance;` |
+| `mask-match` | `mask-mode: match-source;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

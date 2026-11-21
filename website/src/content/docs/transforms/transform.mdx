@@ -1,0 +1,29 @@
+---
+title: "transform"
+description: "Utilities for transforming elements. Tailwind-style transform utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for transforming elements.
+
+| Class | Effect |
+| --- | --- |
+| `transform-[<value>]` | `transform: <value>;` |
+| `transform-none` | `transform: none;` |
+| `transform-gpu` | `transform: translateZ(0) var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);` |
+| `transform-cpu` | `transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);` |
+
+## Examples
+
+### Combining transforms
+
+Translate, rotate, scale and skew compose in one matrix around `transform-origin`, and hit testing follows the transformed shape.
+
+<Preview src="transform-0" width={608} height={132} alt="transform: Combining transforms" />
+
+```odin
+ui.button("Click me", "rounded-lg bg-indigo-500 px-5 py-2 text-sm font-semibold text-white shadow-lg rotate-6 scale-110 transition hover:rotate-0 hover:scale-100")
+```

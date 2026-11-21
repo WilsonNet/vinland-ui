@@ -1,0 +1,20 @@
+---
+title: "background-origin"
+description: "Utilities for controlling how an element's background is positioned relative to borders, padding, and content. Tailwind-style background-origin utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an element's background is positioned relative to borders, padding, and content.
+
+| Class | Effect |
+| --- | --- |
+| `bg-origin-border` | `background-origin: border-box;` |
+| `bg-origin-padding` | `background-origin: padding-box;` |
+| `bg-origin-content` | `background-origin: content-box;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

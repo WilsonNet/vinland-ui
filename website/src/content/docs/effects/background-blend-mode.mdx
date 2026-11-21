@@ -1,0 +1,33 @@
+---
+title: "background-blend-mode"
+description: "Utilities for controlling how an element's background image should blend with its background color. Tailwind-style background-blend-mode utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an element's background image should blend with its background color.
+
+| Class | Effect |
+| --- | --- |
+| `bg-blend-normal` | `background-blend-mode: normal;` |
+| `bg-blend-multiply` | `background-blend-mode: multiply;` |
+| `bg-blend-screen` | `background-blend-mode: screen;` |
+| `bg-blend-overlay` | `background-blend-mode: overlay;` |
+| `bg-blend-darken` | `background-blend-mode: darken;` |
+| `bg-blend-lighten` | `background-blend-mode: lighten;` |
+| `bg-blend-color-dodge` | `background-blend-mode: color-dodge;` |
+| `bg-blend-color-burn` | `background-blend-mode: color-burn;` |
+| `bg-blend-hard-light` | `background-blend-mode: hard-light;` |
+| `bg-blend-soft-light` | `background-blend-mode: soft-light;` |
+| `bg-blend-difference` | `background-blend-mode: difference;` |
+| `bg-blend-exclusion` | `background-blend-mode: exclusion;` |
+| `bg-blend-hue` | `background-blend-mode: hue;` |
+| `bg-blend-saturation` | `background-blend-mode: saturation;` |
+| `bg-blend-color` | `background-blend-mode: color;` |
+| `bg-blend-luminosity` | `background-blend-mode: luminosity;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

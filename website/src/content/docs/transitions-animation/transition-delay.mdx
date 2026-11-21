@@ -1,0 +1,30 @@
+---
+title: "transition-delay"
+description: "Utilities for controlling the delay of CSS transitions. Tailwind-style transition-delay utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the delay of CSS transitions.
+
+| Class | Effect |
+| --- | --- |
+| `delay-<number>` | `transition-delay: <number>ms;` |
+| `delay-[<value>]` | `transition-delay: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="transition-delay-0" width={608} height={128} alt="transition-delay: Basic example" />
+
+```odin
+if ui.div("flex gap-6") {
+    for c in ([]string{"delay-150", "delay-300", "delay-700"}) {
+        ui.key(c)
+        ui.button(c, ui.cx("rounded-lg bg-sky-500 px-4 py-2 font-mono text-xs font-medium text-white transition duration-300 hover:scale-110 hover:bg-indigo-500", c))
+    }
+}
+```

@@ -1,0 +1,21 @@
+---
+title: "break-inside"
+description: "Utilities for controlling how a column or page should break within an element. Tailwind-style break-inside utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how a column or page should break within an element.
+
+| Class | Effect |
+| --- | --- |
+| `break-inside-auto` | `break-inside: auto;` |
+| `break-inside-avoid` | `break-inside: avoid;` |
+| `break-inside-avoid-page` | `break-inside: avoid-page;` |
+| `break-inside-avoid-column` | `break-inside: avoid-column;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

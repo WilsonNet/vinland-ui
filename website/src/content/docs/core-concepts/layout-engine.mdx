@@ -1,0 +1,42 @@
+---
+title: "Layout engine"
+description: "How boxes are measured and placed: block flow, flexbox, grid and positioning."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+How boxes are measured and placed: block flow, flexbox, grid and positioning.
+
+Layout runs once per frame after the tree is built. Sizes are in logical pixels; the renderer multiplies by the display scale at the very end. The model follows CSS closely enough that Tailwind layouts port without changes.
+
+## Box model
+
+Every box is border-box: `w-64 p-4 border-2` is 256px wide in total. Margins never collapse, and `space-x`/`space-y` and `divide-x`/`divide-y` are applied to children by their parent.
+
+## Formatting contexts
+
+| Class | Effect |
+| --- | --- |
+| `block` | `children stack vertically and stretch; inline-level children flow in lines` |
+| `flex` | `single-pass flexbox: basis, grow, shrink, wrap, gap, auto margins, align-content` |
+| `grid` | `fr/px/auto tracks, spans, explicit lines, row and column auto-flow` |
+| `absolute / fixed` | `placed against the nearest positioned ancestor or the window` |
+| `overflow-auto` | `becomes a scroll container with momentum and a draggable scrollbar` |
+
+## Intrinsic sizes
+
+Text reports a min-content width (its longest word) and a max-content width (its unbroken line). Flex items default to `min-width: auto`, so a word never gets crushed. Add `min-w-0` when you want an item to shrink below its content.
+
+<Preview src="layout-engine-0" width={608} height={112} alt="Layout engine: Intrinsic sizes" />
+
+```odin
+if ui.div("flex w-full max-w-md gap-3 rounded-lg bg-gray-50 p-3 dark:bg-white/5") {
+    ui.el("size-10 shrink-0 rounded-full bg-violet-500")
+    if ui.div("min-w-0 flex-1") {
+        ui.text("A very long title that would overflow without min-w-0 on its flex parent", "truncate text-sm font-medium text-gray-950 dark:text-white")
+        ui.text("Truncated with an ellipsis", "text-sm text-gray-500")
+    }
+}
+```

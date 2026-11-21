@@ -1,0 +1,30 @@
+---
+title: "text-overflow"
+description: "Utilities for controlling how the text of an element overflows. Tailwind-style text-overflow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 23
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how the text of an element overflows.
+
+| Class | Effect |
+| --- | --- |
+| `truncate` | `overflow: hidden; text-overflow: ellipsis; white-space: nowrap;` |
+| `text-ellipsis` | `text-overflow: ellipsis;` |
+| `text-clip` | `text-overflow: clip;` |
+
+## Examples
+
+### Truncating text
+
+Use `truncate` to keep text on one line and end it with an ellipsis.
+
+<Preview src="text-overflow-0" width={608} height={116} alt="text-overflow: Truncating text" />
+
+```odin
+if ui.div("w-64 rounded-lg bg-gray-50 p-4 dark:bg-white/5") {
+    ui.text(PROSE, "truncate text-sm text-gray-700 dark:text-gray-300")
+}
+```

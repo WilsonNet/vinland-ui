@@ -1,0 +1,37 @@
+---
+title: "place-self"
+description: "Utilities for controlling how an individual item is justified and aligned at the same time. Tailwind-style place-self utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 24
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an individual item is justified and aligned at the same time.
+
+| Class | Effect |
+| --- | --- |
+| `place-self-auto` | `place-self: auto;` |
+| `place-self-start` | `place-self: start;` |
+| `place-self-end` | `place-self: end;` |
+| `place-self-end-safe` | `place-self: safe end;` |
+| `place-self-center` | `place-self: center;` |
+| `place-self-center-safe` | `place-self: safe center;` |
+| `place-self-stretch` | `place-self: stretch;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="place-self-0" width={608} height={256} alt="place-self: Basic example" />
+
+```odin
+if ui.div("grid h-48 grid-cols-3 gap-4") {
+    for c in ([]string{"place-self-start", "place-self-center", "place-self-end"}) {
+        ui.key(c)
+        if ui.div("grid rounded-lg bg-stripes stripes-violet-500/25") {
+            tile("", ui.cx("size-14", c))
+        }
+    }
+}
+```

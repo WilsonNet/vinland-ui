@@ -1,0 +1,38 @@
+---
+title: "transform-origin"
+description: "Utilities for specifying the origin for an element's transformations. Tailwind-style transform-origin utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for specifying the origin for an element's transformations.
+
+| Class | Effect |
+| --- | --- |
+| `origin-center` | `transform-origin: center;` |
+| `origin-top` | `transform-origin: top;` |
+| `origin-top-right` | `transform-origin: top right;` |
+| `origin-right` | `transform-origin: right;` |
+| `origin-bottom-right` | `transform-origin: bottom right;` |
+| `origin-bottom` | `transform-origin: bottom;` |
+| `origin-bottom-left` | `transform-origin: bottom left;` |
+| `origin-left` | `transform-origin: left;` |
+| `origin-top-left` | `transform-origin: top left;` |
+| `origin-[<value>]` | `transform-origin: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="transform-origin-0" width={608} height={240} alt="transform-origin: Basic example" />
+
+```odin
+if ui.div("flex gap-12") {
+    for c in ([]string{"origin-center", "origin-top-left", "origin-bottom", "origin-right"}) {
+        ui.key(c)
+        transform_tile(c, ui.cx("rotate-45", c))
+    }
+}
+```

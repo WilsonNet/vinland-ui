@@ -1,0 +1,46 @@
+---
+title: "order"
+description: "Utilities for controlling the order of flex and grid items. Tailwind-style order utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the order of flex and grid items.
+
+| Class | Effect |
+| --- | --- |
+| `order-<number>` | `order: <number>;` |
+| `-order-<number>` | `order: calc(<number> * -1);` |
+| `order-first` | `order: -9999;` |
+| `order-last` | `order: 9999;` |
+| `order-[<value>]` | `order: <value>;` |
+
+## Examples
+
+### Explicitly setting a sort order
+
+Use `order-<number>` to render items in a different order than they appear in code.
+
+<Preview src="order-0" width={608} height={116} alt="order: Explicitly setting a sort order" />
+
+```odin
+if ui.div("flex justify-between gap-4") {
+    tile("01", "order-3")
+    tile("02", "order-1")
+    tile("03", "order-2")
+}
+```
+
+### Ordering items first or last
+
+<Preview src="order-1" width={608} height={116} alt="order: Ordering items first or last" />
+
+```odin
+if ui.div("flex justify-between gap-4") {
+    tile("01", "order-last")
+    tile("02")
+    tile("03", "order-first")
+}
+```

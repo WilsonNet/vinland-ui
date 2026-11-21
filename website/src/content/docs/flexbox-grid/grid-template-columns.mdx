@@ -1,0 +1,48 @@
+---
+title: "grid-template-columns"
+description: "Utilities for specifying the columns in a grid layout. Tailwind-style grid-template-columns utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for specifying the columns in a grid layout.
+
+| Class | Effect |
+| --- | --- |
+| `grid-cols-<number>` | `grid-template-columns: repeat(<number>, minmax(0, 1fr));` |
+| `grid-cols-none` | `grid-template-columns: none;` |
+| `grid-cols-subgrid` | `grid-template-columns: subgrid;` |
+| `grid-cols-[<value>]` | `grid-template-columns: <value>;` |
+
+## Examples
+
+### Specifying the grid columns
+
+Use `grid-cols-<number>` to create a grid with n equally sized columns.
+
+<Preview src="grid-template-columns-0" width={608} height={252} alt="grid-template-columns: Specifying the grid columns" />
+
+```odin
+if ui.div("grid grid-cols-4 gap-4") {
+    for i in 1 ..= 9 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### Using a custom value
+
+Use arbitrary track lists like `grid-cols-[200px_minmax(0,1fr)_100px]`.
+
+<Preview src="grid-template-columns-1" width={608} height={116} alt="grid-template-columns: Using a custom value" />
+
+```odin
+if ui.div("grid grid-cols-[120px_minmax(0,1fr)_80px] gap-4") {
+    tile("120px")
+    tile("1fr")
+    tile("80px")
+}
+```

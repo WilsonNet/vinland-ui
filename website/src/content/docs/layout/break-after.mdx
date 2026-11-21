@@ -1,0 +1,25 @@
+---
+title: "break-after"
+description: "Utilities for controlling how a column or page should break after an element. Tailwind-style break-after utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how a column or page should break after an element.
+
+| Class | Effect |
+| --- | --- |
+| `break-after-auto` | `break-after: auto;` |
+| `break-after-avoid` | `break-after: avoid;` |
+| `break-after-all` | `break-after: all;` |
+| `break-after-avoid-page` | `break-after: avoid-page;` |
+| `break-after-page` | `break-after: page;` |
+| `break-after-left` | `break-after: left;` |
+| `break-after-right` | `break-after: right;` |
+| `break-after-column` | `break-after: column;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

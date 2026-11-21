@@ -1,0 +1,34 @@
+---
+title: "box-sizing"
+description: "Utilities for controlling how the browser should calculate an element's total size. Tailwind-style box-sizing utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how the browser should calculate an element's total size.
+
+| Class | Effect |
+| --- | --- |
+| `box-border` | `box-sizing: border-box;` |
+| `box-content` | `box-sizing: content-box;` |
+
+## Examples
+
+### Including borders and padding
+
+Every vinland-ui box is border-box: padding and borders are inside the declared size. Use `box-content` to add them on top.
+
+<Preview src="box-sizing-0" width={608} height={232} alt="box-sizing: Including borders and padding" />
+
+```odin
+if ui.div("flex gap-8") {
+    if ui.div("box-border size-32 border-4 border-violet-400 bg-violet-500/20 p-4") {
+        ui.text("box-border", "font-mono text-xs font-bold text-violet-700 dark:text-violet-300")
+    }
+    if ui.div("box-content size-32 border-4 border-sky-400 bg-sky-500/20 p-4") {
+        ui.text("box-content", "font-mono text-xs font-bold text-sky-700 dark:text-sky-300")
+    }
+}
+```

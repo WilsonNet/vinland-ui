@@ -1,0 +1,23 @@
+---
+title: "scroll-snap-type"
+description: "Utilities for controlling how strictly snap points are enforced in a snap container. Tailwind-style scroll-snap-type utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how strictly snap points are enforced in a snap container.
+
+| Class | Effect |
+| --- | --- |
+| `snap-none` | `scroll-snap-type: none;` |
+| `snap-x` | `scroll-snap-type: x var(--tw-scroll-snap-strictness);` |
+| `snap-y` | `scroll-snap-type: y var(--tw-scroll-snap-strictness);` |
+| `snap-both` | `scroll-snap-type: both var(--tw-scroll-snap-strictness);` |
+| `snap-mandatory` | `--tw-scroll-snap-strictness: mandatory;` |
+| `snap-proximity` | `--tw-scroll-snap-strictness: proximity;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

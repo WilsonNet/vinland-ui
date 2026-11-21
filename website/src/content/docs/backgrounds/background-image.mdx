@@ -1,0 +1,88 @@
+---
+title: "background-image"
+description: "Utilities for controlling an element's background image. Tailwind-style background-image utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling an element's background image.
+
+| Class | Effect |
+| --- | --- |
+| `bg-[<value>]` | `background-image: <value>;` |
+| `bg-none` | `background-image: none;` |
+| `bg-linear-to-t` | `background-image: linear-gradient(to top, var(--tw-gradient-stops));` |
+| `bg-linear-to-tr` | `background-image: linear-gradient(to top right, var(--tw-gradient-stops));` |
+| `bg-linear-to-r` | `background-image: linear-gradient(to right, var(--tw-gradient-stops));` |
+| `bg-linear-to-br` | `background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));` |
+| `bg-linear-to-b` | `background-image: linear-gradient(to bottom, var(--tw-gradient-stops));` |
+| `bg-linear-to-bl` | `background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));` |
+| `bg-linear-to-l` | `background-image: linear-gradient(to left, var(--tw-gradient-stops));` |
+| `bg-linear-to-tl` | `background-image: linear-gradient(to top left, var(--tw-gradient-stops));` |
+| `bg-linear-<angle>` | `background-image: linear-gradient(<angle> in oklab, var(--tw-gradient-stops));` |
+| `-bg-linear-<angle>` | `background-image: linear-gradient(-<angle> in oklab, var(--tw-gradient-stops));` |
+| `bg-linear-[<value>]` | `background-image: linear-gradient(var(--tw-gradient-stops, <value>));` |
+| `bg-radial` | `background-image: radial-gradient(in oklab, var(--tw-gradient-stops));` |
+| `bg-radial-[<value>]` | `background-image: radial-gradient(var(--tw-gradient-stops, <value>));` |
+| `bg-conic-<angle>` | `background-image: conic-gradient(from <angle> in oklab, var(--tw-gradient-stops));` |
+| `-bg-conic-<angle>` | `background-image: conic-gradient(from -<angle> in oklab, var(--tw-gradient-stops));` |
+| `bg-conic-[<value>]` | `background-image: <value>;` |
+| `from-<color>` | `--tw-gradient-from: <color>;` |
+| `from-<percentage>` | `--tw-gradient-from-position: <percentage>;` |
+| `from-[<value>]` | `--tw-gradient-from: <value>;` |
+| `via-<color>` | `--tw-gradient-via: <color>;` |
+| `via-<percentage>` | `--tw-gradient-via-position: <percentage>;` |
+| `via-[<value>]` | `--tw-gradient-via: <value>;` |
+| `to-<color>` | `--tw-gradient-to: <color>;` |
+| `to-<percentage>` | `--tw-gradient-to-position: <percentage>;` |
+| `to-[<value>]` | `--tw-gradient-to: <value>;` |
+
+## Examples
+
+### Adding a linear gradient
+
+Use `bg-linear-to-r` (or an angle like `bg-linear-45`) with `from-*`, `via-*` and `to-*` color stops.
+
+<Preview src="background-image-0" width={608} height={336} alt="background-image: Adding a linear gradient" />
+
+```odin
+if ui.div("flex flex-col gap-4") {
+    ui.el("h-14 rounded-lg bg-linear-to-r from-cyan-500 to-blue-500")
+    ui.el("h-14 rounded-lg bg-linear-to-t from-sky-500 to-indigo-500")
+    ui.el("h-14 rounded-lg bg-linear-to-bl from-violet-500 to-fuchsia-500")
+    ui.el("h-14 rounded-lg bg-linear-65 from-purple-500 to-pink-500")
+}
+```
+
+### Adding a radial gradient
+
+<Preview src="background-image-1" width={608} height={160} alt="background-image: Adding a radial gradient" />
+
+```odin
+if ui.div("flex gap-6") {
+    ui.el("size-24 rounded-full bg-radial from-pink-400 from-40% to-fuchsia-700")
+    ui.el("size-24 rounded-full bg-radial from-violet-300 via-violet-500 to-indigo-800")
+    ui.el("size-24 rounded-full bg-radial from-sky-200 to-sky-700")
+}
+```
+
+### Adding a conic gradient
+
+<Preview src="background-image-2" width={608} height={160} alt="background-image: Adding a conic gradient" />
+
+```odin
+if ui.div("flex gap-6") {
+    ui.el("size-24 rounded-full bg-conic from-blue-600 to-sky-400 to-50%")
+    ui.el("size-24 rounded-full bg-conic-180 from-indigo-600 via-indigo-50 to-indigo-600")
+}
+```
+
+### Setting color stop positions
+
+<Preview src="background-image-3" width={608} height={120} alt="background-image: Setting color stop positions" />
+
+```odin
+ui.el("h-14 rounded-lg bg-linear-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%")
+```

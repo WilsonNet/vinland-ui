@@ -1,0 +1,45 @@
+---
+title: "Agent skill & CLI"
+description: "Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests.
+
+Every vinland-ui app can expose a local control port. `vui-ctl` speaks to it, which gives agents and tests the same feedback loop a person gets from looking at the screen.
+
+## Run an app headless
+
+```odin
+# render offscreen at a fixed scale; nothing appears on your desktop
+VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
+
+./build/vui-ctl info
+./build/vui-ctl nav page=box-shadow
+./build/vui-ctl dark on
+./build/vui-ctl screenshot shadow-dark.png
+./build/vui-ctl click-text "Show all"
+./build/vui-ctl scroll 600
+./build/vui-ctl tree 6 | jq '.nodes[] | select(.t)'
+```
+
+## Commands
+
+| Class | Effect |
+| --- | --- |
+| `info` | `viewport, scale, frame time, node count, unknown classes` |
+| `screenshot <png> [x y w h]` | `writes the last frame (optionally cropped)` |
+| `click <x> <y> [right\|double]` | `synthetic click in logical px` |
+| `click-text <text> [nth]` | `clicks the element whose text matches` |
+| `move / scroll / type / key` | `pointer, wheel and keyboard input` |
+| `resize <w> <h> / dark [on\|off]` | `window size and color scheme` |
+| `tree [depth]` | `element tree with rects, classes and text as JSON` |
+| `settle / wait [frames]` | `block until animations finish` |
+| `<app command> key=value` | `forwarded to App.on_command (nav, pages, search...)` |
+
+## Agent skill
+
+The repository ships `skills/vinland-ui/SKILL.md`, a skill for coding agents. It teaches the element API, the utility vocabulary, the token system and this CLI loop, so an agent can build a screen, screenshot it and iterate without a human in the loop.

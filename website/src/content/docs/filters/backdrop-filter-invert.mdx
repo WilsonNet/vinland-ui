@@ -1,0 +1,20 @@
+---
+title: "invert"
+description: "Utilities for applying backdrop invert filters to an element. Tailwind-style invert utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying backdrop invert filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `backdrop-invert` | `backdrop-filter: invert(100%);` |
+| `backdrop-invert-<number>` | `backdrop-filter: invert(<number>%);` |
+| `backdrop-invert-[<value>]` | `backdrop-filter: invert(<value>);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

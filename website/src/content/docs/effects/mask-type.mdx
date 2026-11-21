@@ -1,0 +1,19 @@
+---
+title: "mask-type"
+description: "Utilities for controlling how an SVG mask is interpreted. Tailwind-style mask-type utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an SVG mask is interpreted.
+
+| Class | Effect |
+| --- | --- |
+| `mask-type-alpha` | `mask-type: alpha;` |
+| `mask-type-luminance` | `mask-type: luminance;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

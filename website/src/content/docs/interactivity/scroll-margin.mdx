@@ -1,0 +1,72 @@
+---
+title: "scroll-margin"
+description: "Utilities for controlling the scroll offset around items in a snap container. Tailwind-style scroll-margin utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 13
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the scroll offset around items in a snap container.
+
+| Class | Effect |
+| --- | --- |
+| `scroll-m-<number>` | `scroll-margin: calc(var(--spacing) * <number>);` |
+| `-scroll-m-<number>` | `scroll-margin: calc(var(--spacing) * -<number>);` |
+| `scroll-m-px` | `scroll-margin: 1px;` |
+| `-scroll-m-px` | `scroll-margin: -1px;` |
+| `scroll-m-[<value>]` | `scroll-margin: <value>;` |
+| `scroll-mx-<number>` | `scroll-margin-inline: calc(var(--spacing) * <number>);` |
+| `-scroll-mx-<number>` | `scroll-margin-inline: calc(var(--spacing) * -<number>);` |
+| `scroll-mx-px` | `scroll-margin-inline: 1px;` |
+| `-scroll-mx-px` | `scroll-margin-inline: -1px;` |
+| `scroll-mx-[<value>]` | `scroll-margin-inline: <value>;` |
+| `scroll-my-<number>` | `scroll-margin-block: calc(var(--spacing) * <number>);` |
+| `-scroll-my-<number>` | `scroll-margin-block: calc(var(--spacing) * -<number>);` |
+| `scroll-my-px` | `scroll-margin-block: 1px;` |
+| `-scroll-my-px` | `scroll-margin-block: -1px;` |
+| `scroll-my-[<value>]` | `scroll-margin-block: <value>;` |
+| `scroll-ms-<number>` | `scroll-margin-inline-start: calc(var(--spacing) * <number>);` |
+| `-scroll-ms-<number>` | `scroll-margin-inline-start: calc(var(--spacing) * -<number>);` |
+| `scroll-ms-px` | `scroll-margin-inline-start: 1px;` |
+| `-scroll-ms-px` | `scroll-margin-inline-start: -1px;` |
+| `scroll-ms-[<value>]` | `scroll-margin-inline-start: <value>;` |
+| `scroll-me-<number>` | `scroll-margin-inline-end: calc(var(--spacing) * <number>);` |
+| `-scroll-me-<number>` | `scroll-margin-inline-end: calc(var(--spacing) * -<number>);` |
+| `scroll-me-px` | `scroll-margin-inline-end: 1px;` |
+| `-scroll-me-px` | `scroll-margin-inline-end: -1px;` |
+| `scroll-me-[<value>]` | `scroll-margin-inline-end: <value>;` |
+| `scroll-mbs-<number>` | `scroll-margin-block-start: calc(var(--spacing) * <number>);` |
+| `-scroll-mbs-<number>` | `scroll-margin-block-start: calc(var(--spacing) * -<number>);` |
+| `scroll-mbs-px` | `scroll-margin-block-start: 1px;` |
+| `-scroll-mbs-px` | `scroll-margin-block-start: -1px;` |
+| `scroll-mbs-[<value>]` | `scroll-margin-block-start: <value>;` |
+| `scroll-mbe-<number>` | `scroll-margin-block-end: calc(var(--spacing) * <number>);` |
+| `-scroll-mbe-<number>` | `scroll-margin-block-end: calc(var(--spacing) * -<number>);` |
+| `scroll-mbe-px` | `scroll-margin-block-end: 1px;` |
+| `-scroll-mbe-px` | `scroll-margin-block-end: -1px;` |
+| `scroll-mbe-[<value>]` | `scroll-margin-block-end: <value>;` |
+| `scroll-mt-<number>` | `scroll-margin-top: calc(var(--spacing) * <number>);` |
+| `-scroll-mt-<number>` | `scroll-margin-top: calc(var(--spacing) * -<number>);` |
+| `scroll-mt-px` | `scroll-margin-top: 1px;` |
+| `-scroll-mt-px` | `scroll-margin-top: -1px;` |
+| `scroll-mt-[<value>]` | `scroll-margin-top: <value>;` |
+| `scroll-mr-<number>` | `scroll-margin-right: calc(var(--spacing) * <number>);` |
+| `-scroll-mr-<number>` | `scroll-margin-right: calc(var(--spacing) * -<number>);` |
+| `scroll-mr-px` | `scroll-margin-right: 1px;` |
+| `-scroll-mr-px` | `scroll-margin-right: -1px;` |
+| `scroll-mr-[<value>]` | `scroll-margin-right: <value>;` |
+| `scroll-mb-<number>` | `scroll-margin-bottom: calc(var(--spacing) * <number>);` |
+| `-scroll-mb-<number>` | `scroll-margin-bottom: calc(var(--spacing) * -<number>);` |
+| `scroll-mb-px` | `scroll-margin-bottom: 1px;` |
+| `-scroll-mb-px` | `scroll-margin-bottom: -1px;` |
+| `scroll-mb-[<value>]` | `scroll-margin-bottom: <value>;` |
+| `scroll-ml-<number>` | `scroll-margin-left: calc(var(--spacing) * <number>);` |
+| `-scroll-ml-<number>` | `scroll-margin-left: calc(var(--spacing) * -<number>);` |
+| `scroll-ml-px` | `scroll-margin-left: 1px;` |
+| `-scroll-ml-px` | `scroll-margin-left: -1px;` |
+| `scroll-ml-[<value>]` | `scroll-margin-left: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

@@ -1,0 +1,42 @@
+---
+title: "flex-shrink"
+description: "Utilities for controlling how flex items shrink. Tailwind-style flex-shrink utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex items shrink.
+
+| Class | Effect |
+| --- | --- |
+| `shrink` | `flex-shrink: 1;` |
+| `shrink-<number>` | `flex-shrink: <number>;` |
+| `shrink-[<value>]` | `flex-shrink: <value>;` |
+
+## Examples
+
+### Allowing items to shrink
+
+Use `shrink` to allow an item to shrink if needed, and `shrink-0` to prevent it.
+
+<Preview src="flex-shrink-0" width={608} height={128} alt="flex-shrink: Allowing items to shrink" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "h-16 w-14 flex-none")
+    tile("02", "h-16 w-64 shrink")
+    tile("03", "h-16 w-14 flex-none")
+}
+```
+
+<Preview src="flex-shrink-1" width={608} height={128} alt="flex-shrink: Allowing items to shrink" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "h-16 flex-1")
+    tile("02", "h-16 w-64 shrink-0")
+    tile("03", "h-16 flex-1")
+}
+```

@@ -1,0 +1,216 @@
+---
+title: "accent-color"
+description: "Utilities for controlling the accented color of a form control. Tailwind-style accent-color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the accented color of a form control.
+
+| Class | Effect |
+| --- | --- |
+| `accent-inherit` | `accent-color: inherit;` |
+| `accent-current` | `accent-color: currentColor;` |
+| `accent-transparent` | `accent-color: transparent;` |
+| `accent-black` | `accent-color: #000;` |
+| `accent-white` | `accent-color: #fff;` |
+| `accent-red-50` | `accent-color: color-red-50 token;` |
+| `accent-red-100` | `accent-color: color-red-100 token;` |
+| `accent-red-200` | `accent-color: color-red-200 token;` |
+| `accent-red-300` | `accent-color: color-red-300 token;` |
+| `accent-red-400` | `accent-color: color-red-400 token;` |
+| `accent-red-500` | `accent-color: color-red-500 token;` |
+| `accent-red-600` | `accent-color: color-red-600 token;` |
+| `accent-red-700` | `accent-color: color-red-700 token;` |
+| `accent-red-800` | `accent-color: color-red-800 token;` |
+| `accent-red-900` | `accent-color: color-red-900 token;` |
+| `accent-red-950` | `accent-color: color-red-950 token;` |
+| `accent-orange-50` | `accent-color: color-orange-50 token;` |
+| `accent-orange-100` | `accent-color: color-orange-100 token;` |
+| `accent-orange-200` | `accent-color: color-orange-200 token;` |
+| `accent-orange-300` | `accent-color: color-orange-300 token;` |
+| `accent-orange-400` | `accent-color: color-orange-400 token;` |
+| `accent-orange-500` | `accent-color: color-orange-500 token;` |
+| `accent-orange-600` | `accent-color: color-orange-600 token;` |
+| `accent-orange-700` | `accent-color: color-orange-700 token;` |
+| `accent-orange-800` | `accent-color: color-orange-800 token;` |
+| `accent-orange-900` | `accent-color: color-orange-900 token;` |
+| `accent-orange-950` | `accent-color: color-orange-950 token;` |
+| `accent-amber-50` | `accent-color: color-amber-50 token;` |
+| `accent-amber-100` | `accent-color: color-amber-100 token;` |
+| `accent-amber-200` | `accent-color: color-amber-200 token;` |
+| `accent-amber-300` | `accent-color: color-amber-300 token;` |
+| `accent-amber-400` | `accent-color: color-amber-400 token;` |
+| `accent-amber-500` | `accent-color: color-amber-500 token;` |
+| `accent-amber-600` | `accent-color: color-amber-600 token;` |
+| `accent-amber-700` | `accent-color: color-amber-700 token;` |
+| `accent-amber-800` | `accent-color: color-amber-800 token;` |
+| `accent-amber-900` | `accent-color: color-amber-900 token;` |
+| `accent-amber-950` | `accent-color: color-amber-950 token;` |
+| `accent-yellow-50` | `accent-color: color-yellow-50 token;` |
+| `accent-yellow-100` | `accent-color: color-yellow-100 token;` |
+| `accent-yellow-200` | `accent-color: color-yellow-200 token;` |
+| `accent-yellow-300` | `accent-color: color-yellow-300 token;` |
+| `accent-yellow-400` | `accent-color: color-yellow-400 token;` |
+| `accent-yellow-500` | `accent-color: color-yellow-500 token;` |
+| `accent-yellow-600` | `accent-color: color-yellow-600 token;` |
+| `accent-yellow-700` | `accent-color: color-yellow-700 token;` |
+| `accent-yellow-800` | `accent-color: color-yellow-800 token;` |
+| `accent-yellow-900` | `accent-color: color-yellow-900 token;` |
+| `accent-yellow-950` | `accent-color: color-yellow-950 token;` |
+| `accent-lime-50` | `accent-color: color-lime-50 token;` |
+| `accent-lime-100` | `accent-color: color-lime-100 token;` |
+| `accent-lime-200` | `accent-color: color-lime-200 token;` |
+| `accent-lime-300` | `accent-color: color-lime-300 token;` |
+| `accent-lime-400` | `accent-color: color-lime-400 token;` |
+| `accent-lime-500` | `accent-color: color-lime-500 token;` |
+| `accent-lime-600` | `accent-color: color-lime-600 token;` |
+| `accent-lime-700` | `accent-color: color-lime-700 token;` |
+| `accent-lime-800` | `accent-color: color-lime-800 token;` |
+| `accent-lime-900` | `accent-color: color-lime-900 token;` |
+| `accent-lime-950` | `accent-color: color-lime-950 token;` |
+| `accent-green-50` | `accent-color: color-green-50 token;` |
+| `accent-green-100` | `accent-color: color-green-100 token;` |
+| `accent-green-200` | `accent-color: color-green-200 token;` |
+| `accent-green-300` | `accent-color: color-green-300 token;` |
+| `accent-green-400` | `accent-color: color-green-400 token;` |
+| `accent-green-500` | `accent-color: color-green-500 token;` |
+| `accent-green-600` | `accent-color: color-green-600 token;` |
+| `accent-green-700` | `accent-color: color-green-700 token;` |
+| `accent-green-800` | `accent-color: color-green-800 token;` |
+| `accent-green-900` | `accent-color: color-green-900 token;` |
+| `accent-green-950` | `accent-color: color-green-950 token;` |
+| `accent-emerald-50` | `accent-color: color-emerald-50 token;` |
+| `accent-emerald-100` | `accent-color: color-emerald-100 token;` |
+| `accent-emerald-200` | `accent-color: color-emerald-200 token;` |
+| `accent-emerald-300` | `accent-color: color-emerald-300 token;` |
+| `accent-emerald-400` | `accent-color: color-emerald-400 token;` |
+| `accent-emerald-500` | `accent-color: color-emerald-500 token;` |
+| `accent-emerald-600` | `accent-color: color-emerald-600 token;` |
+| `accent-emerald-700` | `accent-color: color-emerald-700 token;` |
+| `accent-emerald-800` | `accent-color: color-emerald-800 token;` |
+| `accent-emerald-900` | `accent-color: color-emerald-900 token;` |
+| `accent-emerald-950` | `accent-color: color-emerald-950 token;` |
+| `accent-teal-50` | `accent-color: color-teal-50 token;` |
+| `accent-teal-100` | `accent-color: color-teal-100 token;` |
+| `accent-teal-200` | `accent-color: color-teal-200 token;` |
+| `accent-teal-300` | `accent-color: color-teal-300 token;` |
+| `accent-teal-400` | `accent-color: color-teal-400 token;` |
+| `accent-teal-500` | `accent-color: color-teal-500 token;` |
+| `accent-teal-600` | `accent-color: color-teal-600 token;` |
+| `accent-teal-700` | `accent-color: color-teal-700 token;` |
+| `accent-teal-800` | `accent-color: color-teal-800 token;` |
+| `accent-teal-900` | `accent-color: color-teal-900 token;` |
+| `accent-teal-950` | `accent-color: color-teal-950 token;` |
+| `accent-cyan-50` | `accent-color: color-cyan-50 token;` |
+| `accent-cyan-100` | `accent-color: color-cyan-100 token;` |
+| `accent-cyan-200` | `accent-color: color-cyan-200 token;` |
+| `accent-cyan-300` | `accent-color: color-cyan-300 token;` |
+| `accent-cyan-400` | `accent-color: color-cyan-400 token;` |
+| `accent-cyan-500` | `accent-color: color-cyan-500 token;` |
+| `accent-cyan-600` | `accent-color: color-cyan-600 token;` |
+| `accent-cyan-700` | `accent-color: color-cyan-700 token;` |
+| `accent-cyan-800` | `accent-color: color-cyan-800 token;` |
+| `accent-cyan-900` | `accent-color: color-cyan-900 token;` |
+| `accent-cyan-950` | `accent-color: color-cyan-950 token;` |
+| `accent-sky-50` | `accent-color: color-sky-50 token;` |
+| `accent-sky-100` | `accent-color: color-sky-100 token;` |
+| `accent-sky-200` | `accent-color: color-sky-200 token;` |
+| `accent-sky-300` | `accent-color: color-sky-300 token;` |
+| `accent-sky-400` | `accent-color: color-sky-400 token;` |
+| `accent-sky-500` | `accent-color: color-sky-500 token;` |
+| `accent-sky-600` | `accent-color: color-sky-600 token;` |
+| `accent-sky-700` | `accent-color: color-sky-700 token;` |
+| `accent-sky-800` | `accent-color: color-sky-800 token;` |
+| `accent-sky-900` | `accent-color: color-sky-900 token;` |
+| `accent-sky-950` | `accent-color: color-sky-950 token;` |
+| `accent-blue-50` | `accent-color: color-blue-50 token;` |
+| `accent-blue-100` | `accent-color: color-blue-100 token;` |
+| `accent-blue-200` | `accent-color: color-blue-200 token;` |
+| `accent-blue-300` | `accent-color: color-blue-300 token;` |
+| `accent-blue-400` | `accent-color: color-blue-400 token;` |
+| `accent-blue-500` | `accent-color: color-blue-500 token;` |
+| `accent-blue-600` | `accent-color: color-blue-600 token;` |
+| `accent-blue-700` | `accent-color: color-blue-700 token;` |
+| `accent-blue-800` | `accent-color: color-blue-800 token;` |
+| `accent-blue-900` | `accent-color: color-blue-900 token;` |
+| `accent-blue-950` | `accent-color: color-blue-950 token;` |
+| `accent-indigo-50` | `accent-color: color-indigo-50 token;` |
+| `accent-indigo-100` | `accent-color: color-indigo-100 token;` |
+| `accent-indigo-200` | `accent-color: color-indigo-200 token;` |
+| `accent-indigo-300` | `accent-color: color-indigo-300 token;` |
+| `accent-indigo-400` | `accent-color: color-indigo-400 token;` |
+| `accent-indigo-500` | `accent-color: color-indigo-500 token;` |
+| `accent-indigo-600` | `accent-color: color-indigo-600 token;` |
+| `accent-indigo-700` | `accent-color: color-indigo-700 token;` |
+| `accent-indigo-800` | `accent-color: color-indigo-800 token;` |
+| `accent-indigo-900` | `accent-color: color-indigo-900 token;` |
+| `accent-indigo-950` | `accent-color: color-indigo-950 token;` |
+| `accent-violet-50` | `accent-color: color-violet-50 token;` |
+| `accent-violet-100` | `accent-color: color-violet-100 token;` |
+| `accent-violet-200` | `accent-color: color-violet-200 token;` |
+| `accent-violet-300` | `accent-color: color-violet-300 token;` |
+| `accent-violet-400` | `accent-color: color-violet-400 token;` |
+| `accent-violet-500` | `accent-color: color-violet-500 token;` |
+| `accent-violet-600` | `accent-color: color-violet-600 token;` |
+| `accent-violet-700` | `accent-color: color-violet-700 token;` |
+| `accent-violet-800` | `accent-color: color-violet-800 token;` |
+| `accent-violet-900` | `accent-color: color-violet-900 token;` |
+| `accent-violet-950` | `accent-color: color-violet-950 token;` |
+| `accent-purple-50` | `accent-color: color-purple-50 token;` |
+| `accent-purple-100` | `accent-color: color-purple-100 token;` |
+| `accent-purple-200` | `accent-color: color-purple-200 token;` |
+| `accent-purple-300` | `accent-color: color-purple-300 token;` |
+| `accent-purple-400` | `accent-color: color-purple-400 token;` |
+| `accent-purple-500` | `accent-color: color-purple-500 token;` |
+| `accent-purple-600` | `accent-color: color-purple-600 token;` |
+| `accent-purple-700` | `accent-color: color-purple-700 token;` |
+| `accent-purple-800` | `accent-color: color-purple-800 token;` |
+| `accent-purple-900` | `accent-color: color-purple-900 token;` |
+| `accent-purple-950` | `accent-color: color-purple-950 token;` |
+| `accent-fuchsia-50` | `accent-color: color-fuchsia-50 token;` |
+
+## Examples
+
+### Controls styled by state
+
+Form controls are plain elements with behaviour. `ui.checkbox` toggles a bool and lights up the `checked:` variant; the look is entirely yours.
+
+<Preview src="accent-color-0" width={608} height={148} alt="accent-color: Controls styled by state" />
+
+```odin
+if ui.div("flex flex-col gap-3") {
+    check_box(&s.demo.checked[0], "Default", "gray-900")
+    check_box(&s.demo.checked[1], "Accent violet", "violet-500")
+    check_box(&s.demo.checked[2], "Accent pink", "pink-500")
+}
+```
+
+### Radio groups
+
+<Preview src="accent-color-1" width={608} height={148} alt="accent-color: Radio groups" />
+
+```odin
+if ui.div("flex flex-col gap-3") {
+    for label, i in ([]string{"Small", "Medium", "Large"}) {
+        ui.key(label)
+        if ui.radio(&s.demo.radio, i, "group flex items-center gap-3") {
+            ui.el("size-4 rounded-full border border-gray-300 bg-white checked:border-[5px] checked:border-violet-500 dark:border-white/20 dark:bg-white/5", s.demo.radio == i ? {.Checked} : {})
+            ui.text(label, "text-sm text-gray-700 dark:text-gray-300")
+        }
+    }
+}
+```
+
+### Sliders
+
+<Preview src="accent-color-2" width={608} height={102} alt="accent-color: Sliders" />
+
+```odin
+if ui.div("flex w-72 flex-col gap-3") {
+    ui.slider(&s.demo.slider, 0, 100, "relative h-1.5 w-full rounded-full bg-gray-200 dark:bg-white/10", "rounded-full bg-violet-500", "size-4 rounded-full bg-white shadow ring-1 ring-gray-950/10 focus-visible:ring-2 focus-visible:ring-violet-500", 1)
+    ui.text(fmt.tprintf("Volume %.0f", s.demo.slider), "text-sm text-gray-600 dark:text-gray-400")
+}
+```

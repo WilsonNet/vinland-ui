@@ -1,0 +1,25 @@
+---
+title: "table-layout"
+description: "Utilities for controlling the table layout algorithm. Tailwind-style table-layout utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the table layout algorithm.
+
+| Class | Effect |
+| --- | --- |
+| `table-auto` | `table-layout: auto;` |
+| `table-fixed` | `table-layout: fixed;` |
+| `The Sliding Mr. Bones (Next Stop, Pottersville)` | `Malcolm Lockyer` |
+| `Witchy Woman` | `The Eagles` |
+| `Shining Star` | `Earth, Wind, and Fire` |
+| `The Sliding Mr. Bones (Next Stop, Pottersville)` | `Malcolm Lockyer` |
+| `Witchy Woman` | `The Eagles` |
+| `Shining Star` | `Earth, Wind, and Fire` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

@@ -1,0 +1,19 @@
+---
+title: "transform-style"
+description: "Utilities for controlling if an elements children are placed in 3D space. Tailwind-style transform-style utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling if an elements children are placed in 3D space.
+
+| Class | Effect |
+| --- | --- |
+| `transform-3d` | `transform-style: preserve-3d;` |
+| `transform-flat` | `transform-style: flat;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

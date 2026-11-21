@@ -1,0 +1,20 @@
+---
+title: "hue-rotate"
+description: "Utilities for applying backdrop hue-rotate filters to an element. Tailwind-style hue-rotate utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying backdrop hue-rotate filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `backdrop-hue-rotate-<number>` | `backdrop-filter: hue-rotate(<number>deg);` |
+| `-backdrop-hue-rotate-<number>` | `backdrop-filter: hue-rotate(calc(<number>deg * -1));` |
+| `backdrop-hue-rotate-[<value>]` | `backdrop-filter: hue-rotate(<value>);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

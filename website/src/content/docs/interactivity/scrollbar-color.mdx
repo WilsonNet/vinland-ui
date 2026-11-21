@@ -1,0 +1,177 @@
+---
+title: "scrollbar-color"
+description: "Utilities for controlling the color of an element's scrollbar. Tailwind-style scrollbar-color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the color of an element's scrollbar.
+
+| Class | Effect |
+| --- | --- |
+| `scrollbar-thumb-inherit` | `--tw-scrollbar-thumb: inherit; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-current` | `--tw-scrollbar-thumb: currentColor; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-transparent` | `--tw-scrollbar-thumb: transparent; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-black` | `--tw-scrollbar-thumb: #000; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-white` | `--tw-scrollbar-thumb: #fff; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-50` | `--tw-scrollbar-thumb: color-red-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-100` | `--tw-scrollbar-thumb: color-red-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-200` | `--tw-scrollbar-thumb: color-red-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-300` | `--tw-scrollbar-thumb: color-red-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-400` | `--tw-scrollbar-thumb: color-red-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-500` | `--tw-scrollbar-thumb: color-red-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-600` | `--tw-scrollbar-thumb: color-red-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-700` | `--tw-scrollbar-thumb: color-red-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-800` | `--tw-scrollbar-thumb: color-red-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-900` | `--tw-scrollbar-thumb: color-red-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-red-950` | `--tw-scrollbar-thumb: color-red-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-50` | `--tw-scrollbar-thumb: color-orange-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-100` | `--tw-scrollbar-thumb: color-orange-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-200` | `--tw-scrollbar-thumb: color-orange-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-300` | `--tw-scrollbar-thumb: color-orange-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-400` | `--tw-scrollbar-thumb: color-orange-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-500` | `--tw-scrollbar-thumb: color-orange-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-600` | `--tw-scrollbar-thumb: color-orange-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-700` | `--tw-scrollbar-thumb: color-orange-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-800` | `--tw-scrollbar-thumb: color-orange-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-900` | `--tw-scrollbar-thumb: color-orange-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-orange-950` | `--tw-scrollbar-thumb: color-orange-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-50` | `--tw-scrollbar-thumb: color-amber-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-100` | `--tw-scrollbar-thumb: color-amber-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-200` | `--tw-scrollbar-thumb: color-amber-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-300` | `--tw-scrollbar-thumb: color-amber-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-400` | `--tw-scrollbar-thumb: color-amber-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-500` | `--tw-scrollbar-thumb: color-amber-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-600` | `--tw-scrollbar-thumb: color-amber-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-700` | `--tw-scrollbar-thumb: color-amber-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-800` | `--tw-scrollbar-thumb: color-amber-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-900` | `--tw-scrollbar-thumb: color-amber-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-amber-950` | `--tw-scrollbar-thumb: color-amber-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-50` | `--tw-scrollbar-thumb: color-yellow-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-100` | `--tw-scrollbar-thumb: color-yellow-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-200` | `--tw-scrollbar-thumb: color-yellow-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-300` | `--tw-scrollbar-thumb: color-yellow-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-400` | `--tw-scrollbar-thumb: color-yellow-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-500` | `--tw-scrollbar-thumb: color-yellow-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-600` | `--tw-scrollbar-thumb: color-yellow-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-700` | `--tw-scrollbar-thumb: color-yellow-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-800` | `--tw-scrollbar-thumb: color-yellow-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-900` | `--tw-scrollbar-thumb: color-yellow-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-yellow-950` | `--tw-scrollbar-thumb: color-yellow-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-50` | `--tw-scrollbar-thumb: color-lime-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-100` | `--tw-scrollbar-thumb: color-lime-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-200` | `--tw-scrollbar-thumb: color-lime-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-300` | `--tw-scrollbar-thumb: color-lime-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-400` | `--tw-scrollbar-thumb: color-lime-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-500` | `--tw-scrollbar-thumb: color-lime-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-600` | `--tw-scrollbar-thumb: color-lime-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-700` | `--tw-scrollbar-thumb: color-lime-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-800` | `--tw-scrollbar-thumb: color-lime-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-900` | `--tw-scrollbar-thumb: color-lime-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-lime-950` | `--tw-scrollbar-thumb: color-lime-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-50` | `--tw-scrollbar-thumb: color-green-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-100` | `--tw-scrollbar-thumb: color-green-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-200` | `--tw-scrollbar-thumb: color-green-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-300` | `--tw-scrollbar-thumb: color-green-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-400` | `--tw-scrollbar-thumb: color-green-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-500` | `--tw-scrollbar-thumb: color-green-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-600` | `--tw-scrollbar-thumb: color-green-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-700` | `--tw-scrollbar-thumb: color-green-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-800` | `--tw-scrollbar-thumb: color-green-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-900` | `--tw-scrollbar-thumb: color-green-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-green-950` | `--tw-scrollbar-thumb: color-green-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-50` | `--tw-scrollbar-thumb: color-emerald-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-100` | `--tw-scrollbar-thumb: color-emerald-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-200` | `--tw-scrollbar-thumb: color-emerald-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-300` | `--tw-scrollbar-thumb: color-emerald-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-400` | `--tw-scrollbar-thumb: color-emerald-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-500` | `--tw-scrollbar-thumb: color-emerald-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-600` | `--tw-scrollbar-thumb: color-emerald-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-700` | `--tw-scrollbar-thumb: color-emerald-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-800` | `--tw-scrollbar-thumb: color-emerald-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-900` | `--tw-scrollbar-thumb: color-emerald-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-emerald-950` | `--tw-scrollbar-thumb: color-emerald-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-50` | `--tw-scrollbar-thumb: color-teal-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-100` | `--tw-scrollbar-thumb: color-teal-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-200` | `--tw-scrollbar-thumb: color-teal-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-300` | `--tw-scrollbar-thumb: color-teal-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-400` | `--tw-scrollbar-thumb: color-teal-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-500` | `--tw-scrollbar-thumb: color-teal-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-600` | `--tw-scrollbar-thumb: color-teal-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-700` | `--tw-scrollbar-thumb: color-teal-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-800` | `--tw-scrollbar-thumb: color-teal-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-900` | `--tw-scrollbar-thumb: color-teal-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-teal-950` | `--tw-scrollbar-thumb: color-teal-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-50` | `--tw-scrollbar-thumb: color-cyan-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-100` | `--tw-scrollbar-thumb: color-cyan-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-200` | `--tw-scrollbar-thumb: color-cyan-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-300` | `--tw-scrollbar-thumb: color-cyan-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-400` | `--tw-scrollbar-thumb: color-cyan-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-500` | `--tw-scrollbar-thumb: color-cyan-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-600` | `--tw-scrollbar-thumb: color-cyan-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-700` | `--tw-scrollbar-thumb: color-cyan-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-800` | `--tw-scrollbar-thumb: color-cyan-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-900` | `--tw-scrollbar-thumb: color-cyan-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-cyan-950` | `--tw-scrollbar-thumb: color-cyan-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-50` | `--tw-scrollbar-thumb: color-sky-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-100` | `--tw-scrollbar-thumb: color-sky-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-200` | `--tw-scrollbar-thumb: color-sky-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-300` | `--tw-scrollbar-thumb: color-sky-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-400` | `--tw-scrollbar-thumb: color-sky-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-500` | `--tw-scrollbar-thumb: color-sky-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-600` | `--tw-scrollbar-thumb: color-sky-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-700` | `--tw-scrollbar-thumb: color-sky-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-800` | `--tw-scrollbar-thumb: color-sky-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-900` | `--tw-scrollbar-thumb: color-sky-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-sky-950` | `--tw-scrollbar-thumb: color-sky-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-50` | `--tw-scrollbar-thumb: color-blue-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-100` | `--tw-scrollbar-thumb: color-blue-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-200` | `--tw-scrollbar-thumb: color-blue-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-300` | `--tw-scrollbar-thumb: color-blue-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-400` | `--tw-scrollbar-thumb: color-blue-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-500` | `--tw-scrollbar-thumb: color-blue-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-600` | `--tw-scrollbar-thumb: color-blue-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-700` | `--tw-scrollbar-thumb: color-blue-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-800` | `--tw-scrollbar-thumb: color-blue-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-900` | `--tw-scrollbar-thumb: color-blue-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-blue-950` | `--tw-scrollbar-thumb: color-blue-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-50` | `--tw-scrollbar-thumb: color-indigo-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-100` | `--tw-scrollbar-thumb: color-indigo-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-200` | `--tw-scrollbar-thumb: color-indigo-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-300` | `--tw-scrollbar-thumb: color-indigo-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-400` | `--tw-scrollbar-thumb: color-indigo-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-500` | `--tw-scrollbar-thumb: color-indigo-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-600` | `--tw-scrollbar-thumb: color-indigo-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-700` | `--tw-scrollbar-thumb: color-indigo-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-800` | `--tw-scrollbar-thumb: color-indigo-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-900` | `--tw-scrollbar-thumb: color-indigo-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-indigo-950` | `--tw-scrollbar-thumb: color-indigo-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-50` | `--tw-scrollbar-thumb: color-violet-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-100` | `--tw-scrollbar-thumb: color-violet-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-200` | `--tw-scrollbar-thumb: color-violet-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-300` | `--tw-scrollbar-thumb: color-violet-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-400` | `--tw-scrollbar-thumb: color-violet-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-500` | `--tw-scrollbar-thumb: color-violet-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-600` | `--tw-scrollbar-thumb: color-violet-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-700` | `--tw-scrollbar-thumb: color-violet-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-800` | `--tw-scrollbar-thumb: color-violet-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-900` | `--tw-scrollbar-thumb: color-violet-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-violet-950` | `--tw-scrollbar-thumb: color-violet-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-50` | `--tw-scrollbar-thumb: color-purple-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-100` | `--tw-scrollbar-thumb: color-purple-100 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-200` | `--tw-scrollbar-thumb: color-purple-200 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-300` | `--tw-scrollbar-thumb: color-purple-300 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-400` | `--tw-scrollbar-thumb: color-purple-400 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-500` | `--tw-scrollbar-thumb: color-purple-500 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-600` | `--tw-scrollbar-thumb: color-purple-600 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-700` | `--tw-scrollbar-thumb: color-purple-700 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-800` | `--tw-scrollbar-thumb: color-purple-800 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-900` | `--tw-scrollbar-thumb: color-purple-900 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-purple-950` | `--tw-scrollbar-thumb: color-purple-950 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+| `scrollbar-thumb-fuchsia-50` | `--tw-scrollbar-thumb: color-fuchsia-50 token; scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

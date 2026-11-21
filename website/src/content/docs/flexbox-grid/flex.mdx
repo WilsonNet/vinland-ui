@@ -1,0 +1,61 @@
+---
+title: "flex"
+description: "Utilities for controlling how flex items both grow and shrink. Tailwind-style flex utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex items both grow and shrink.
+
+| Class | Effect |
+| --- | --- |
+| `flex-<number>` | `flex: <number>;` |
+| `flex-<fraction>` | `flex: calc(<fraction> * 100%);` |
+| `flex-auto` | `flex: auto;` |
+| `flex-initial` | `flex: 0 auto;` |
+| `flex-none` | `flex: none;` |
+| `flex-[<value>]` | `flex: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `flex-1` to let an item grow and shrink as needed, ignoring its initial size.
+
+<Preview src="flex-0" width={608} height={116} alt="flex: Basic example" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "w-14 flex-none")
+    tile("02", "w-64 flex-1")
+    tile("03", "w-32 flex-1")
+}
+```
+
+### Initial
+
+Use `flex-initial` to allow shrinking but not growing.
+
+<Preview src="flex-1" width={608} height={116} alt="flex: Initial" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "w-14 flex-none")
+    tile("02", "w-64 flex-initial")
+    tile("03", "w-32 flex-initial")
+}
+```
+
+### Auto
+
+<Preview src="flex-2" width={608} height={116} alt="flex: Auto" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "w-14 flex-none")
+    tile("02", "w-64 flex-auto")
+    tile("03", "w-32 flex-auto")
+}
+```

@@ -1,0 +1,83 @@
+---
+title: "align-items"
+description: "Utilities for controlling how flex and grid items are positioned along a container's cross axis. Tailwind-style align-items utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 20
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex and grid items are positioned along a container's cross axis.
+
+| Class | Effect |
+| --- | --- |
+| `items-start` | `align-items: flex-start;` |
+| `items-end` | `align-items: flex-end;` |
+| `items-end-safe` | `align-items: safe flex-end;` |
+| `items-center` | `align-items: center;` |
+| `items-center-safe` | `align-items: safe center;` |
+| `items-baseline` | `align-items: baseline;` |
+| `items-baseline-last` | `align-items: last baseline;` |
+| `items-stretch` | `align-items: stretch;` |
+
+## Examples
+
+### items-stretch
+
+<Preview src="align-items-0" width={608} height={156} alt="align-items: items-stretch" />
+
+```odin
+if ui.div(ui.cx("flex gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    tile("01", "pt-6 pb-12")
+    tile("02", "pt-12 pb-6")
+    tile("03", "pt-8 pb-8")
+}
+```
+
+### items-start
+
+<Preview src="align-items-1" width={608} height={156} alt="align-items: items-start" />
+
+```odin
+if ui.div(ui.cx("flex gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    tile("01", "pt-6 pb-12")
+    tile("02", "pt-12 pb-6")
+    tile("03", "pt-8 pb-8")
+}
+```
+
+### items-center
+
+<Preview src="align-items-2" width={608} height={156} alt="align-items: items-center" />
+
+```odin
+if ui.div(ui.cx("flex gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    tile("01", "pt-6 pb-12")
+    tile("02", "pt-12 pb-6")
+    tile("03", "pt-8 pb-8")
+}
+```
+
+### items-end
+
+<Preview src="align-items-3" width={608} height={156} alt="align-items: items-end" />
+
+```odin
+if ui.div(ui.cx("flex gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    tile("01", "pt-6 pb-12")
+    tile("02", "pt-12 pb-6")
+    tile("03", "pt-8 pb-8")
+}
+```
+
+### items-baseline
+
+<Preview src="align-items-4" width={608} height={180} alt="align-items: items-baseline" />
+
+```odin
+if ui.div(ui.cx("flex gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    tile("01", "pt-6 pb-12")
+    tile("02", "pt-12 pb-6")
+    tile("03", "pt-8 pb-8")
+}
+```

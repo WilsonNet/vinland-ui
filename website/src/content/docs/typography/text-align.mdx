@@ -1,0 +1,45 @@
+---
+title: "text-align"
+description: "Utilities for controlling the alignment of text. Tailwind-style text-align utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the alignment of text.
+
+| Class | Effect |
+| --- | --- |
+| `text-left` | `text-align: left;` |
+| `text-center` | `text-align: center;` |
+| `text-right` | `text-align: right;` |
+| `text-justify` | `text-align: justify;` |
+| `text-start` | `text-align: start;` |
+| `text-end` | `text-align: end;` |
+
+## Examples
+
+### text-left
+
+<Preview src="text-align-0" width={608} height={136} alt="text-align: text-left" />
+
+```odin
+ui.text(PROSE, ui.cx("max-w-md text-sm/6 text-gray-700 dark:text-gray-300", c))
+```
+
+### text-center
+
+<Preview src="text-align-1" width={608} height={136} alt="text-align: text-center" />
+
+```odin
+ui.text(PROSE, ui.cx("max-w-md text-sm/6 text-gray-700 dark:text-gray-300", c))
+```
+
+### text-right
+
+<Preview src="text-align-2" width={608} height={136} alt="text-align: text-right" />
+
+```odin
+ui.text(PROSE, ui.cx("max-w-md text-sm/6 text-gray-700 dark:text-gray-300", c))
+```

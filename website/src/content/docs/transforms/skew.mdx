@@ -1,0 +1,37 @@
+---
+title: "skew"
+description: "Utilities for skewing elements with transform. Tailwind-style skew utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for skewing elements with transform.
+
+| Class | Effect |
+| --- | --- |
+| `skew-<number>` | `transform: skewX(<number>deg) skewY(<number>deg);` |
+| `-skew-<number>` | `transform: skewX(-<number>deg) skewY(-<number>deg);` |
+| `skew-[<value>]` | `transform: skewX(<value>) skewY(<value>);` |
+| `skew-x-<number>` | `transform: skewX(<number>deg));` |
+| `-skew-x-<number>` | `transform: skewX(-<number>deg));` |
+| `skew-x-[<value>]` | `transform: skewX(<value>));` |
+| `skew-y-<number>` | `transform: skewY(<number>deg);` |
+| `-skew-y-<number>` | `transform: skewY(-<number>deg);` |
+| `skew-y-[<value>]` | `transform: skewY(<value>);` |
+
+## Examples
+
+### Basic example
+
+<Preview src="skew-0" width={608} height={224} alt="skew: Basic example" />
+
+```odin
+if ui.div("flex gap-10") {
+    for c in ([]string{"skew-3", "skew-6", "skew-12", "-skew-x-12"}) {
+        ui.key(c)
+        transform_tile(c, c)
+    }
+}
+```

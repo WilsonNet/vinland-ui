@@ -1,0 +1,33 @@
+---
+title: "background-size"
+description: "Utilities for controlling the background size of an element's background image. Tailwind-style background-size utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the background size of an element's background image.
+
+| Class | Effect |
+| --- | --- |
+| `bg-auto` | `background-size: auto;` |
+| `bg-cover` | `background-size: cover;` |
+| `bg-contain` | `background-size: contain;` |
+| `bg-size-[<value>]` | `background-size: <value>;` |
+
+## Examples
+
+### Patterns
+
+`bg-stripes` draws a diagonal hatch in the `stripes-*` color; `bg-stripes-<n>` sets the period. The showroom's gutters use it.
+
+<Preview src="background-size-0" width={608} height={176} alt="background-size: Patterns" />
+
+```odin
+if ui.div("flex gap-4") {
+    ui.el("size-28 rounded-lg bg-stripes stripes-violet-500/40")
+    ui.el("size-28 rounded-lg bg-sky-50 bg-stripes-6 stripes-sky-500/40 dark:bg-sky-500/10")
+    ui.el("size-28 rounded-lg bg-gray-950 bg-stripes-16 stripes-white/15")
+}
+```

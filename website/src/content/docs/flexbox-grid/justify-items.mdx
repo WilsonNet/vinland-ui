@@ -1,0 +1,78 @@
+---
+title: "justify-items"
+description: "Utilities for controlling how grid items are aligned along their inline axis. Tailwind-style justify-items utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how grid items are aligned along their inline axis.
+
+| Class | Effect |
+| --- | --- |
+| `justify-items-start` | `justify-items: start;` |
+| `justify-items-end` | `justify-items: end;` |
+| `justify-items-end-safe` | `justify-items: safe end;` |
+| `justify-items-center` | `justify-items: center;` |
+| `justify-items-center-safe` | `justify-items: safe center;` |
+| `justify-items-stretch` | `justify-items: stretch;` |
+| `justify-items-normal` | `justify-items: normal;` |
+
+## Examples
+
+### Start, center and end
+
+Use `justify-items-*` to align grid items along their inline axis.
+
+### justify-items-start
+
+<Preview src="justify-items-0" width={608} height={184} alt="justify-items: justify-items-start" />
+
+```odin
+if ui.div(ui.cx("grid grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "justify-items-stretch" ? "" : "w-14")
+    }
+}
+```
+
+### justify-items-center
+
+<Preview src="justify-items-1" width={608} height={184} alt="justify-items: justify-items-center" />
+
+```odin
+if ui.div(ui.cx("grid grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "justify-items-stretch" ? "" : "w-14")
+    }
+}
+```
+
+### justify-items-end
+
+<Preview src="justify-items-2" width={608} height={184} alt="justify-items: justify-items-end" />
+
+```odin
+if ui.div(ui.cx("grid grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "justify-items-stretch" ? "" : "w-14")
+    }
+}
+```
+
+### justify-items-stretch
+
+<Preview src="justify-items-3" width={608} height={184} alt="justify-items: justify-items-stretch" />
+
+```odin
+if ui.div(ui.cx("grid grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "justify-items-stretch" ? "" : "w-14")
+    }
+}
+```

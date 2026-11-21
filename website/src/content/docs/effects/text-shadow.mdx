@@ -1,0 +1,188 @@
+---
+title: "text-shadow"
+description: "Utilities for controlling the shadow of a text element. Tailwind-style text-shadow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the shadow of a text element.
+
+| Class | Effect |
+| --- | --- |
+| `text-shadow-2xs` | `text-shadow: 0px 1px 0px rgb(0 0 0 / 0.15);` |
+| `text-shadow-xs` | `text-shadow: 0px 1px 1px rgb(0 0 0 / 0.2);` |
+| `text-shadow-sm` | `text-shadow: 0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075);` |
+| `text-shadow-md` | `text-shadow: 0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1);` |
+| `text-shadow-lg` | `text-shadow: 0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1);` |
+| `text-shadow-none` | `text-shadow: none;` |
+| `text-shadow-[<value>]` | `text-shadow: <value>;` |
+| `text-shadow-inherit` | `--tw-shadow-color inherit;` |
+| `text-shadow-current` | `--tw-shadow-color currentColor;` |
+| `text-shadow-transparent` | `--tw-shadow-color transparent;` |
+| `text-shadow-black` | `--tw-text-shadow-color #000;` |
+| `text-shadow-white` | `--tw-text-shadow-color #fff;` |
+| `text-shadow-red-50` | `--tw-text-shadow-color color-red-50 token;` |
+| `text-shadow-red-100` | `--tw-text-shadow-color color-red-100 token;` |
+| `text-shadow-red-200` | `--tw-text-shadow-color color-red-200 token;` |
+| `text-shadow-red-300` | `--tw-text-shadow-color color-red-300 token;` |
+| `text-shadow-red-400` | `--tw-text-shadow-color color-red-400 token;` |
+| `text-shadow-red-500` | `--tw-text-shadow-color color-red-500 token;` |
+| `text-shadow-red-600` | `--tw-text-shadow-color color-red-600 token;` |
+| `text-shadow-red-700` | `--tw-text-shadow-color color-red-700 token;` |
+| `text-shadow-red-800` | `--tw-text-shadow-color color-red-800 token;` |
+| `text-shadow-red-900` | `--tw-text-shadow-color color-red-900 token;` |
+| `text-shadow-red-950` | `--tw-text-shadow-color color-red-950 token;` |
+| `text-shadow-orange-50` | `--tw-text-shadow-color color-orange-50 token;` |
+| `text-shadow-orange-100` | `--tw-text-shadow-color color-orange-100 token;` |
+| `text-shadow-orange-200` | `--tw-text-shadow-color color-orange-200 token;` |
+| `text-shadow-orange-300` | `--tw-text-shadow-color color-orange-300 token;` |
+| `text-shadow-orange-400` | `--tw-text-shadow-color color-orange-400 token;` |
+| `text-shadow-orange-500` | `--tw-text-shadow-color color-orange-500 token;` |
+| `text-shadow-orange-600` | `--tw-text-shadow-color color-orange-600 token;` |
+| `text-shadow-orange-700` | `--tw-text-shadow-color color-orange-700 token;` |
+| `text-shadow-orange-800` | `--tw-text-shadow-color color-orange-800 token;` |
+| `text-shadow-orange-900` | `--tw-text-shadow-color color-orange-900 token;` |
+| `text-shadow-orange-950` | `--tw-text-shadow-color color-orange-950 token;` |
+| `text-shadow-amber-50` | `--tw-text-shadow-color color-amber-50 token;` |
+| `text-shadow-amber-100` | `--tw-text-shadow-color color-amber-100 token;` |
+| `text-shadow-amber-200` | `--tw-text-shadow-color color-amber-200 token;` |
+| `text-shadow-amber-300` | `--tw-text-shadow-color color-amber-300 token;` |
+| `text-shadow-amber-400` | `--tw-text-shadow-color color-amber-400 token;` |
+| `text-shadow-amber-500` | `--tw-text-shadow-color color-amber-500 token;` |
+| `text-shadow-amber-600` | `--tw-text-shadow-color color-amber-600 token;` |
+| `text-shadow-amber-700` | `--tw-text-shadow-color color-amber-700 token;` |
+| `text-shadow-amber-800` | `--tw-text-shadow-color color-amber-800 token;` |
+| `text-shadow-amber-900` | `--tw-text-shadow-color color-amber-900 token;` |
+| `text-shadow-amber-950` | `--tw-text-shadow-color color-amber-950 token;` |
+| `text-shadow-yellow-50` | `--tw-text-shadow-color color-yellow-50 token;` |
+| `text-shadow-yellow-100` | `--tw-text-shadow-color color-yellow-100 token;` |
+| `text-shadow-yellow-200` | `--tw-text-shadow-color color-yellow-200 token;` |
+| `text-shadow-yellow-300` | `--tw-text-shadow-color color-yellow-300 token;` |
+| `text-shadow-yellow-400` | `--tw-text-shadow-color color-yellow-400 token;` |
+| `text-shadow-yellow-500` | `--tw-text-shadow-color color-yellow-500 token;` |
+| `text-shadow-yellow-600` | `--tw-text-shadow-color color-yellow-600 token;` |
+| `text-shadow-yellow-700` | `--tw-text-shadow-color color-yellow-700 token;` |
+| `text-shadow-yellow-800` | `--tw-text-shadow-color color-yellow-800 token;` |
+| `text-shadow-yellow-900` | `--tw-text-shadow-color color-yellow-900 token;` |
+| `text-shadow-yellow-950` | `--tw-text-shadow-color color-yellow-950 token;` |
+| `text-shadow-lime-50` | `--tw-text-shadow-color color-lime-50 token;` |
+| `text-shadow-lime-100` | `--tw-text-shadow-color color-lime-100 token;` |
+| `text-shadow-lime-200` | `--tw-text-shadow-color color-lime-200 token;` |
+| `text-shadow-lime-300` | `--tw-text-shadow-color color-lime-300 token;` |
+| `text-shadow-lime-400` | `--tw-text-shadow-color color-lime-400 token;` |
+| `text-shadow-lime-500` | `--tw-text-shadow-color color-lime-500 token;` |
+| `text-shadow-lime-600` | `--tw-text-shadow-color color-lime-600 token;` |
+| `text-shadow-lime-700` | `--tw-text-shadow-color color-lime-700 token;` |
+| `text-shadow-lime-800` | `--tw-text-shadow-color color-lime-800 token;` |
+| `text-shadow-lime-900` | `--tw-text-shadow-color color-lime-900 token;` |
+| `text-shadow-lime-950` | `--tw-text-shadow-color color-lime-950 token;` |
+| `text-shadow-green-50` | `--tw-text-shadow-color color-green-50 token;` |
+| `text-shadow-green-100` | `--tw-text-shadow-color color-green-100 token;` |
+| `text-shadow-green-200` | `--tw-text-shadow-color color-green-200 token;` |
+| `text-shadow-green-300` | `--tw-text-shadow-color color-green-300 token;` |
+| `text-shadow-green-400` | `--tw-text-shadow-color color-green-400 token;` |
+| `text-shadow-green-500` | `--tw-text-shadow-color color-green-500 token;` |
+| `text-shadow-green-600` | `--tw-text-shadow-color color-green-600 token;` |
+| `text-shadow-green-700` | `--tw-text-shadow-color color-green-700 token;` |
+| `text-shadow-green-800` | `--tw-text-shadow-color color-green-800 token;` |
+| `text-shadow-green-900` | `--tw-text-shadow-color color-green-900 token;` |
+| `text-shadow-green-950` | `--tw-text-shadow-color color-green-950 token;` |
+| `text-shadow-emerald-50` | `--tw-text-shadow-color color-emerald-50 token;` |
+| `text-shadow-emerald-100` | `--tw-text-shadow-color color-emerald-100 token;` |
+| `text-shadow-emerald-200` | `--tw-text-shadow-color color-emerald-200 token;` |
+| `text-shadow-emerald-300` | `--tw-text-shadow-color color-emerald-300 token;` |
+| `text-shadow-emerald-400` | `--tw-text-shadow-color color-emerald-400 token;` |
+| `text-shadow-emerald-500` | `--tw-text-shadow-color color-emerald-500 token;` |
+| `text-shadow-emerald-600` | `--tw-text-shadow-color color-emerald-600 token;` |
+| `text-shadow-emerald-700` | `--tw-text-shadow-color color-emerald-700 token;` |
+| `text-shadow-emerald-800` | `--tw-text-shadow-color color-emerald-800 token;` |
+| `text-shadow-emerald-900` | `--tw-text-shadow-color color-emerald-900 token;` |
+| `text-shadow-emerald-950` | `--tw-text-shadow-color color-emerald-950 token;` |
+| `text-shadow-teal-50` | `--tw-text-shadow-color color-teal-50 token;` |
+| `text-shadow-teal-100` | `--tw-text-shadow-color color-teal-100 token;` |
+| `text-shadow-teal-200` | `--tw-text-shadow-color color-teal-200 token;` |
+| `text-shadow-teal-300` | `--tw-text-shadow-color color-teal-300 token;` |
+| `text-shadow-teal-400` | `--tw-text-shadow-color color-teal-400 token;` |
+| `text-shadow-teal-500` | `--tw-text-shadow-color color-teal-500 token;` |
+| `text-shadow-teal-600` | `--tw-text-shadow-color color-teal-600 token;` |
+| `text-shadow-teal-700` | `--tw-text-shadow-color color-teal-700 token;` |
+| `text-shadow-teal-800` | `--tw-text-shadow-color color-teal-800 token;` |
+| `text-shadow-teal-900` | `--tw-text-shadow-color color-teal-900 token;` |
+| `text-shadow-teal-950` | `--tw-text-shadow-color color-teal-950 token;` |
+| `text-shadow-cyan-50` | `--tw-text-shadow-color color-cyan-50 token;` |
+| `text-shadow-cyan-100` | `--tw-text-shadow-color color-cyan-100 token;` |
+| `text-shadow-cyan-200` | `--tw-text-shadow-color color-cyan-200 token;` |
+| `text-shadow-cyan-300` | `--tw-text-shadow-color color-cyan-300 token;` |
+| `text-shadow-cyan-400` | `--tw-text-shadow-color color-cyan-400 token;` |
+| `text-shadow-cyan-500` | `--tw-text-shadow-color color-cyan-500 token;` |
+| `text-shadow-cyan-600` | `--tw-text-shadow-color color-cyan-600 token;` |
+| `text-shadow-cyan-700` | `--tw-text-shadow-color color-cyan-700 token;` |
+| `text-shadow-cyan-800` | `--tw-text-shadow-color color-cyan-800 token;` |
+| `text-shadow-cyan-900` | `--tw-text-shadow-color color-cyan-900 token;` |
+| `text-shadow-cyan-950` | `--tw-text-shadow-color color-cyan-950 token;` |
+| `text-shadow-sky-50` | `--tw-text-shadow-color color-sky-50 token;` |
+| `text-shadow-sky-100` | `--tw-text-shadow-color color-sky-100 token;` |
+| `text-shadow-sky-200` | `--tw-text-shadow-color color-sky-200 token;` |
+| `text-shadow-sky-300` | `--tw-text-shadow-color color-sky-300 token;` |
+| `text-shadow-sky-400` | `--tw-text-shadow-color color-sky-400 token;` |
+| `text-shadow-sky-500` | `--tw-text-shadow-color color-sky-500 token;` |
+| `text-shadow-sky-600` | `--tw-text-shadow-color color-sky-600 token;` |
+| `text-shadow-sky-700` | `--tw-text-shadow-color color-sky-700 token;` |
+| `text-shadow-sky-800` | `--tw-text-shadow-color color-sky-800 token;` |
+| `text-shadow-sky-900` | `--tw-text-shadow-color color-sky-900 token;` |
+| `text-shadow-sky-950` | `--tw-text-shadow-color color-sky-950 token;` |
+| `text-shadow-blue-50` | `--tw-text-shadow-color color-blue-50 token;` |
+| `text-shadow-blue-100` | `--tw-text-shadow-color color-blue-100 token;` |
+| `text-shadow-blue-200` | `--tw-text-shadow-color color-blue-200 token;` |
+| `text-shadow-blue-300` | `--tw-text-shadow-color color-blue-300 token;` |
+| `text-shadow-blue-400` | `--tw-text-shadow-color color-blue-400 token;` |
+| `text-shadow-blue-500` | `--tw-text-shadow-color color-blue-500 token;` |
+| `text-shadow-blue-600` | `--tw-text-shadow-color color-blue-600 token;` |
+| `text-shadow-blue-700` | `--tw-text-shadow-color color-blue-700 token;` |
+| `text-shadow-blue-800` | `--tw-text-shadow-color color-blue-800 token;` |
+| `text-shadow-blue-900` | `--tw-text-shadow-color color-blue-900 token;` |
+| `text-shadow-blue-950` | `--tw-text-shadow-color color-blue-950 token;` |
+| `text-shadow-indigo-50` | `--tw-text-shadow-color color-indigo-50 token;` |
+| `text-shadow-indigo-100` | `--tw-text-shadow-color color-indigo-100 token;` |
+| `text-shadow-indigo-200` | `--tw-text-shadow-color color-indigo-200 token;` |
+| `text-shadow-indigo-300` | `--tw-text-shadow-color color-indigo-300 token;` |
+| `text-shadow-indigo-400` | `--tw-text-shadow-color color-indigo-400 token;` |
+| `text-shadow-indigo-500` | `--tw-text-shadow-color color-indigo-500 token;` |
+| `text-shadow-indigo-600` | `--tw-text-shadow-color color-indigo-600 token;` |
+| `text-shadow-indigo-700` | `--tw-text-shadow-color color-indigo-700 token;` |
+| `text-shadow-indigo-800` | `--tw-text-shadow-color color-indigo-800 token;` |
+| `text-shadow-indigo-900` | `--tw-text-shadow-color color-indigo-900 token;` |
+| `text-shadow-indigo-950` | `--tw-text-shadow-color color-indigo-950 token;` |
+| `text-shadow-violet-50` | `--tw-text-shadow-color color-violet-50 token;` |
+| `text-shadow-violet-100` | `--tw-text-shadow-color color-violet-100 token;` |
+| `text-shadow-violet-200` | `--tw-text-shadow-color color-violet-200 token;` |
+| `text-shadow-violet-300` | `--tw-text-shadow-color color-violet-300 token;` |
+| `text-shadow-violet-400` | `--tw-text-shadow-color color-violet-400 token;` |
+| `text-shadow-violet-500` | `--tw-text-shadow-color color-violet-500 token;` |
+| `text-shadow-violet-600` | `--tw-text-shadow-color color-violet-600 token;` |
+| `text-shadow-violet-700` | `--tw-text-shadow-color color-violet-700 token;` |
+| `text-shadow-violet-800` | `--tw-text-shadow-color color-violet-800 token;` |
+| `text-shadow-violet-900` | `--tw-text-shadow-color color-violet-900 token;` |
+| `text-shadow-violet-950` | `--tw-text-shadow-color color-violet-950 token;` |
+| `text-shadow-purple-50` | `--tw-text-shadow-color color-purple-50 token;` |
+| `text-shadow-purple-100` | `--tw-text-shadow-color color-purple-100 token;` |
+| `text-shadow-purple-200` | `--tw-text-shadow-color color-purple-200 token;` |
+| `text-shadow-purple-300` | `--tw-text-shadow-color color-purple-300 token;` |
+| `text-shadow-purple-400` | `--tw-text-shadow-color color-purple-400 token;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-shadow-0" width={608} height={388} alt="text-shadow: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-4") {
+    for c in ([]string{"text-shadow-2xs", "text-shadow-xs", "text-shadow-sm", "text-shadow-md", "text-shadow-lg"}) {
+        ui.key(c)
+        specimen(c, ui.cx("text-2xl font-semibold", c))
+    }
+}
+```

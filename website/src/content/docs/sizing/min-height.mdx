@@ -1,0 +1,43 @@
+---
+title: "min-height"
+description: "Utilities for setting the minimum height of an element. Tailwind-style min-height utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the minimum height of an element.
+
+| Class | Effect |
+| --- | --- |
+| `min-h-<number>` | `min-height: calc(var(--spacing) * <number>);` |
+| `min-h-<fraction>` | `min-height: calc(<fraction> * 100%);` |
+| `min-h-px` | `min-height: 1px;` |
+| `min-h-full` | `min-height: 100%;` |
+| `min-h-screen` | `min-height: 100vh;` |
+| `min-h-dvh` | `min-height: 100dvh;` |
+| `min-h-dvw` | `min-height: 100dvw;` |
+| `min-h-lvh` | `min-height: 100lvh;` |
+| `min-h-lvw` | `min-height: 100lvw;` |
+| `min-h-svw` | `min-height: 100svw;` |
+| `min-h-svh` | `min-height: 100svh;` |
+| `min-h-auto` | `min-height: auto;` |
+| `min-h-min` | `min-height: min-content;` |
+| `min-h-max` | `min-height: max-content;` |
+| `min-h-fit` | `min-height: fit-content;` |
+| `min-h-lh` | `min-height: 1lh;` |
+| `min-h-[<value>]` | `min-height: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="min-height-0" width={608} height={224} alt="min-height: Basic example" />
+
+```odin
+if ui.div("flex items-start gap-4") {
+    tile("min-h-24", "min-h-24 w-24")
+    tile("min-h-40", "min-h-40 w-24")
+}
+```

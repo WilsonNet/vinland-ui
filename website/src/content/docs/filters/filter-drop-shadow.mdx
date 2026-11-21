@@ -1,0 +1,188 @@
+---
+title: "drop-shadow"
+description: "Utilities for applying drop-shadow filters to an element. Tailwind-style drop-shadow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying drop-shadow filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `drop-shadow-xs` | `filter: drop-shadow(var(--drop-shadow-xs));` |
+| `drop-shadow-sm` | `filter: drop-shadow(var(--drop-shadow-sm));` |
+| `drop-shadow-md` | `filter: drop-shadow(var(--drop-shadow-md));` |
+| `drop-shadow-lg` | `filter: drop-shadow(var(--drop-shadow-lg));` |
+| `drop-shadow-xl` | `filter: drop-shadow(0 9px 7px rgb(0 0 0 / 0.1);` |
+| `drop-shadow-2xl` | `filter: drop-shadow(var(--drop-shadow-2xl));` |
+| `drop-shadow-none` | `filter: drop-shadow(0 0 #0000);` |
+| `drop-shadow-[<value>]` | `filter: drop-shadow(<value>);` |
+| `drop-shadow-inherit` | `--tw-drop-shadow-color: inherit;` |
+| `drop-shadow-current` | `--tw-drop-shadow-color: currentColor;` |
+| `drop-shadow-transparent` | `--tw-drop-shadow-color: transparent;` |
+| `drop-shadow-black` | `--tw-drop-shadow-color: #000;` |
+| `drop-shadow-white` | `--tw-drop-shadow-color: #fff;` |
+| `drop-shadow-red-50` | `--tw-drop-shadow-color: color-red-50 token;` |
+| `drop-shadow-red-100` | `--tw-drop-shadow-color: color-red-100 token;` |
+| `drop-shadow-red-200` | `--tw-drop-shadow-color: color-red-200 token;` |
+| `drop-shadow-red-300` | `--tw-drop-shadow-color: color-red-300 token;` |
+| `drop-shadow-red-400` | `--tw-drop-shadow-color: color-red-400 token;` |
+| `drop-shadow-red-500` | `--tw-drop-shadow-color: color-red-500 token;` |
+| `drop-shadow-red-600` | `--tw-drop-shadow-color: color-red-600 token;` |
+| `drop-shadow-red-700` | `--tw-drop-shadow-color: color-red-700 token;` |
+| `drop-shadow-red-800` | `--tw-drop-shadow-color: color-red-800 token;` |
+| `drop-shadow-red-900` | `--tw-drop-shadow-color: color-red-900 token;` |
+| `drop-shadow-red-950` | `--tw-drop-shadow-color: color-red-950 token;` |
+| `drop-shadow-orange-50` | `--tw-drop-shadow-color: color-orange-50 token;` |
+| `drop-shadow-orange-100` | `--tw-drop-shadow-color: color-orange-100 token;` |
+| `drop-shadow-orange-200` | `--tw-drop-shadow-color: color-orange-200 token;` |
+| `drop-shadow-orange-300` | `--tw-drop-shadow-color: color-orange-300 token;` |
+| `drop-shadow-orange-400` | `--tw-drop-shadow-color: color-orange-400 token;` |
+| `drop-shadow-orange-500` | `--tw-drop-shadow-color: color-orange-500 token;` |
+| `drop-shadow-orange-600` | `--tw-drop-shadow-color: color-orange-600 token;` |
+| `drop-shadow-orange-700` | `--tw-drop-shadow-color: color-orange-700 token;` |
+| `drop-shadow-orange-800` | `--tw-drop-shadow-color: color-orange-800 token;` |
+| `drop-shadow-orange-900` | `--tw-drop-shadow-color: color-orange-900 token;` |
+| `drop-shadow-orange-950` | `--tw-drop-shadow-color: color-orange-950 token;` |
+| `drop-shadow-amber-50` | `--tw-drop-shadow-color: color-amber-50 token;` |
+| `drop-shadow-amber-100` | `--tw-drop-shadow-color: color-amber-100 token;` |
+| `drop-shadow-amber-200` | `--tw-drop-shadow-color: color-amber-200 token;` |
+| `drop-shadow-amber-300` | `--tw-drop-shadow-color: color-amber-300 token;` |
+| `drop-shadow-amber-400` | `--tw-drop-shadow-color: color-amber-400 token;` |
+| `drop-shadow-amber-500` | `--tw-drop-shadow-color: color-amber-500 token;` |
+| `drop-shadow-amber-600` | `--tw-drop-shadow-color: color-amber-600 token;` |
+| `drop-shadow-amber-700` | `--tw-drop-shadow-color: color-amber-700 token;` |
+| `drop-shadow-amber-800` | `--tw-drop-shadow-color: color-amber-800 token;` |
+| `drop-shadow-amber-900` | `--tw-drop-shadow-color: color-amber-900 token;` |
+| `drop-shadow-amber-950` | `--tw-drop-shadow-color: color-amber-950 token;` |
+| `drop-shadow-yellow-50` | `--tw-drop-shadow-color: color-yellow-50 token;` |
+| `drop-shadow-yellow-100` | `--tw-drop-shadow-color: color-yellow-100 token;` |
+| `drop-shadow-yellow-200` | `--tw-drop-shadow-color: color-yellow-200 token;` |
+| `drop-shadow-yellow-300` | `--tw-drop-shadow-color: color-yellow-300 token;` |
+| `drop-shadow-yellow-400` | `--tw-drop-shadow-color: color-yellow-400 token;` |
+| `drop-shadow-yellow-500` | `--tw-drop-shadow-color: color-yellow-500 token;` |
+| `drop-shadow-yellow-600` | `--tw-drop-shadow-color: color-yellow-600 token;` |
+| `drop-shadow-yellow-700` | `--tw-drop-shadow-color: color-yellow-700 token;` |
+| `drop-shadow-yellow-800` | `--tw-drop-shadow-color: color-yellow-800 token;` |
+| `drop-shadow-yellow-900` | `--tw-drop-shadow-color: color-yellow-900 token;` |
+| `drop-shadow-yellow-950` | `--tw-drop-shadow-color: color-yellow-950 token;` |
+| `drop-shadow-lime-50` | `--tw-drop-shadow-color: color-lime-50 token;` |
+| `drop-shadow-lime-100` | `--tw-drop-shadow-color: color-lime-100 token;` |
+| `drop-shadow-lime-200` | `--tw-drop-shadow-color: color-lime-200 token;` |
+| `drop-shadow-lime-300` | `--tw-drop-shadow-color: color-lime-300 token;` |
+| `drop-shadow-lime-400` | `--tw-drop-shadow-color: color-lime-400 token;` |
+| `drop-shadow-lime-500` | `--tw-drop-shadow-color: color-lime-500 token;` |
+| `drop-shadow-lime-600` | `--tw-drop-shadow-color: color-lime-600 token;` |
+| `drop-shadow-lime-700` | `--tw-drop-shadow-color: color-lime-700 token;` |
+| `drop-shadow-lime-800` | `--tw-drop-shadow-color: color-lime-800 token;` |
+| `drop-shadow-lime-900` | `--tw-drop-shadow-color: color-lime-900 token;` |
+| `drop-shadow-lime-950` | `--tw-drop-shadow-color: color-lime-950 token;` |
+| `drop-shadow-green-50` | `--tw-drop-shadow-color: color-green-50 token;` |
+| `drop-shadow-green-100` | `--tw-drop-shadow-color: color-green-100 token;` |
+| `drop-shadow-green-200` | `--tw-drop-shadow-color: color-green-200 token;` |
+| `drop-shadow-green-300` | `--tw-drop-shadow-color: color-green-300 token;` |
+| `drop-shadow-green-400` | `--tw-drop-shadow-color: color-green-400 token;` |
+| `drop-shadow-green-500` | `--tw-drop-shadow-color: color-green-500 token;` |
+| `drop-shadow-green-600` | `--tw-drop-shadow-color: color-green-600 token;` |
+| `drop-shadow-green-700` | `--tw-drop-shadow-color: color-green-700 token;` |
+| `drop-shadow-green-800` | `--tw-drop-shadow-color: color-green-800 token;` |
+| `drop-shadow-green-900` | `--tw-drop-shadow-color: color-green-900 token;` |
+| `drop-shadow-green-950` | `--tw-drop-shadow-color: color-green-950 token;` |
+| `drop-shadow-emerald-50` | `--tw-drop-shadow-color: color-emerald-50 token;` |
+| `drop-shadow-emerald-100` | `--tw-drop-shadow-color: color-emerald-100 token;` |
+| `drop-shadow-emerald-200` | `--tw-drop-shadow-color: color-emerald-200 token;` |
+| `drop-shadow-emerald-300` | `--tw-drop-shadow-color: color-emerald-300 token;` |
+| `drop-shadow-emerald-400` | `--tw-drop-shadow-color: color-emerald-400 token;` |
+| `drop-shadow-emerald-500` | `--tw-drop-shadow-color: color-emerald-500 token;` |
+| `drop-shadow-emerald-600` | `--tw-drop-shadow-color: color-emerald-600 token;` |
+| `drop-shadow-emerald-700` | `--tw-drop-shadow-color: color-emerald-700 token;` |
+| `drop-shadow-emerald-800` | `--tw-drop-shadow-color: color-emerald-800 token;` |
+| `drop-shadow-emerald-900` | `--tw-drop-shadow-color: color-emerald-900 token;` |
+| `drop-shadow-emerald-950` | `--tw-drop-shadow-color: color-emerald-950 token;` |
+| `drop-shadow-teal-50` | `--tw-drop-shadow-color: color-teal-50 token;` |
+| `drop-shadow-teal-100` | `--tw-drop-shadow-color: color-teal-100 token;` |
+| `drop-shadow-teal-200` | `--tw-drop-shadow-color: color-teal-200 token;` |
+| `drop-shadow-teal-300` | `--tw-drop-shadow-color: color-teal-300 token;` |
+| `drop-shadow-teal-400` | `--tw-drop-shadow-color: color-teal-400 token;` |
+| `drop-shadow-teal-500` | `--tw-drop-shadow-color: color-teal-500 token;` |
+| `drop-shadow-teal-600` | `--tw-drop-shadow-color: color-teal-600 token;` |
+| `drop-shadow-teal-700` | `--tw-drop-shadow-color: color-teal-700 token;` |
+| `drop-shadow-teal-800` | `--tw-drop-shadow-color: color-teal-800 token;` |
+| `drop-shadow-teal-900` | `--tw-drop-shadow-color: color-teal-900 token;` |
+| `drop-shadow-teal-950` | `--tw-drop-shadow-color: color-teal-950 token;` |
+| `drop-shadow-cyan-50` | `--tw-drop-shadow-color: color-cyan-50 token;` |
+| `drop-shadow-cyan-100` | `--tw-drop-shadow-color: color-cyan-100 token;` |
+| `drop-shadow-cyan-200` | `--tw-drop-shadow-color: color-cyan-200 token;` |
+| `drop-shadow-cyan-300` | `--tw-drop-shadow-color: color-cyan-300 token;` |
+| `drop-shadow-cyan-400` | `--tw-drop-shadow-color: color-cyan-400 token;` |
+| `drop-shadow-cyan-500` | `--tw-drop-shadow-color: color-cyan-500 token;` |
+| `drop-shadow-cyan-600` | `--tw-drop-shadow-color: color-cyan-600 token;` |
+| `drop-shadow-cyan-700` | `--tw-drop-shadow-color: color-cyan-700 token;` |
+| `drop-shadow-cyan-800` | `--tw-drop-shadow-color: color-cyan-800 token;` |
+| `drop-shadow-cyan-900` | `--tw-drop-shadow-color: color-cyan-900 token;` |
+| `drop-shadow-cyan-950` | `--tw-drop-shadow-color: color-cyan-950 token;` |
+| `drop-shadow-sky-50` | `--tw-drop-shadow-color: color-sky-50 token;` |
+| `drop-shadow-sky-100` | `--tw-drop-shadow-color: color-sky-100 token;` |
+| `drop-shadow-sky-200` | `--tw-drop-shadow-color: color-sky-200 token;` |
+| `drop-shadow-sky-300` | `--tw-drop-shadow-color: color-sky-300 token;` |
+| `drop-shadow-sky-400` | `--tw-drop-shadow-color: color-sky-400 token;` |
+| `drop-shadow-sky-500` | `--tw-drop-shadow-color: color-sky-500 token;` |
+| `drop-shadow-sky-600` | `--tw-drop-shadow-color: color-sky-600 token;` |
+| `drop-shadow-sky-700` | `--tw-drop-shadow-color: color-sky-700 token;` |
+| `drop-shadow-sky-800` | `--tw-drop-shadow-color: color-sky-800 token;` |
+| `drop-shadow-sky-900` | `--tw-drop-shadow-color: color-sky-900 token;` |
+| `drop-shadow-sky-950` | `--tw-drop-shadow-color: color-sky-950 token;` |
+| `drop-shadow-blue-50` | `--tw-drop-shadow-color: color-blue-50 token;` |
+| `drop-shadow-blue-100` | `--tw-drop-shadow-color: color-blue-100 token;` |
+| `drop-shadow-blue-200` | `--tw-drop-shadow-color: color-blue-200 token;` |
+| `drop-shadow-blue-300` | `--tw-drop-shadow-color: color-blue-300 token;` |
+| `drop-shadow-blue-400` | `--tw-drop-shadow-color: color-blue-400 token;` |
+| `drop-shadow-blue-500` | `--tw-drop-shadow-color: color-blue-500 token;` |
+| `drop-shadow-blue-600` | `--tw-drop-shadow-color: color-blue-600 token;` |
+| `drop-shadow-blue-700` | `--tw-drop-shadow-color: color-blue-700 token;` |
+| `drop-shadow-blue-800` | `--tw-drop-shadow-color: color-blue-800 token;` |
+| `drop-shadow-blue-900` | `--tw-drop-shadow-color: color-blue-900 token;` |
+| `drop-shadow-blue-950` | `--tw-drop-shadow-color: color-blue-950 token;` |
+| `drop-shadow-indigo-50` | `--tw-drop-shadow-color: color-indigo-50 token;` |
+| `drop-shadow-indigo-100` | `--tw-drop-shadow-color: color-indigo-100 token;` |
+| `drop-shadow-indigo-200` | `--tw-drop-shadow-color: color-indigo-200 token;` |
+| `drop-shadow-indigo-300` | `--tw-drop-shadow-color: color-indigo-300 token;` |
+| `drop-shadow-indigo-400` | `--tw-drop-shadow-color: color-indigo-400 token;` |
+| `drop-shadow-indigo-500` | `--tw-drop-shadow-color: color-indigo-500 token;` |
+| `drop-shadow-indigo-600` | `--tw-drop-shadow-color: color-indigo-600 token;` |
+| `drop-shadow-indigo-700` | `--tw-drop-shadow-color: color-indigo-700 token;` |
+| `drop-shadow-indigo-800` | `--tw-drop-shadow-color: color-indigo-800 token;` |
+| `drop-shadow-indigo-900` | `--tw-drop-shadow-color: color-indigo-900 token;` |
+| `drop-shadow-indigo-950` | `--tw-drop-shadow-color: color-indigo-950 token;` |
+| `drop-shadow-violet-50` | `--tw-drop-shadow-color: color-violet-50 token;` |
+| `drop-shadow-violet-100` | `--tw-drop-shadow-color: color-violet-100 token;` |
+| `drop-shadow-violet-200` | `--tw-drop-shadow-color: color-violet-200 token;` |
+| `drop-shadow-violet-300` | `--tw-drop-shadow-color: color-violet-300 token;` |
+| `drop-shadow-violet-400` | `--tw-drop-shadow-color: color-violet-400 token;` |
+| `drop-shadow-violet-500` | `--tw-drop-shadow-color: color-violet-500 token;` |
+| `drop-shadow-violet-600` | `--tw-drop-shadow-color: color-violet-600 token;` |
+| `drop-shadow-violet-700` | `--tw-drop-shadow-color: color-violet-700 token;` |
+| `drop-shadow-violet-800` | `--tw-drop-shadow-color: color-violet-800 token;` |
+| `drop-shadow-violet-900` | `--tw-drop-shadow-color: color-violet-900 token;` |
+| `drop-shadow-violet-950` | `--tw-drop-shadow-color: color-violet-950 token;` |
+| `drop-shadow-purple-50` | `--tw-drop-shadow-color: color-purple-50 token;` |
+| `drop-shadow-purple-100` | `--tw-drop-shadow-color: color-purple-100 token;` |
+| `drop-shadow-purple-200` | `--tw-drop-shadow-color: color-purple-200 token;` |
+| `drop-shadow-purple-300` | `--tw-drop-shadow-color: color-purple-300 token;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="filter-drop-shadow-0" width={608} height={220} alt="drop-shadow: Basic example" />
+
+```odin
+if ui.div("flex gap-10") {
+    for c in ([]string{"drop-shadow-md", "drop-shadow-lg", "drop-shadow-xl"}) {
+        ui.key(c)
+        shadow_card(c, c)
+    }
+}
+```

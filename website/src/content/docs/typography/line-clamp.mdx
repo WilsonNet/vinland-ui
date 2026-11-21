@@ -1,0 +1,31 @@
+---
+title: "line-clamp"
+description: "Utilities for clamping text to a specific number of lines. Tailwind-style line-clamp utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for clamping text to a specific number of lines.
+
+| Class | Effect |
+| --- | --- |
+| `line-clamp-<number>` | `overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: <number>;` |
+| `line-clamp-none` | `overflow: visible; display: block; -webkit-box-orient: horizontal; -webkit-line-clamp: unset;` |
+| `line-clamp-[<value>]` | `overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `line-clamp-<number>` to truncate text after a number of lines with an ellipsis.
+
+<Preview src="line-clamp-0" width={608} height={172} alt="line-clamp: Basic example" />
+
+```odin
+if ui.div("max-w-sm") {
+    ui.text("Boost your conversion rate", "text-lg font-semibold text-gray-950 dark:text-white")
+    ui.text("Nulla dolor velit adipisicing duis excepteur esse in duis nostrud occaecat mollit incididunt deserunt sunt. Ut ut sunt laborum ex occaecat eu tempor labore enim adipisicing minim ad. Est in quis eu dolore occaecat excepteur fugiat dolore nisi aliqua fugiat enim ut cillum.", "mt-2 line-clamp-3 text-sm/6 text-gray-600 dark:text-gray-400")
+}
+```

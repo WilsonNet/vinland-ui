@@ -1,0 +1,24 @@
+---
+title: "mask-clip"
+description: "Utilities for controlling the bounding box of an element's mask. Tailwind-style mask-clip utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the bounding box of an element's mask.
+
+| Class | Effect |
+| --- | --- |
+| `mask-clip-border` | `mask-clip: border-box;` |
+| `mask-clip-padding` | `mask-clip: padding-box;` |
+| `mask-clip-content` | `mask-clip: content-box;` |
+| `mask-clip-fill` | `mask-clip: fill-box;` |
+| `mask-clip-stroke` | `mask-clip: stroke-box;` |
+| `mask-clip-view` | `mask-clip: view-box;` |
+| `mask-no-clip` | `mask-clip: no-clip;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

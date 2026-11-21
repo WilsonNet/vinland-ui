@@ -1,0 +1,31 @@
+---
+title: "transition-duration"
+description: "Utilities for controlling the duration of CSS transitions. Tailwind-style transition-duration utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the duration of CSS transitions.
+
+| Class | Effect |
+| --- | --- |
+| `duration-<number>` | `transition-duration: <number>ms;` |
+| `duration-initial` | `transition-duration: initial;` |
+| `duration-[<value>]` | `transition-duration: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="transition-duration-0" width={608} height={144} alt="transition-duration: Basic example" />
+
+```odin
+if ui.div("flex gap-6") {
+    for c in ([]string{"duration-150", "duration-300", "duration-700", "duration-1000"}) {
+        ui.key(c)
+        ui.button(c, ui.cx("rounded-lg bg-sky-500 px-4 py-2 font-mono text-xs font-medium text-white transition hover:-translate-y-2 hover:bg-indigo-500", c))
+    }
+}
+```

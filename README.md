@@ -90,6 +90,13 @@ main :: proc() {
 odin build my_app -collection:vinland=path/to/vinland-ui
 ```
 
+## Website
+
+https://wilsonnet.github.io/vinland-ui/ is the showroom published as an Astro Starlight site:
+every page's text, tables and code are real HTML, example previews are captured from the native
+showroom, and the component showcase runs live in the browser through WebAssembly + WebGL2.
+See [`website/README.md`](website/README.md).
+
 ## The showroom
 
 `showroom/` is the documentation: every Tailwind docs page (184 utility pages plus guides), each

@@ -1,0 +1,28 @@
+---
+title: "font-style"
+description: "Utilities for controlling the style of text. Tailwind-style font-style utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the style of text.
+
+| Class | Effect |
+| --- | --- |
+| `italic` | `font-style: italic;` |
+| `not-italic` | `font-style: normal;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="font-style-0" width={608} height={184} alt="font-style: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-6") {
+    specimen("italic", "italic text-lg font-medium")
+    specimen("not-italic", "not-italic text-lg font-medium")
+}
+```

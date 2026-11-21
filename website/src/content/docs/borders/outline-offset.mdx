@@ -1,0 +1,56 @@
+---
+title: "outline-offset"
+description: "Utilities for controlling the offset of an element's outline. Tailwind-style outline-offset utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the offset of an element's outline.
+
+| Class | Effect |
+| --- | --- |
+| `outline-offset-<number>` | `outline-offset: <number>px;` |
+| `-outline-offset-<number>` | `outline-offset: calc(<number>px * -1);` |
+| `outline-offset-[<value>]` | `outline-offset: <value>;` |
+
+## Examples
+
+### Widths, colors and styles
+
+<Preview src="outline-offset-0" width={608} height={100} alt="outline-offset: Widths, colors and styles" />
+
+```odin
+if ui.div("flex flex-wrap gap-6") {
+    ui.button("outline", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline outline-sky-500 dark:text-white")
+    ui.button("outline-2", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline-2 outline-sky-500 dark:text-white")
+    ui.button("outline-dashed", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline-2 outline-pink-500 outline-dashed dark:text-white")
+}
+```
+
+### Offset
+
+<Preview src="outline-offset-1" width={608} height={96} alt="outline-offset: Offset" />
+
+```odin
+if ui.div("flex gap-8") {
+    for c in ([]string{"outline-offset-0", "outline-offset-2", "outline-offset-4"}) {
+        ui.key(c)
+        ui.button(c, ui.cx("rounded-md bg-indigo-500 px-4 py-2 font-mono text-xs font-medium text-white outline-2 outline-indigo-500", c))
+    }
+}
+```
+
+### Focus rings
+
+Press Tab while the preview is on screen: buttons show `focus-visible:` outlines only for keyboard focus.
+
+<Preview src="outline-offset-2" width={608} height={100} alt="outline-offset: Focus rings" />
+
+```odin
+if ui.div("flex gap-4") {
+    ui.button("First", "rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-white dark:text-gray-950")
+    ui.button("Second", "rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-white dark:text-gray-950")
+}
+```

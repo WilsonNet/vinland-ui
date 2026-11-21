@@ -1,0 +1,21 @@
+---
+title: "mask-composite"
+description: "Utilities for controlling how multiple masks are combined together. Tailwind-style mask-composite utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how multiple masks are combined together.
+
+| Class | Effect |
+| --- | --- |
+| `mask-add` | `mask-composite: add;` |
+| `mask-subtract` | `mask-composite: subtract;` |
+| `mask-intersect` | `mask-composite: intersect;` |
+| `mask-exclude` | `mask-composite: exclude;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

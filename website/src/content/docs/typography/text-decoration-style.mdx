@@ -1,0 +1,33 @@
+---
+title: "text-decoration-style"
+description: "Utilities for controlling the style of text decorations. Tailwind-style text-decoration-style utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 19
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the style of text decorations.
+
+| Class | Effect |
+| --- | --- |
+| `decoration-solid` | `text-decoration-style: solid;` |
+| `decoration-double` | `text-decoration-style: double;` |
+| `decoration-dotted` | `text-decoration-style: dotted;` |
+| `decoration-dashed` | `text-decoration-style: dashed;` |
+| `decoration-wavy` | `text-decoration-style: wavy;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-decoration-style-0" width={608} height={384} alt="text-decoration-style: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"decoration-solid", "decoration-double", "decoration-dotted", "decoration-dashed", "decoration-wavy"}) {
+        ui.key(c)
+        specimen(c, ui.cx("text-lg font-medium underline decoration-sky-500 underline-offset-4", c))
+    }
+}
+```

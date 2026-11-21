@@ -1,0 +1,42 @@
+---
+title: "grid-row"
+description: "Utilities for controlling how elements are sized and placed across grid rows. Tailwind-style grid-row utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how elements are sized and placed across grid rows.
+
+| Class | Effect |
+| --- | --- |
+| `row-span-<number>` | `grid-row: span <number> / span <number>;` |
+| `row-span-full` | `grid-row: 1 / -1;` |
+| `row-span-[<value>]` | `grid-row: span <value> / span <value>;` |
+| `row-start-<number>` | `grid-row-start: <number>;` |
+| `-row-start-<number>` | `grid-row-start: calc(<number> * -1);` |
+| `row-start-auto` | `grid-row-start: auto;` |
+| `row-start-[<value>]` | `grid-row-start: <value>;` |
+| `row-end-<number>` | `grid-row-end: <number>;` |
+| `-row-end-<number>` | `grid-row-end: calc(<number> * -1);` |
+| `row-end-auto` | `grid-row-end: auto;` |
+| `row-end-[<value>]` | `grid-row-end: <value>;` |
+| `row-auto` | `grid-row: auto;` |
+| `row-<number>` | `grid-row: <number>;` |
+| `-row-<number>` | `grid-row: calc(<number> * -1);` |
+| `row-[<value>]` | `grid-row: <value>;` |
+
+## Examples
+
+### Spanning rows
+
+<Preview src="grid-row-0" width={608} height={184} alt="grid-row: Spanning rows" />
+
+```odin
+if ui.div("grid grid-flow-col grid-rows-3 gap-4") {
+    tile("01", "row-span-3")
+    tile("02", "col-span-2")
+    tile("03", "col-span-2 row-span-2")
+}
+```

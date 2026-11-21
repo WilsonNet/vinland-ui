@@ -1,0 +1,76 @@
+---
+title: "Theme tokens"
+description: "Every utility resolves through a Theme. Change the tokens and the whole app follows, without touching component code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Every utility resolves through a Theme. Change the tokens and the whole app follows, without touching component code.
+
+The `Theme` struct is the single source of truth: spacing unit, colors, radii, shadows, type scale, weights, tracking, leading, breakpoints, container widths, blur and easing curves. Utilities read from it at parse time; changing a token invalidates the class cache.
+
+## Defining tokens in code
+
+```odin
+t := &ctx.theme
+ui.theme_set_color(t, "brand", ui.rgb(0x7c3aed), ui.rgb(0xa78bfa))
+t.radius["card"] = 14
+t.spacing = 4                          // p-1 = 4px
+ui.theme_changed()
+
+ui.div("rounded-card bg-brand p-6")
+```
+
+## Loading a theme file
+
+Themes can live outside the binary. `ui.theme_load_json` merges a JSON file into the current theme, which makes it possible to re-skin a shipped app.
+
+```odin
+{
+  "name": "dusk",
+  "colors": {
+    "brand":  { "light": "violet-600", "dark": "#a78bfa" },
+    "canvas": { "light": "#ffffff",    "dark": "gray-950" }
+  },
+  "radius":      { "card": 14 },
+  "breakpoints": { "md": 760 },
+  "fonts":       { "sans": "Inter" }
+}
+```
+
+## Live token swap
+
+This example changes one token, `accent`, which the whole showroom chrome uses. Watch the sidebar marker and the logo change.
+
+<Preview src="theme-tokens-0" width={608} height={96} alt="Theme tokens: Live token swap" />
+
+```odin
+if ui.div("flex flex-wrap justify-center gap-3") {
+    for fam in ([]string{"violet", "sky", "emerald", "rose", "amber"}) {
+        ui.key(fam)
+        if ui.button_box("flex items-center gap-2 rounded-full py-1.5 pr-4 pl-2 text-sm font-medium text-gray-700 ring-1 ring-gray-950/10 hover:bg-gray-50 dark:text-gray-200 dark:ring-white/15 dark:hover:bg-white/5") {
+            ui.el(fmt.tprintf("size-5 rounded-full bg-%s-500", fam))
+            ui.text(fam)
+            if ui.clicked() {
+                t := ui.theme()
+                ui.theme_set_color(t, "accent", t.colors[fmt.tprintf("%s-600", fam)].light, t.colors[fmt.tprintf("%s-400", fam)].light)
+                ui.theme_set_color(t, "accent-soft", ui.with_alpha(t.colors[fmt.tprintf("%s-500", fam)].light, 0.1), ui.with_alpha(t.colors[fmt.tprintf("%s-400", fam)].light, 0.15))
+            }
+        }
+    }
+}
+```
+
+## Default scales
+
+| Class | Effect |
+| --- | --- |
+| `spacing` | `4px per step: p-1 = 4px, p-4 = 16px` |
+| `text-xs … text-9xl` | `12px … 128px with paired line heights` |
+| `rounded-xs … rounded-4xl` | `2px … 32px, rounded-full` |
+| `shadow-2xs … shadow-2xl` | `layered elevation shadows` |
+| `sm md lg xl 2xl` | `640 768 1024 1280 1536px` |
+| `font-thin … font-black` | `100 … 900` |
+| `ease-in / ease-out / ease-in-out` | `cubic-bezier curves` |

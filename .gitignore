@@ -6,3 +6,7 @@ build/
 .impeccable/mocks/
 .impeccable/review/
 *.log
+!website/public/*.png
+website/node_modules/
+website/dist/
+website/.astro/

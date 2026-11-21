@@ -1,0 +1,84 @@
+---
+title: "align-self"
+description: "Utilities for controlling how an individual flex or grid item is positioned along its container's cross axis. Tailwind-style align-self utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 21
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an individual flex or grid item is positioned along its container's cross axis.
+
+| Class | Effect |
+| --- | --- |
+| `self-auto` | `align-self: auto;` |
+| `self-start` | `align-self: flex-start;` |
+| `self-end` | `align-self: flex-end;` |
+| `self-end-safe` | `align-self: safe flex-end;` |
+| `self-center` | `align-self: center;` |
+| `self-center-safe` | `align-self: safe center;` |
+| `self-stretch` | `align-self: stretch;` |
+| `self-baseline` | `align-self: baseline;` |
+| `self-baseline-last` | `align-self: last baseline;` |
+
+## Examples
+
+### self-auto
+
+<Preview src="align-self-0" width={608} height={224} alt="align-self: self-auto" />
+
+```odin
+if ui.div("flex h-40 items-stretch gap-4 rounded-lg bg-stripes stripes-violet-500/25") {
+    tile("01", "flex-1")
+    tile("02", ui.cx("flex-1", c))
+    tile("03", "flex-1")
+}
+```
+
+### self-start
+
+<Preview src="align-self-1" width={608} height={224} alt="align-self: self-start" />
+
+```odin
+if ui.div("flex h-40 items-stretch gap-4 rounded-lg bg-stripes stripes-violet-500/25") {
+    tile("01", "flex-1")
+    tile("02", ui.cx("flex-1", c))
+    tile("03", "flex-1")
+}
+```
+
+### self-center
+
+<Preview src="align-self-2" width={608} height={224} alt="align-self: self-center" />
+
+```odin
+if ui.div("flex h-40 items-stretch gap-4 rounded-lg bg-stripes stripes-violet-500/25") {
+    tile("01", "flex-1")
+    tile("02", ui.cx("flex-1", c))
+    tile("03", "flex-1")
+}
+```
+
+### self-end
+
+<Preview src="align-self-3" width={608} height={224} alt="align-self: self-end" />
+
+```odin
+if ui.div("flex h-40 items-stretch gap-4 rounded-lg bg-stripes stripes-violet-500/25") {
+    tile("01", "flex-1")
+    tile("02", ui.cx("flex-1", c))
+    tile("03", "flex-1")
+}
+```
+
+### self-stretch
+
+<Preview src="align-self-4" width={608} height={224} alt="align-self: self-stretch" />
+
+```odin
+if ui.div("flex h-40 items-stretch gap-4 rounded-lg bg-stripes stripes-violet-500/25") {
+    tile("01", "flex-1")
+    tile("02", ui.cx("flex-1", c))
+    tile("03", "flex-1")
+}
+```

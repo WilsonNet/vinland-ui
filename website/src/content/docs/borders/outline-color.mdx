@@ -1,0 +1,213 @@
+---
+title: "outline-color"
+description: "Utilities for controlling the color of an element's outline. Tailwind-style outline-color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the color of an element's outline.
+
+| Class | Effect |
+| --- | --- |
+| `outline-inherit` | `outline-color: inherit;` |
+| `outline-current` | `outline-color: currentColor;` |
+| `outline-transparent` | `outline-color: transparent;` |
+| `outline-black` | `outline-color: #000;` |
+| `outline-white` | `outline-color: #fff;` |
+| `outline-red-50` | `outline-color: color-red-50 token;` |
+| `outline-red-100` | `outline-color: color-red-100 token;` |
+| `outline-red-200` | `outline-color: color-red-200 token;` |
+| `outline-red-300` | `outline-color: color-red-300 token;` |
+| `outline-red-400` | `outline-color: color-red-400 token;` |
+| `outline-red-500` | `outline-color: color-red-500 token;` |
+| `outline-red-600` | `outline-color: color-red-600 token;` |
+| `outline-red-700` | `outline-color: color-red-700 token;` |
+| `outline-red-800` | `outline-color: color-red-800 token;` |
+| `outline-red-900` | `outline-color: color-red-900 token;` |
+| `outline-red-950` | `outline-color: color-red-950 token;` |
+| `outline-orange-50` | `outline-color: color-orange-50 token;` |
+| `outline-orange-100` | `outline-color: color-orange-100 token;` |
+| `outline-orange-200` | `outline-color: color-orange-200 token;` |
+| `outline-orange-300` | `outline-color: color-orange-300 token;` |
+| `outline-orange-400` | `outline-color: color-orange-400 token;` |
+| `outline-orange-500` | `outline-color: color-orange-500 token;` |
+| `outline-orange-600` | `outline-color: color-orange-600 token;` |
+| `outline-orange-700` | `outline-color: color-orange-700 token;` |
+| `outline-orange-800` | `outline-color: color-orange-800 token;` |
+| `outline-orange-900` | `outline-color: color-orange-900 token;` |
+| `outline-orange-950` | `outline-color: color-orange-950 token;` |
+| `outline-amber-50` | `outline-color: color-amber-50 token;` |
+| `outline-amber-100` | `outline-color: color-amber-100 token;` |
+| `outline-amber-200` | `outline-color: color-amber-200 token;` |
+| `outline-amber-300` | `outline-color: color-amber-300 token;` |
+| `outline-amber-400` | `outline-color: color-amber-400 token;` |
+| `outline-amber-500` | `outline-color: color-amber-500 token;` |
+| `outline-amber-600` | `outline-color: color-amber-600 token;` |
+| `outline-amber-700` | `outline-color: color-amber-700 token;` |
+| `outline-amber-800` | `outline-color: color-amber-800 token;` |
+| `outline-amber-900` | `outline-color: color-amber-900 token;` |
+| `outline-amber-950` | `outline-color: color-amber-950 token;` |
+| `outline-yellow-50` | `outline-color: color-yellow-50 token;` |
+| `outline-yellow-100` | `outline-color: color-yellow-100 token;` |
+| `outline-yellow-200` | `outline-color: color-yellow-200 token;` |
+| `outline-yellow-300` | `outline-color: color-yellow-300 token;` |
+| `outline-yellow-400` | `outline-color: color-yellow-400 token;` |
+| `outline-yellow-500` | `outline-color: color-yellow-500 token;` |
+| `outline-yellow-600` | `outline-color: color-yellow-600 token;` |
+| `outline-yellow-700` | `outline-color: color-yellow-700 token;` |
+| `outline-yellow-800` | `outline-color: color-yellow-800 token;` |
+| `outline-yellow-900` | `outline-color: color-yellow-900 token;` |
+| `outline-yellow-950` | `outline-color: color-yellow-950 token;` |
+| `outline-lime-50` | `outline-color: color-lime-50 token;` |
+| `outline-lime-100` | `outline-color: color-lime-100 token;` |
+| `outline-lime-200` | `outline-color: color-lime-200 token;` |
+| `outline-lime-300` | `outline-color: color-lime-300 token;` |
+| `outline-lime-400` | `outline-color: color-lime-400 token;` |
+| `outline-lime-500` | `outline-color: color-lime-500 token;` |
+| `outline-lime-600` | `outline-color: color-lime-600 token;` |
+| `outline-lime-700` | `outline-color: color-lime-700 token;` |
+| `outline-lime-800` | `outline-color: color-lime-800 token;` |
+| `outline-lime-900` | `outline-color: color-lime-900 token;` |
+| `outline-lime-950` | `outline-color: color-lime-950 token;` |
+| `outline-green-50` | `outline-color: color-green-50 token;` |
+| `outline-green-100` | `outline-color: color-green-100 token;` |
+| `outline-green-200` | `outline-color: color-green-200 token;` |
+| `outline-green-300` | `outline-color: color-green-300 token;` |
+| `outline-green-400` | `outline-color: color-green-400 token;` |
+| `outline-green-500` | `outline-color: color-green-500 token;` |
+| `outline-green-600` | `outline-color: color-green-600 token;` |
+| `outline-green-700` | `outline-color: color-green-700 token;` |
+| `outline-green-800` | `outline-color: color-green-800 token;` |
+| `outline-green-900` | `outline-color: color-green-900 token;` |
+| `outline-green-950` | `outline-color: color-green-950 token;` |
+| `outline-emerald-50` | `outline-color: color-emerald-50 token;` |
+| `outline-emerald-100` | `outline-color: color-emerald-100 token;` |
+| `outline-emerald-200` | `outline-color: color-emerald-200 token;` |
+| `outline-emerald-300` | `outline-color: color-emerald-300 token;` |
+| `outline-emerald-400` | `outline-color: color-emerald-400 token;` |
+| `outline-emerald-500` | `outline-color: color-emerald-500 token;` |
+| `outline-emerald-600` | `outline-color: color-emerald-600 token;` |
+| `outline-emerald-700` | `outline-color: color-emerald-700 token;` |
+| `outline-emerald-800` | `outline-color: color-emerald-800 token;` |
+| `outline-emerald-900` | `outline-color: color-emerald-900 token;` |
+| `outline-emerald-950` | `outline-color: color-emerald-950 token;` |
+| `outline-teal-50` | `outline-color: color-teal-50 token;` |
+| `outline-teal-100` | `outline-color: color-teal-100 token;` |
+| `outline-teal-200` | `outline-color: color-teal-200 token;` |
+| `outline-teal-300` | `outline-color: color-teal-300 token;` |
+| `outline-teal-400` | `outline-color: color-teal-400 token;` |
+| `outline-teal-500` | `outline-color: color-teal-500 token;` |
+| `outline-teal-600` | `outline-color: color-teal-600 token;` |
+| `outline-teal-700` | `outline-color: color-teal-700 token;` |
+| `outline-teal-800` | `outline-color: color-teal-800 token;` |
+| `outline-teal-900` | `outline-color: color-teal-900 token;` |
+| `outline-teal-950` | `outline-color: color-teal-950 token;` |
+| `outline-cyan-50` | `outline-color: color-cyan-50 token;` |
+| `outline-cyan-100` | `outline-color: color-cyan-100 token;` |
+| `outline-cyan-200` | `outline-color: color-cyan-200 token;` |
+| `outline-cyan-300` | `outline-color: color-cyan-300 token;` |
+| `outline-cyan-400` | `outline-color: color-cyan-400 token;` |
+| `outline-cyan-500` | `outline-color: color-cyan-500 token;` |
+| `outline-cyan-600` | `outline-color: color-cyan-600 token;` |
+| `outline-cyan-700` | `outline-color: color-cyan-700 token;` |
+| `outline-cyan-800` | `outline-color: color-cyan-800 token;` |
+| `outline-cyan-900` | `outline-color: color-cyan-900 token;` |
+| `outline-cyan-950` | `outline-color: color-cyan-950 token;` |
+| `outline-sky-50` | `outline-color: color-sky-50 token;` |
+| `outline-sky-100` | `outline-color: color-sky-100 token;` |
+| `outline-sky-200` | `outline-color: color-sky-200 token;` |
+| `outline-sky-300` | `outline-color: color-sky-300 token;` |
+| `outline-sky-400` | `outline-color: color-sky-400 token;` |
+| `outline-sky-500` | `outline-color: color-sky-500 token;` |
+| `outline-sky-600` | `outline-color: color-sky-600 token;` |
+| `outline-sky-700` | `outline-color: color-sky-700 token;` |
+| `outline-sky-800` | `outline-color: color-sky-800 token;` |
+| `outline-sky-900` | `outline-color: color-sky-900 token;` |
+| `outline-sky-950` | `outline-color: color-sky-950 token;` |
+| `outline-blue-50` | `outline-color: color-blue-50 token;` |
+| `outline-blue-100` | `outline-color: color-blue-100 token;` |
+| `outline-blue-200` | `outline-color: color-blue-200 token;` |
+| `outline-blue-300` | `outline-color: color-blue-300 token;` |
+| `outline-blue-400` | `outline-color: color-blue-400 token;` |
+| `outline-blue-500` | `outline-color: color-blue-500 token;` |
+| `outline-blue-600` | `outline-color: color-blue-600 token;` |
+| `outline-blue-700` | `outline-color: color-blue-700 token;` |
+| `outline-blue-800` | `outline-color: color-blue-800 token;` |
+| `outline-blue-900` | `outline-color: color-blue-900 token;` |
+| `outline-blue-950` | `outline-color: color-blue-950 token;` |
+| `outline-indigo-50` | `outline-color: color-indigo-50 token;` |
+| `outline-indigo-100` | `outline-color: color-indigo-100 token;` |
+| `outline-indigo-200` | `outline-color: color-indigo-200 token;` |
+| `outline-indigo-300` | `outline-color: color-indigo-300 token;` |
+| `outline-indigo-400` | `outline-color: color-indigo-400 token;` |
+| `outline-indigo-500` | `outline-color: color-indigo-500 token;` |
+| `outline-indigo-600` | `outline-color: color-indigo-600 token;` |
+| `outline-indigo-700` | `outline-color: color-indigo-700 token;` |
+| `outline-indigo-800` | `outline-color: color-indigo-800 token;` |
+| `outline-indigo-900` | `outline-color: color-indigo-900 token;` |
+| `outline-indigo-950` | `outline-color: color-indigo-950 token;` |
+| `outline-violet-50` | `outline-color: color-violet-50 token;` |
+| `outline-violet-100` | `outline-color: color-violet-100 token;` |
+| `outline-violet-200` | `outline-color: color-violet-200 token;` |
+| `outline-violet-300` | `outline-color: color-violet-300 token;` |
+| `outline-violet-400` | `outline-color: color-violet-400 token;` |
+| `outline-violet-500` | `outline-color: color-violet-500 token;` |
+| `outline-violet-600` | `outline-color: color-violet-600 token;` |
+| `outline-violet-700` | `outline-color: color-violet-700 token;` |
+| `outline-violet-800` | `outline-color: color-violet-800 token;` |
+| `outline-violet-900` | `outline-color: color-violet-900 token;` |
+| `outline-violet-950` | `outline-color: color-violet-950 token;` |
+| `outline-purple-50` | `outline-color: color-purple-50 token;` |
+| `outline-purple-100` | `outline-color: color-purple-100 token;` |
+| `outline-purple-200` | `outline-color: color-purple-200 token;` |
+| `outline-purple-300` | `outline-color: color-purple-300 token;` |
+| `outline-purple-400` | `outline-color: color-purple-400 token;` |
+| `outline-purple-500` | `outline-color: color-purple-500 token;` |
+| `outline-purple-600` | `outline-color: color-purple-600 token;` |
+| `outline-purple-700` | `outline-color: color-purple-700 token;` |
+| `outline-purple-800` | `outline-color: color-purple-800 token;` |
+| `outline-purple-900` | `outline-color: color-purple-900 token;` |
+| `outline-purple-950` | `outline-color: color-purple-950 token;` |
+| `outline-fuchsia-50` | `outline-color: color-fuchsia-50 token;` |
+
+## Examples
+
+### Widths, colors and styles
+
+<Preview src="outline-color-0" width={608} height={100} alt="outline-color: Widths, colors and styles" />
+
+```odin
+if ui.div("flex flex-wrap gap-6") {
+    ui.button("outline", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline outline-sky-500 dark:text-white")
+    ui.button("outline-2", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline-2 outline-sky-500 dark:text-white")
+    ui.button("outline-dashed", "rounded-md px-4 py-2 text-sm font-medium text-gray-900 outline-2 outline-pink-500 outline-dashed dark:text-white")
+}
+```
+
+### Offset
+
+<Preview src="outline-color-1" width={608} height={96} alt="outline-color: Offset" />
+
+```odin
+if ui.div("flex gap-8") {
+    for c in ([]string{"outline-offset-0", "outline-offset-2", "outline-offset-4"}) {
+        ui.key(c)
+        ui.button(c, ui.cx("rounded-md bg-indigo-500 px-4 py-2 font-mono text-xs font-medium text-white outline-2 outline-indigo-500", c))
+    }
+}
+```
+
+### Focus rings
+
+Press Tab while the preview is on screen: buttons show `focus-visible:` outlines only for keyboard focus.
+
+<Preview src="outline-color-2" width={608} height={100} alt="outline-color: Focus rings" />
+
+```odin
+if ui.div("flex gap-4") {
+    ui.button("First", "rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-white dark:text-gray-950")
+    ui.button("Second", "rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-white dark:text-gray-950")
+}
+```

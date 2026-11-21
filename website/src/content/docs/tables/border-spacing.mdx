@@ -1,0 +1,29 @@
+---
+title: "border-spacing"
+description: "Utilities for controlling the spacing between table borders. Tailwind-style border-spacing utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the spacing between table borders.
+
+| Class | Effect |
+| --- | --- |
+| `border-spacing-<number>` | `border-spacing: calc(var(--spacing) * <number>);` |
+| `border-spacing-px` | `border-spacing: 1px;` |
+| `border-spacing-[<value>]` | `border-spacing: <value>;` |
+| `border-spacing-x-<number>` | `border-spacing: calc(var(--spacing) * <number>) var(--tw-border-spacing-y);` |
+| `border-spacing-x-px` | `border-spacing: 1px var(--tw-border-spacing-y);` |
+| `border-spacing-x-[<value>]` | `border-spacing: <value> var(--tw-border-spacing-y);` |
+| `border-spacing-y-<number>` | `border-spacing: var(--tw-border-spacing-x) calc(var(--spacing) * <number>);` |
+| `border-spacing-y-px` | `border-spacing: var(--tw-border-spacing-x) 1px;` |
+| `border-spacing-y-[<value>]` | `border-spacing: var(--tw-border-spacing-x) <value>;` |
+| `Indiana` | `Indianapolis` |
+| `Ohio` | `Columbus` |
+| `Michigan` | `Detroit` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

@@ -1,0 +1,19 @@
+---
+title: "font-smoothing"
+description: "Utilities for controlling the font smoothing of an element. Tailwind-style font-smoothing utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the font smoothing of an element.
+
+| Class | Effect |
+| --- | --- |
+| `antialiased` | `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;` |
+| `subpixel-antialiased` | `-webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

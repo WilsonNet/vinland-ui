@@ -1,0 +1,41 @@
+---
+title: "visibility"
+description: "Utilities for controlling the visibility of an element. Tailwind-style visibility utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 18
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the visibility of an element.
+
+| Class | Effect |
+| --- | --- |
+| `visible` | `visibility: visible;` |
+| `invisible` | `visibility: hidden;` |
+| `collapse` | `visibility: collapse;` |
+| `#100` | `Pendant Publishing` |
+| `#101` | `Kruger Industrial Smoothing` |
+| `#102` | `J. Peterman` |
+| `#100` | `Pendant Publishing` |
+| `#101` | `Kruger Industrial Smoothing` |
+| `#102` | `J. Peterman` |
+| `#100` | `Pendant Publishing` |
+| `#101` | `Kruger Industrial Smoothing` |
+| `#102` | `J. Peterman` |
+
+## Examples
+
+### Making elements invisible
+
+Use `invisible` to hide an element while it still takes up space.
+
+<Preview src="visibility-0" width={608} height={116} alt="visibility: Making elements invisible" />
+
+```odin
+if ui.div("grid grid-cols-3 gap-4") {
+    tile("01")
+    tile("02", "invisible")
+    tile("03")
+}
+```

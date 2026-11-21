@@ -1,0 +1,44 @@
+---
+title: "max-height"
+description: "Utilities for setting the maximum height of an element. Tailwind-style max-height utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the maximum height of an element.
+
+| Class | Effect |
+| --- | --- |
+| `max-h-<number>` | `max-height: calc(var(--spacing) * <number>);` |
+| `max-h-<fraction>` | `max-height: calc(<fraction> * 100%);` |
+| `max-h-none` | `max-height: none;` |
+| `max-h-px` | `max-height: 1px;` |
+| `max-h-full` | `max-height: 100%;` |
+| `max-h-screen` | `max-height: 100vh;` |
+| `max-h-dvh` | `max-height: 100dvh;` |
+| `max-h-dvw` | `max-height: 100dvw;` |
+| `max-h-lvh` | `max-height: 100lvh;` |
+| `max-h-lvw` | `max-height: 100lvw;` |
+| `max-h-svh` | `max-height: 100svh;` |
+| `max-h-svw` | `max-height: 100svw;` |
+| `max-h-min` | `max-height: min-content;` |
+| `max-h-max` | `max-height: max-content;` |
+| `max-h-fit` | `max-height: fit-content;` |
+| `max-h-lh` | `max-height: 1lh;` |
+| `max-h-[<value>]` | `max-height: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="max-height-0" width={608} height={288} alt="max-height: Basic example" />
+
+```odin
+if ui.div("flex h-56 items-start gap-4") {
+    tile("max-h-24", "h-full max-h-24 w-24")
+    tile("max-h-40", "h-full max-h-40 w-24")
+    tile("max-h-full", "h-full max-h-full w-24")
+}
+```

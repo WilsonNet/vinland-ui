@@ -1,0 +1,56 @@
+---
+title: "Introduction"
+description: "vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density.
+
+<Preview src="introduction-0" width={608} height={236} alt="Introduction: Introduction" />
+
+```odin
+if ui.div("w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10") {
+    if ui.div("flex items-center gap-4") {
+        if ui.div("flex size-12 shrink-0 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-500/20") {
+            ui.icon(IC.sparkles, "size-6 text-violet-600 dark:text-violet-300")
+        }
+        if ui.div("min-w-0") {
+            ui.text("Ship it natively", "text-base font-semibold text-gray-950 dark:text-white")
+            ui.text("One binary, no webview, sharp text.", "text-sm text-gray-500 dark:text-gray-400")
+        }
+    }
+    if ui.div("mt-6 flex gap-3") {
+        ui.button("Get started", "flex-1 rounded-lg bg-violet-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-violet-500")
+        ui.button("Docs", "rounded-lg px-3 py-2 text-sm font-semibold text-gray-950 ring-1 ring-gray-950/10 transition-colors hover:bg-gray-50 dark:text-white dark:ring-white/15 dark:hover:bg-white/5")
+    }
+}
+```
+
+## What it is
+
+A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 and OpenGL 3.3 that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.
+
+The core never draws anything on its own. A `ui.div` is an empty box until you give it classes, so the look of an app lives entirely in your code and in your theme.
+
+## How it reads
+
+Containers open with `if ui.div("...") { }` and close automatically at the end of the block. Leaves such as `ui.text`, `ui.icon` and `ui.el` take a class string. Interaction is queried where you build: `ui.clicked()`, `ui.hovered()` and friends refer to the element you are inside.
+
+```odin
+count := 0
+for app.next_frame(&a) {
+    if ui.div("flex h-full items-center justify-center bg-gray-50") {
+        if ui.button(fmt.tprintf("Clicked %d times", count), "rounded-full bg-gray-950 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800") {
+            count += 1
+        }
+    }
+    app.end_frame(&a)
+}
+```
+
+## Inspiration
+
+Jetpack Compose showed that UI can live in the host language. Flutter showed the value of owning the renderer end to end. Quickshell showed how good small desktop widgets can feel when animation is cheap. Tailwind CSS supplied the vocabulary: if you know Tailwind, you already know how to style vinland-ui.

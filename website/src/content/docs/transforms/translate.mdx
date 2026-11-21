@@ -1,0 +1,65 @@
+---
+title: "translate"
+description: "Utilities for translating elements. Tailwind-style translate utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for translating elements.
+
+| Class | Effect |
+| --- | --- |
+| `translate-<number>` | `translate: calc(var(--spacing) * <number>) calc(var(--spacing) * <number>);` |
+| `-translate-<number>` | `translate: calc(var(--spacing) * -<number>) calc(var(--spacing) * -<number>);` |
+| `translate-<fraction>` | `translate: calc(<fraction> * 100%) calc(<fraction> * 100%);` |
+| `-translate-<fraction>` | `translate: calc(<fraction> * -100%) calc(<fraction> * -100%);` |
+| `translate-full` | `translate: 100% 100%;` |
+| `-translate-full` | `translate: -100% -100%;` |
+| `translate-px` | `translate: 1px 1px;` |
+| `-translate-px` | `translate: -1px -1px;` |
+| `translate-[<value>]` | `translate: <value> <value>;` |
+| `translate-x-<number>` | `translate: calc(var(--spacing) * <number>) var(--tw-translate-y);` |
+| `-translate-x-<number>` | `translate: calc(var(--spacing) * -<number>) var(--tw-translate-y);` |
+| `translate-x-<fraction>` | `translate: calc(<fraction> * 100%) var(--tw-translate-y);` |
+| `-translate-x-<fraction>` | `translate: calc(<fraction> * -100%) var(--tw-translate-y);` |
+| `translate-x-full` | `translate: 100% var(--tw-translate-y);` |
+| `-translate-x-full` | `translate: -100% var(--tw-translate-y);` |
+| `translate-x-px` | `translate: 1px var(--tw-translate-y);` |
+| `-translate-x-px` | `translate: -1px var(--tw-translate-y);` |
+| `translate-x-[<value>]` | `translate: <value> var(--tw-translate-y);` |
+| `translate-y-<number>` | `translate: var(--tw-translate-x) calc(var(--spacing) * <number>);` |
+| `-translate-y-<number>` | `translate: var(--tw-translate-x) calc(var(--spacing) * -<number>);` |
+| `translate-y-<fraction>` | `translate: var(--tw-translate-x) calc(<fraction> * 100%);` |
+| `-translate-y-<fraction>` | `translate: var(--tw-translate-x) calc(<fraction> * -100%);` |
+| `translate-y-full` | `translate: var(--tw-translate-x) 100%;` |
+| `-translate-y-full` | `translate: var(--tw-translate-x) -100%;` |
+| `translate-y-px` | `translate: var(--tw-translate-x) 1px;` |
+| `-translate-y-px` | `translate: var(--tw-translate-x) -1px;` |
+| `translate-y-[<value>]` | `translate: var(--tw-translate-x) <value>;` |
+| `translate-z-<number>` | `translate: var(--tw-translate-x) var(--tw-translate-y) calc(var(--spacing) * <number>);` |
+| `-translate-z-<number>` | `translate: var(--tw-translate-x) var(--tw-translate-y) calc(var(--spacing) * -<number>);` |
+| `translate-z-px` | `translate: var(--tw-translate-x) var(--tw-translate-y) 1px;` |
+| `-translate-z-px` | `translate: var(--tw-translate-x) var(--tw-translate-y) -1px;` |
+| `translate-z-[<value>]` | `translate: var(--tw-translate-x) var(--tw-translate-y) <value>;` |
+| `translate-none` | `translate: none;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="translate-0" width={608} height={224} alt="translate: Basic example" />
+
+```odin
+if ui.div("flex gap-10") {
+    for c in ([]string{"-translate-2", "translate-2", "translate-x-4", "-translate-y-4"}) {
+        ui.key(c)
+        transform_tile(c, c)
+    }
+}
+```
+
+### Using percentages
+
+Percent translations are relative to the element's own size: `-translate-x-1/2`.

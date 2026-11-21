@@ -1,0 +1,23 @@
+---
+title: "clear"
+description: "Utilities for controlling the wrapping of content around an element. Tailwind-style clear utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the wrapping of content around an element.
+
+| Class | Effect |
+| --- | --- |
+| `clear-left` | `clear: left;` |
+| `clear-right` | `clear: right;` |
+| `clear-both` | `clear: both;` |
+| `clear-start` | `clear: inline-start;` |
+| `clear-end` | `clear: inline-end;` |
+| `clear-none` | `clear: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

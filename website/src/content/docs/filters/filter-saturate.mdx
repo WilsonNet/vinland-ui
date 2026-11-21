@@ -1,0 +1,43 @@
+---
+title: "saturate"
+description: "Utilities for applying saturation filters to an element. Tailwind-style saturate utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying saturation filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `saturate-<number>` | `filter: saturate(<number>%);` |
+| `saturate-[<value>]` | `filter: saturate(<value>);` |
+
+## Examples
+
+### Color filters
+
+Color filters compile into a 4×5 color matrix applied by the shader to the element and its children: `grayscale`, `sepia`, `invert`, `brightness-*`, `contrast-*`, `saturate-*`, `hue-rotate-*`.
+
+<Preview src="filter-saturate-0" width={608} height={352} alt="saturate: Color filters" />
+
+```odin
+if ui.div("grid grid-cols-4 gap-4") {
+    for c in ([]string{"", "grayscale", "sepia", "invert", "brightness-125", "contrast-150", "saturate-200", "hue-rotate-90"}) {
+        ui.key(c)
+        if ui.div("flex flex-col items-center gap-2") {
+            ui.image(DEMO_IMAGE, ui.cx("size-28 rounded-lg object-cover", c))
+            ui.text(c == "" ? "none" : c, "font-mono text-xs text-gray-500 dark:text-gray-400")
+        }
+    }
+}
+```
+
+### Applying on hover
+
+<Preview src="filter-saturate-1" width={608} height={224} alt="saturate: Applying on hover" />
+
+```odin
+ui.image(DEMO_IMAGE, "h-40 w-64 rounded-lg object-cover grayscale transition hover:grayscale-0")
+```

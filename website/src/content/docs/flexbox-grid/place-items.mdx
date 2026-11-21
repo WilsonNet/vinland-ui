@@ -1,0 +1,74 @@
+---
+title: "place-items"
+description: "Utilities for controlling how items are justified and aligned at the same time. Tailwind-style place-items utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 23
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how items are justified and aligned at the same time.
+
+| Class | Effect |
+| --- | --- |
+| `place-items-start` | `place-items: start;` |
+| `place-items-end` | `place-items: end;` |
+| `place-items-end-safe` | `place-items: safe end;` |
+| `place-items-center` | `place-items: center;` |
+| `place-items-center-safe` | `place-items: safe center;` |
+| `place-items-baseline` | `place-items: baseline;` |
+| `place-items-stretch` | `place-items: stretch;` |
+
+## Examples
+
+### place-items-start
+
+<Preview src="place-items-0" width={608} height={288} alt="place-items: place-items-start" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "place-items-stretch" ? "" : "size-14")
+    }
+}
+```
+
+### place-items-center
+
+<Preview src="place-items-1" width={608} height={288} alt="place-items: place-items-center" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "place-items-stretch" ? "" : "size-14")
+    }
+}
+```
+
+### place-items-end
+
+<Preview src="place-items-2" width={608} height={288} alt="place-items: place-items-end" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "place-items-stretch" ? "" : "size-14")
+    }
+}
+```
+
+### place-items-stretch
+
+<Preview src="place-items-3" width={608} height={288} alt="place-items: place-items-stretch" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 6 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i), c == "place-items-stretch" ? "" : "size-14")
+    }
+}
+```

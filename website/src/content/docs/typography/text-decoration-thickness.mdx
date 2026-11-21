@@ -1,0 +1,32 @@
+---
+title: "text-decoration-thickness"
+description: "Utilities for controlling the thickness of text decorations. Tailwind-style text-decoration-thickness utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 20
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the thickness of text decorations.
+
+| Class | Effect |
+| --- | --- |
+| `decoration-<number>` | `text-decoration-thickness: <number>px;` |
+| `decoration-from-font` | `text-decoration-thickness: from-font;` |
+| `decoration-auto` | `text-decoration-thickness: auto;` |
+| `decoration-[<value>]` | `text-decoration-thickness: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-decoration-thickness-0" width={608} height={248} alt="text-decoration-thickness: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"decoration-1", "decoration-2", "decoration-4"}) {
+        ui.key(c)
+        specimen(c, ui.cx("text-lg font-medium underline decoration-sky-500 underline-offset-4", c))
+    }
+}
+```

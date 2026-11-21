@@ -1,0 +1,74 @@
+---
+title: "justify-content"
+description: "Utilities for controlling how flex and grid items are positioned along a container's main axis. Tailwind-style justify-content utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex and grid items are positioned along a container's main axis.
+
+| Class | Effect |
+| --- | --- |
+| `justify-start` | `justify-content: flex-start;` |
+| `justify-end` | `justify-content: flex-end;` |
+| `justify-end-safe` | `justify-content: safe flex-end;` |
+| `justify-center` | `justify-content: center;` |
+| `justify-center-safe` | `justify-content: safe center;` |
+| `justify-between` | `justify-content: space-between;` |
+| `justify-around` | `justify-content: space-around;` |
+| `justify-evenly` | `justify-content: space-evenly;` |
+| `justify-stretch` | `justify-content: stretch;` |
+| `justify-baseline` | `justify-content: baseline;` |
+| `justify-normal` | `justify-content: normal;` |
+
+## Examples
+
+### Start
+
+<Preview src="justify-content-0" width={608} height={116} alt="justify-content: Start" />
+
+```odin
+justify_demo("justify-start")
+```
+
+### Center
+
+<Preview src="justify-content-1" width={608} height={116} alt="justify-content: Center" />
+
+```odin
+justify_demo("justify-center")
+```
+
+### End
+
+<Preview src="justify-content-2" width={608} height={116} alt="justify-content: End" />
+
+```odin
+justify_demo("justify-end")
+```
+
+### Space between
+
+<Preview src="justify-content-3" width={608} height={116} alt="justify-content: Space between" />
+
+```odin
+justify_demo("justify-between")
+```
+
+### Space around
+
+<Preview src="justify-content-4" width={608} height={116} alt="justify-content: Space around" />
+
+```odin
+justify_demo("justify-around")
+```
+
+### Space evenly
+
+<Preview src="justify-content-5" width={608} height={116} alt="justify-content: Space evenly" />
+
+```odin
+justify_demo("justify-evenly")
+```

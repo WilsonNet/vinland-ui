@@ -1,0 +1,56 @@
+---
+title: "flex-wrap"
+description: "Utilities for controlling how flex items wrap. Tailwind-style flex-wrap utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex items wrap.
+
+| Class | Effect |
+| --- | --- |
+| `flex-nowrap` | `flex-wrap: nowrap;` |
+| `flex-wrap` | `flex-wrap: wrap;` |
+| `flex-wrap-reverse` | `flex-wrap: wrap-reverse;` |
+
+## Examples
+
+### Don't wrap
+
+Use `flex-nowrap` to keep items on one line, shrinking them if needed.
+
+<Preview src="flex-wrap-0" width={608} height={116} alt="flex-wrap: Don't wrap" />
+
+```odin
+if ui.div("flex flex-nowrap gap-4") {
+    tile("01", "w-2/5 shrink-0")
+    tile("02", "w-2/5 shrink-0")
+    tile("03", "w-2/5")
+}
+```
+
+### Wrap normally
+
+<Preview src="flex-wrap-1" width={608} height={184} alt="flex-wrap: Wrap normally" />
+
+```odin
+if ui.div("flex flex-wrap gap-4") {
+    tile("01", "w-2/5")
+    tile("02", "w-2/5")
+    tile("03", "w-2/5")
+}
+```
+
+### Wrap reversed
+
+<Preview src="flex-wrap-2" width={608} height={240} alt="flex-wrap: Wrap reversed" />
+
+```odin
+if ui.div("flex h-44 flex-wrap-reverse content-start gap-4") {
+    tile("01", "w-2/5")
+    tile("02", "w-2/5")
+    tile("03", "w-2/5")
+}
+```

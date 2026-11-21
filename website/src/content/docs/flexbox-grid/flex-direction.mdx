@@ -1,0 +1,69 @@
+---
+title: "flex-direction"
+description: "Utilities for controlling the direction of flex items. Tailwind-style flex-direction utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the direction of flex items.
+
+| Class | Effect |
+| --- | --- |
+| `flex-row` | `flex-direction: row;` |
+| `flex-row-reverse` | `flex-direction: row-reverse;` |
+| `flex-col` | `flex-direction: column;` |
+| `flex-col-reverse` | `flex-direction: column-reverse;` |
+
+## Examples
+
+### Row
+
+Use `flex-row` to position flex items horizontally in the same direction as text.
+
+<Preview src="flex-direction-0" width={608} height={116} alt="flex-direction: Row" />
+
+```odin
+if ui.div("flex flex-row gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+}
+```
+
+### Row reversed
+
+<Preview src="flex-direction-1" width={608} height={116} alt="flex-direction: Row reversed" />
+
+```odin
+if ui.div("flex flex-row-reverse gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+}
+```
+
+### Column
+
+<Preview src="flex-direction-2" width={608} height={252} alt="flex-direction: Column" />
+
+```odin
+if ui.div("flex w-48 flex-col gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+}
+```
+
+### Column reversed
+
+<Preview src="flex-direction-3" width={608} height={252} alt="flex-direction: Column reversed" />
+
+```odin
+if ui.div("flex w-48 flex-col-reverse gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+}
+```

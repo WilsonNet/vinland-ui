@@ -314,6 +314,16 @@ def page_html(doc, pages, groups, prev_p, next_p):
 """
 
 
+def capture_only(img_parent: str, data_path: str, only: set):
+    """Captures example images into <img_parent>/img and writes page data as JSON."""
+    print("capturing pages from the showroom…", flush=True)
+    pages, data = capture(img_parent, only, True)
+    os.makedirs(os.path.dirname(data_path), exist_ok=True)
+    with open(data_path, "w") as f:
+        json.dump({"pages": pages, "docs": data}, f, indent=1)
+    print(f"wrote {len(data)} pages to {data_path}")
+
+
 def build(out_dir: str, only: set, shots: bool):
     print("capturing pages from the showroom…", flush=True)
     pages, data = capture(out_dir, only, shots)
@@ -379,4 +389,7 @@ if __name__ == "__main__":
         if a.startswith("--pages="):
             only = set(a.split("=", 1)[1].split(","))
     os.makedirs(out, exist_ok=True)
-    build(out, only, "--no-shots" not in sys.argv)
+    if "--capture-only" in sys.argv:
+        capture_only(out, os.path.join(ROOT, "website/src/data/showroom.json"), only)
+    else:
+        build(out, only, "--no-shots" not in sys.argv)

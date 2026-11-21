@@ -1,0 +1,19 @@
+---
+title: "box-decoration-break"
+description: "Utilities for controlling how element fragments should be rendered across multiple lines, columns, or pages. Tailwind-style box-decoration-break utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how element fragments should be rendered across multiple lines, columns, or pages.
+
+| Class | Effect |
+| --- | --- |
+| `box-decoration-clone` | `box-decoration-break: clone;` |
+| `box-decoration-slice` | `box-decoration-break: slice;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

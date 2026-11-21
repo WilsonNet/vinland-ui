@@ -1,0 +1,34 @@
+---
+title: "line-height"
+description: "Utilities for controlling the leading, or line height, of an element. Tailwind-style line-height utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the leading, or line height, of an element.
+
+| Class | Effect |
+| --- | --- |
+| `text-<size>/<number>` | `font-size: <size>; line-height: calc(var(--spacing) * <number>);` |
+| `text-<size>/[<value>]` | `font-size: <size>; line-height: <value>;` |
+| `leading-none` | `line-height: 1;` |
+| `leading-<number>` | `line-height: calc(var(--spacing) * <number>);` |
+| `leading-[<value>]` | `line-height: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `leading-<number>` (spacing scale) or `leading-tight`/`leading-relaxed` to set line height.
+
+<Preview src="line-height-0" width={608} height={412} alt="line-height: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-6") {
+    specimen("leading-6", "text-sm leading-6", PROSE)
+    specimen("leading-7", "text-sm leading-7", PROSE)
+    specimen("leading-loose", "text-sm leading-loose", PROSE)
+}
+```

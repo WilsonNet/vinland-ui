@@ -1,0 +1,19 @@
+---
+title: "contrast"
+description: "Utilities for applying backdrop contrast filters to an element. Tailwind-style contrast utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for applying backdrop contrast filters to an element.
+
+| Class | Effect |
+| --- | --- |
+| `backdrop-contrast-<number>` | `backdrop-filter: contrast(<number>%);` |
+| `backdrop-contrast-[<value>]` | `backdrop-filter: contrast(<value>);` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

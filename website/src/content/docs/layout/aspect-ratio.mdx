@@ -1,0 +1,43 @@
+---
+title: "aspect-ratio"
+description: "Utilities for controlling the aspect ratio of an element. Tailwind-style aspect-ratio utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the aspect ratio of an element.
+
+| Class | Effect |
+| --- | --- |
+| `aspect-<ratio>` | `aspect-ratio: <ratio>;` |
+| `aspect-square` | `aspect-ratio: 1 / 1;` |
+| `aspect-video` | `aspect-ratio: 16 / 9;` |
+| `aspect-auto` | `aspect-ratio: auto;` |
+| `aspect-[<value>]` | `aspect-ratio: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `aspect-<ratio>` utilities like `aspect-3/2` to give an element a specific aspect ratio.
+
+<Preview src="aspect-ratio-0" width={608} height={320} alt="aspect-ratio: Basic example" />
+
+```odin
+ui.image(DEMO_IMAGE, "aspect-3/2 w-full max-w-sm rounded-lg object-cover")
+```
+
+### Using a video aspect ratio
+
+Use `aspect-video` for 16:9 and `aspect-square` for 1:1.
+
+<Preview src="aspect-ratio-1" width={608} height={307} alt="aspect-ratio: Using a video aspect ratio" />
+
+```odin
+if ui.div("flex w-full items-start gap-4") {
+    ui.text("aspect-video", "flex aspect-video flex-1 items-center justify-center rounded-lg bg-sky-500 font-mono text-sm font-bold text-white")
+    ui.text("square", "flex aspect-square w-24 items-center justify-center rounded-lg bg-pink-500 font-mono text-sm font-bold text-white")
+}
+```

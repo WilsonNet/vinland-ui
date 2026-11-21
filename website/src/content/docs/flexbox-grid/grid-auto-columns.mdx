@@ -1,0 +1,35 @@
+---
+title: "grid-auto-columns"
+description: "Utilities for controlling the size of implicitly-created grid columns. Tailwind-style grid-auto-columns utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 13
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the size of implicitly-created grid columns.
+
+| Class | Effect |
+| --- | --- |
+| `auto-cols-auto` | `grid-auto-columns: auto;` |
+| `auto-cols-min` | `grid-auto-columns: min-content;` |
+| `auto-cols-max` | `grid-auto-columns: max-content;` |
+| `auto-cols-fr` | `grid-auto-columns: minmax(0, 1fr);` |
+| `auto-cols-<number>` | `grid-auto-columns: calc(var(--spacing) * <number>);` |
+| `auto-cols-[<value>]` | `grid-auto-columns: <value>;` |
+
+## Examples
+
+### Sizing implicit tracks
+
+Use `auto-cols-*` and `auto-rows-*` to size tracks the grid creates implicitly.
+
+<Preview src="grid-auto-columns-0" width={608} height={116} alt="grid-auto-columns: Sizing implicit tracks" />
+
+```odin
+if ui.div("grid grid-flow-col auto-cols-fr gap-4") {
+    tile("01")
+    tile("02")
+    tile("03")
+}
+```

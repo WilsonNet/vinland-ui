@@ -1,0 +1,19 @@
+---
+title: "scroll-snap-stop"
+description: "Utilities for controlling whether you can skip past possible snap positions. Tailwind-style scroll-snap-stop utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling whether you can skip past possible snap positions.
+
+| Class | Effect |
+| --- | --- |
+| `snap-normal` | `scroll-snap-stop: normal;` |
+| `snap-always` | `scroll-snap-stop: always;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

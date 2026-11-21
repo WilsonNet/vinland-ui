@@ -1,0 +1,72 @@
+---
+title: "height"
+description: "Utilities for setting the height of an element. Tailwind-style height utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the height of an element.
+
+| Class | Effect |
+| --- | --- |
+| `h-<number>` | `height: calc(var(--spacing) * <number>);` |
+| `h-<fraction>` | `height: calc(<fraction> * 100%);` |
+| `h-auto` | `height: auto;` |
+| `h-px` | `height: 1px;` |
+| `h-full` | `height: 100%;` |
+| `h-screen` | `height: 100vh;` |
+| `h-dvh` | `height: 100dvh;` |
+| `h-dvw` | `height: 100dvw;` |
+| `h-lvh` | `height: 100lvh;` |
+| `h-lvw` | `height: 100lvw;` |
+| `h-svh` | `height: 100svh;` |
+| `h-svw` | `height: 100svw;` |
+| `h-min` | `height: min-content;` |
+| `h-max` | `height: max-content;` |
+| `h-fit` | `height: fit-content;` |
+| `h-lh` | `height: 1lh;` |
+| `h-[<value>]` | `height: <value>;` |
+| `size-<number>` | `width: calc(var(--spacing) * <number>); height: calc(var(--spacing) * <number>);` |
+| `size-<fraction>` | `width: calc(<fraction> * 100%); height: calc(<fraction> * 100%);` |
+| `size-auto` | `width: auto; height: auto;` |
+| `size-px` | `width: 1px; height: 1px;` |
+| `size-full` | `width: 100%; height: 100%;` |
+| `size-dvw` | `width: 100dvw; height: 100dvw;` |
+| `size-dvh` | `width: 100dvh; height: 100dvh;` |
+| `size-lvw` | `width: 100lvw; height: 100lvw;` |
+| `size-lvh` | `width: 100lvh; height: 100lvh;` |
+| `size-svw` | `width: 100svw; height: 100svw;` |
+| `size-svh` | `width: 100svh; height: 100svh;` |
+| `size-min` | `width: min-content; height: min-content;` |
+| `size-max` | `width: max-content; height: max-content;` |
+| `size-fit` | `width: fit-content; height: fit-content;` |
+| `size-[<value>]` | `width: <value>; height: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="height-0" width={608} height={288} alt="height: Basic example" />
+
+```odin
+if ui.div("flex items-end gap-4") {
+    for h in ([]string{"h-24", "h-32", "h-40", "h-48", "h-56"}) {
+        ui.key(h)
+        tile(h, ui.cx("w-14", h))
+    }
+}
+```
+
+### Full height
+
+`h-full` resolves against a parent with a definite height.
+
+<Preview src="height-1" width={608} height={224} alt="height: Full height" />
+
+```odin
+if ui.div("h-40 w-48 rounded-lg bg-stripes stripes-violet-500/30 p-4") {
+    tile("h-full", "h-full")
+}
+```

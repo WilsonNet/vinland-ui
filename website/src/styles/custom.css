@@ -1,0 +1,57 @@
+/* vinland-ui docs theme: the showroom's tokens (Inter, IBM Plex Mono, violet accent, Tailwind grays). */
+@font-face { font-family: Inter; src: url(../fonts/Inter-Regular.ttf) format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Inter; src: url(../fonts/Inter-Medium.ttf) format('truetype'); font-weight: 500; font-display: swap; }
+@font-face { font-family: Inter; src: url(../fonts/Inter-SemiBold.ttf) format('truetype'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url(../fonts/IBMPlexMono-Regular.ttf) format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url(../fonts/IBMPlexMono-Medium.ttf) format('truetype'); font-weight: 500; font-display: swap; }
+
+:root {
+	--sl-font: Inter, ui-sans-serif, system-ui, sans-serif;
+	--sl-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+	/* dark (Starlight default) */
+	--sl-color-accent-low: #2f0d68;
+	--sl-color-accent: #8e51ff;
+	--sl-color-accent-high: #c4b4ff;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #f3f4f6;
+	--sl-color-gray-2: #d1d5dc;
+	--sl-color-gray-3: #99a1af;
+	--sl-color-gray-4: #6a7282;
+	--sl-color-gray-5: #364153;
+	--sl-color-gray-6: #101828;
+	--sl-color-black: #030712;
+	--vui-preview-bg: rgb(3 7 18 / 0.8);
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #ede9fe;
+	--sl-color-accent: #7f22fe;
+	--sl-color-accent-high: #4d179a;
+	--sl-color-white: #030712;
+	--sl-color-gray-1: #101828;
+	--sl-color-gray-2: #1e2939;
+	--sl-color-gray-3: #364153;
+	--sl-color-gray-4: #6a7282;
+	--sl-color-gray-5: #d1d5dc;
+	--sl-color-gray-6: #f3f4f6;
+	--sl-color-gray-7: #f9fafb;
+	--sl-color-black: #ffffff;
+	--vui-preview-bg: #ffffff;
+}
+/* sidebar group labels in the showroom's mono caps */
+.sidebar-content .group-label .large {
+	font-family: var(--sl-font-mono);
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+}
+/* reference tables: compact mono like the showroom */
+.sl-markdown-content table { font-size: 0.8125rem; display: table; width: 100%; }
+.sl-markdown-content table code { background: none; padding: 0; font-size: inherit; }
+.sl-markdown-content table td:first-child code { color: var(--sl-color-accent-high); }
+:root[data-theme='light'] .sl-markdown-content table td:first-child code { color: var(--sl-color-accent); }
+.sl-markdown-content table td:last-child code { color: #74d4ff; }
+:root[data-theme='light'] .sl-markdown-content table td:last-child code { color: #0069a8; }
+.sl-markdown-content h1 { letter-spacing: -0.025em; }
+.sl-markdown-content h2, .sl-markdown-content h3 { letter-spacing: -0.02em; }

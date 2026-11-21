@@ -1,0 +1,34 @@
+---
+title: "white-space"
+description: "Utilities for controlling an element's white-space property. Tailwind-style white-space utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 28
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling an element's white-space property.
+
+| Class | Effect |
+| --- | --- |
+| `whitespace-normal` | `white-space: normal;` |
+| `whitespace-nowrap` | `white-space: nowrap;` |
+| `whitespace-pre` | `white-space: pre;` |
+| `whitespace-pre-line` | `white-space: pre-line;` |
+| `whitespace-pre-wrap` | `white-space: pre-wrap;` |
+| `whitespace-break-spaces` | `white-space: break-spaces;` |
+
+## Examples
+
+### Preserving whitespace
+
+Use `whitespace-pre` to keep spaces and line breaks exactly as written; `whitespace-pre-line` keeps line breaks but collapses spaces.
+
+<Preview src="white-space-0" width={608} height={144} alt="white-space: Preserving whitespace" />
+
+```odin
+if ui.div("grid grid-cols-2 gap-6") {
+    ui.text("Hey everyone!\n\nIt's almost 2022     and we still don't know if there is aliens living among us.", "whitespace-normal text-sm text-gray-700 dark:text-gray-300")
+    ui.text("Hey everyone!\n\nIt's almost 2022     and we still don't know if there is aliens living among us.", "whitespace-pre-line text-sm text-gray-700 dark:text-gray-300")
+}
+```

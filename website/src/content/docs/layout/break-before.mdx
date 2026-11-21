@@ -1,0 +1,25 @@
+---
+title: "break-before"
+description: "Utilities for controlling how a column or page should break before an element. Tailwind-style break-before utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how a column or page should break before an element.
+
+| Class | Effect |
+| --- | --- |
+| `break-before-auto` | `break-before: auto;` |
+| `break-before-avoid` | `break-before: avoid;` |
+| `break-before-all` | `break-before: all;` |
+| `break-before-avoid-page` | `break-before: avoid-page;` |
+| `break-before-page` | `break-before: page;` |
+| `break-before-left` | `break-before: left;` |
+| `break-before-right` | `break-before: right;` |
+| `break-before-column` | `break-before: column;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

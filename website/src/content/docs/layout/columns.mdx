@@ -1,0 +1,33 @@
+---
+title: "columns"
+description: "Utilities for controlling the number of columns within an element. Tailwind-style columns utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the number of columns within an element.
+
+| Class | Effect |
+| --- | --- |
+| `columns-<number>` | `columns: <number>;` |
+| `columns-3xs` | `columns: 16rem (256px);` |
+| `columns-2xs` | `columns: 18rem (288px);` |
+| `columns-xs` | `columns: 20rem (320px);` |
+| `columns-sm` | `columns: 24rem (384px);` |
+| `columns-md` | `columns: 28rem (448px);` |
+| `columns-lg` | `columns: 32rem (512px);` |
+| `columns-xl` | `columns: 36rem (576px);` |
+| `columns-2xl` | `columns: 42rem (672px);` |
+| `columns-3xl` | `columns: 48rem (768px);` |
+| `columns-4xl` | `columns: 56rem (896px);` |
+| `columns-5xl` | `columns: 64rem (1024px);` |
+| `columns-6xl` | `columns: 72rem (1152px);` |
+| `columns-7xl` | `columns: 80rem (1280px);` |
+| `columns-auto` | `columns: auto;` |
+| `columns-[<value>]` | `columns: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

@@ -1,0 +1,41 @@
+---
+title: "transition-timing-function"
+description: "Utilities for controlling the easing of CSS transitions. Tailwind-style transition-timing-function utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the easing of CSS transitions.
+
+| Class | Effect |
+| --- | --- |
+| `ease-linear` | `transition-timing-function: linear;` |
+| `ease-in` | `transition-timing-function: cubic-bezier(0.4, 0, 1, 1);` |
+| `ease-out` | `transition-timing-function: cubic-bezier(0, 0, 0.2, 1);` |
+| `ease-in-out` | `transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);` |
+| `ease-initial` | `transition-timing-function: initial;` |
+| `ease-[<value>]` | `transition-timing-function: <value>;` |
+
+## Examples
+
+### Basic example
+
+Hover each row: the dot travels with `ease-linear`, `ease-in`, `ease-out` and `ease-in-out`.
+
+<Preview src="transition-timing-function-0" width={608} height={256} alt="transition-timing-function: Basic example" />
+
+```odin
+if ui.div("group flex w-full flex-col gap-4 rounded-lg p-2") {
+    for c in ([]string{"ease-linear", "ease-in", "ease-out", "ease-in-out"}) {
+        ui.key(c)
+        if ui.div("flex items-center gap-4") {
+            ui.text(c, "w-28 shrink-0 font-mono text-xs text-gray-500 dark:text-gray-400")
+            if ui.div("relative h-8 flex-1 rounded-full bg-gray-100 dark:bg-white/5") {
+                ui.el(ui.cx("absolute top-1 left-1 size-6 rounded-full bg-violet-500 shadow transition-transform duration-1000 group-hover:translate-x-64", c))
+            }
+        }
+    }
+}
+```

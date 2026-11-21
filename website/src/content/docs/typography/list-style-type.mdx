@@ -1,0 +1,48 @@
+---
+title: "list-style-type"
+description: "Utilities for controlling the marker style of a list. Tailwind-style list-style-type utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the marker style of a list.
+
+| Class | Effect |
+| --- | --- |
+| `list-disc` | `list-style-type: disc;` |
+| `list-decimal` | `list-style-type: decimal;` |
+| `list-none` | `list-style-type: none;` |
+| `list-[<value>]` | `list-style-type: <value>;` |
+
+## Examples
+
+### Basic example
+
+Lists are plain elements; draw the markers yourself so they follow your design. Here a bullet and a number are separate leaves aligned with `items-baseline`.
+
+<Preview src="list-style-type-0" width={608} height={140} alt="list-style-type: Basic example" />
+
+```odin
+if ui.div("grid grid-cols-2 gap-8") {
+    if ui.div("flex flex-col gap-2") {
+        for item in ([]string{"Now this is a story", "All about how", "My life got flipped"}) {
+            ui.key(item)
+            if ui.div("flex items-baseline gap-3 text-sm text-gray-700 dark:text-gray-300") {
+                ui.el("size-1.5 shrink-0 -translate-y-0.5 rounded-full bg-gray-400")
+                ui.text(item)
+            }
+        }
+    }
+    if ui.div("flex flex-col gap-2") {
+        for item, i in ([]string{"Now this is a story", "All about how", "My life got flipped"}) {
+            ui.key(item)
+            if ui.div("flex items-baseline gap-3 text-sm text-gray-700 dark:text-gray-300") {
+                ui.text(fmt.tprintf("%d.", i + 1), "w-4 shrink-0 text-right font-medium text-gray-400 tabular-nums")
+                ui.text(item)
+            }
+        }
+    }
+}
+```

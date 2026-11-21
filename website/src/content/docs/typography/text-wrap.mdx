@@ -1,0 +1,39 @@
+---
+title: "text-wrap"
+description: "Utilities for controlling how text wraps within an element. Tailwind-style text-wrap utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 24
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how text wraps within an element.
+
+| Class | Effect |
+| --- | --- |
+| `text-wrap` | `text-wrap: wrap;` |
+| `text-nowrap` | `text-wrap: nowrap;` |
+| `text-balance` | `text-wrap: balance;` |
+| `text-pretty` | `text-wrap: pretty;` |
+
+## Examples
+
+### Allowing text to wrap
+
+<Preview src="text-wrap-0" width={608} height={128} alt="text-wrap: Allowing text to wrap" />
+
+```odin
+if ui.div("w-72") {
+    ui.text("Beloved Manhattan soup stand closes", "text-wrap text-2xl font-bold text-gray-950 dark:text-white")
+}
+```
+
+### Preventing text from wrapping
+
+<Preview src="text-wrap-1" width={608} height={96} alt="text-wrap: Preventing text from wrapping" />
+
+```odin
+if ui.div("w-72 overflow-hidden") {
+    ui.text("Beloved Manhattan soup stand closes", "text-nowrap text-2xl font-bold text-gray-950 dark:text-white")
+}
+```

@@ -1,0 +1,34 @@
+---
+title: "grid-template-rows"
+description: "Utilities for specifying the rows in a grid layout. Tailwind-style grid-template-rows utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for specifying the rows in a grid layout.
+
+| Class | Effect |
+| --- | --- |
+| `grid-rows-<number>` | `grid-template-rows: repeat(<number>, minmax(0, 1fr));` |
+| `grid-rows-none` | `grid-template-rows: none;` |
+| `grid-rows-subgrid` | `grid-template-rows: subgrid;` |
+| `grid-rows-[<value>]` | `grid-template-rows: <value>;` |
+
+## Examples
+
+### Specifying the grid rows
+
+Use `grid-rows-<number>` with `grid-flow-col` to fill rows first.
+
+<Preview src="grid-template-rows-0" width={608} height={288} alt="grid-template-rows: Specifying the grid rows" />
+
+```odin
+if ui.div("grid h-56 grid-flow-col grid-rows-4 gap-4") {
+    for i in 1 ..= 9 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```

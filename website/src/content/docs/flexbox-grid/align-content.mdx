@@ -1,0 +1,102 @@
+---
+title: "align-content"
+description: "Utilities for controlling how rows are positioned in multi-row flex and grid containers. Tailwind-style align-content utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 19
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how rows are positioned in multi-row flex and grid containers.
+
+| Class | Effect |
+| --- | --- |
+| `content-normal` | `align-content: normal;` |
+| `content-center` | `align-content: center;` |
+| `content-start` | `align-content: flex-start;` |
+| `content-end` | `align-content: flex-end;` |
+| `content-between` | `align-content: space-between;` |
+| `content-around` | `align-content: space-around;` |
+| `content-evenly` | `align-content: space-evenly;` |
+| `content-baseline` | `align-content: baseline;` |
+| `content-stretch` | `align-content: stretch;` |
+
+## Examples
+
+### content-start
+
+<Preview src="align-content-0" width={608} height={288} alt="align-content: content-start" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### content-center
+
+<Preview src="align-content-1" width={608} height={288} alt="align-content: content-center" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### content-end
+
+<Preview src="align-content-2" width={608} height={288} alt="align-content: content-end" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### content-between
+
+<Preview src="align-content-3" width={608} height={288} alt="align-content: content-between" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### content-around
+
+<Preview src="align-content-4" width={608} height={288} alt="align-content: content-around" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```
+
+### content-evenly
+
+<Preview src="align-content-5" width={608} height={288} alt="align-content: content-evenly" />
+
+```odin
+if ui.div(ui.cx("grid h-56 grid-cols-3 gap-4 rounded-lg bg-stripes stripes-violet-500/25", c)) {
+    for i in 1 ..= 5 {
+        ui.key(i)
+        tile(fmt.tprintf("%02d", i))
+    }
+}
+```

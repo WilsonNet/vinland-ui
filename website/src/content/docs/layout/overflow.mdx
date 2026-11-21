@@ -1,0 +1,76 @@
+---
+title: "overflow"
+description: "Utilities for controlling how an element handles content that is too large for the container. Tailwind-style overflow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an element handles content that is too large for the container.
+
+| Class | Effect |
+| --- | --- |
+| `overflow-auto` | `overflow: auto;` |
+| `overflow-hidden` | `overflow: hidden;` |
+| `overflow-clip` | `overflow: clip;` |
+| `overflow-visible` | `overflow: visible;` |
+| `overflow-scroll` | `overflow: scroll;` |
+| `overflow-x-auto` | `overflow-x: auto;` |
+| `overflow-y-auto` | `overflow-y: auto;` |
+| `overflow-x-hidden` | `overflow-x: hidden;` |
+| `overflow-y-hidden` | `overflow-y: hidden;` |
+| `overflow-x-clip` | `overflow-x: clip;` |
+| `overflow-y-clip` | `overflow-y: clip;` |
+| `overflow-x-visible` | `overflow-x: visible;` |
+| `overflow-y-visible` | `overflow-y: visible;` |
+| `overflow-x-scroll` | `overflow-x: scroll;` |
+| `overflow-y-scroll` | `overflow-y: scroll;` |
+
+## Examples
+
+### Hiding content that overflows
+
+Use `overflow-hidden` to clip children to the padding box, including rounded corners.
+
+<Preview src="overflow-0" width={608} height={264} alt="overflow: Hiding content that overflows" />
+
+```odin
+if ui.div("w-64 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-800") {
+    ui.image(DEMO_IMAGE, "h-32 w-full object-cover")
+    ui.text("The image is clipped by the card's corners.", "p-4 text-sm text-gray-600 dark:text-gray-300")
+}
+```
+
+### Scrolling if needed
+
+Use `overflow-auto` (or `overflow-y-auto`) to make an element scroll when its content is larger than its box. Wheel input is smooth and the scrollbar can be dragged.
+
+<Preview src="overflow-1" width={608} height={256} alt="overflow: Scrolling if needed" />
+
+```odin
+if ui.div("h-48 w-72 overflow-y-auto rounded-lg bg-gray-50 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10") {
+    for name, i in ([]string{"Andrew Alfred", "Debra Houston", "Jane White", "Ray Flint", "Mindy Albrect", "David Arnold", "Erin Lee", "Caleb Price", "Lina Moss", "Owen Hart"}) {
+        ui.key(i)
+        if ui.div("flex items-center gap-3 px-4 py-2.5") {
+            ui.el(i % 2 == 0 ? "size-8 rounded-full bg-violet-400" : "size-8 rounded-full bg-sky-400")
+            ui.text(name, "text-sm font-medium text-gray-900 dark:text-gray-200")
+        }
+    }
+}
+```
+
+### Scrolling horizontally
+
+<Preview src="overflow-2" width={608} height={176} alt="overflow: Scrolling horizontally" />
+
+```odin
+if ui.div("w-full max-w-md overflow-x-auto rounded-lg bg-gray-50 dark:bg-white/5") {
+    if ui.div("flex w-max gap-4 p-4") {
+        for i in 0 ..< 10 {
+            ui.key(i)
+            ui.el("h-20 w-28 shrink-0 rounded-lg bg-linear-to-br from-violet-400 to-fuchsia-500")
+        }
+    }
+}
+```

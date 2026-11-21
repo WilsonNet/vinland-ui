@@ -1,0 +1,57 @@
+---
+title: "min-width"
+description: "Utilities for setting the minimum width of an element. Tailwind-style min-width utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the minimum width of an element.
+
+| Class | Effect |
+| --- | --- |
+| `min-w-<number>` | `min-width: calc(var(--spacing) * <number>);` |
+| `min-w-<fraction>` | `min-width: calc(<fraction> * 100%);` |
+| `min-w-3xs` | `min-width: 16rem (256px);` |
+| `min-w-2xs` | `min-width: 18rem (288px);` |
+| `min-w-xs` | `min-width: 20rem (320px);` |
+| `min-w-sm` | `min-width: 24rem (384px);` |
+| `min-w-md` | `min-width: 28rem (448px);` |
+| `min-w-lg` | `min-width: 32rem (512px);` |
+| `min-w-xl` | `min-width: 36rem (576px);` |
+| `min-w-2xl` | `min-width: 42rem (672px);` |
+| `min-w-3xl` | `min-width: 48rem (768px);` |
+| `min-w-4xl` | `min-width: 56rem (896px);` |
+| `min-w-5xl` | `min-width: 64rem (1024px);` |
+| `min-w-6xl` | `min-width: 72rem (1152px);` |
+| `min-w-7xl` | `min-width: 80rem (1280px);` |
+| `min-w-auto` | `min-width: auto;` |
+| `min-w-px` | `min-width: 1px;` |
+| `min-w-full` | `min-width: 100%;` |
+| `min-w-screen` | `min-width: 100vw;` |
+| `min-w-dvw` | `min-width: 100dvw;` |
+| `min-w-dvh` | `min-width: 100dvh;` |
+| `min-w-lvw` | `min-width: 100lvw;` |
+| `min-w-lvh` | `min-width: 100lvh;` |
+| `min-w-svw` | `min-width: 100svw;` |
+| `min-w-svh` | `min-width: 100svh;` |
+| `min-w-min` | `min-width: min-content;` |
+| `min-w-max` | `min-width: max-content;` |
+| `min-w-fit` | `min-width: fit-content;` |
+| `min-w-[<value>]` | `min-width: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `min-w-<number>` to keep an element from shrinking below a size.
+
+<Preview src="min-width-0" width={608} height={116} alt="min-width: Basic example" />
+
+```odin
+if ui.div("flex w-full gap-3") {
+    tile("min-w-48", "min-w-48 flex-1")
+    tile("flex-1", "w-full flex-1")
+}
+```

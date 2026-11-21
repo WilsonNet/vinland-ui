@@ -1,0 +1,28 @@
+---
+title: "text-indent"
+description: "Utilities for controlling the amount of empty space shown before text in a block. Tailwind-style text-indent utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 25
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the amount of empty space shown before text in a block.
+
+| Class | Effect |
+| --- | --- |
+| `indent-<number>` | `text-indent: calc(var(--spacing) * <number>);` |
+| `-indent-<number>` | `text-indent: calc(var(--spacing) * -<number>);` |
+| `indent-px` | `text-indent: 1px;` |
+| `-indent-px` | `text-indent: -1px;` |
+| `indent-[<value>]` | `text-indent: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-indent-0" width={608} height={136} alt="text-indent: Basic example" />
+
+```odin
+ui.text(PROSE, "max-w-md text-sm/6 text-gray-700 dark:text-gray-300")
+```

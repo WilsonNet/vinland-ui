@@ -1,0 +1,200 @@
+---
+title: "color"
+description: "Utilities for controlling the text color of an element. Tailwind-style color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the text color of an element.
+
+| Class | Effect |
+| --- | --- |
+| `text-inherit` | `color: inherit;` |
+| `text-current` | `color: currentColor;` |
+| `text-transparent` | `color: transparent;` |
+| `text-black` | `color: #000;` |
+| `text-white` | `color: #fff;` |
+| `text-red-50` | `color: color-red-50 token;` |
+| `text-red-100` | `color: color-red-100 token;` |
+| `text-red-200` | `color: color-red-200 token;` |
+| `text-red-300` | `color: color-red-300 token;` |
+| `text-red-400` | `color: color-red-400 token;` |
+| `text-red-500` | `color: color-red-500 token;` |
+| `text-red-600` | `color: color-red-600 token;` |
+| `text-red-700` | `color: color-red-700 token;` |
+| `text-red-800` | `color: color-red-800 token;` |
+| `text-red-900` | `color: color-red-900 token;` |
+| `text-red-950` | `color: color-red-950 token;` |
+| `text-orange-50` | `color: color-orange-50 token;` |
+| `text-orange-100` | `color: color-orange-100 token;` |
+| `text-orange-200` | `color: color-orange-200 token;` |
+| `text-orange-300` | `color: color-orange-300 token;` |
+| `text-orange-400` | `color: color-orange-400 token;` |
+| `text-orange-500` | `color: color-orange-500 token;` |
+| `text-orange-600` | `color: color-orange-600 token;` |
+| `text-orange-700` | `color: color-orange-700 token;` |
+| `text-orange-800` | `color: color-orange-800 token;` |
+| `text-orange-900` | `color: color-orange-900 token;` |
+| `text-orange-950` | `color: color-orange-950 token;` |
+| `text-amber-50` | `color: color-amber-50 token;` |
+| `text-amber-100` | `color: color-amber-100 token;` |
+| `text-amber-200` | `color: color-amber-200 token;` |
+| `text-amber-300` | `color: color-amber-300 token;` |
+| `text-amber-400` | `color: color-amber-400 token;` |
+| `text-amber-500` | `color: color-amber-500 token;` |
+| `text-amber-600` | `color: color-amber-600 token;` |
+| `text-amber-700` | `color: color-amber-700 token;` |
+| `text-amber-800` | `color: color-amber-800 token;` |
+| `text-amber-900` | `color: color-amber-900 token;` |
+| `text-amber-950` | `color: color-amber-950 token;` |
+| `text-yellow-50` | `color: color-yellow-50 token;` |
+| `text-yellow-100` | `color: color-yellow-100 token;` |
+| `text-yellow-200` | `color: color-yellow-200 token;` |
+| `text-yellow-300` | `color: color-yellow-300 token;` |
+| `text-yellow-400` | `color: color-yellow-400 token;` |
+| `text-yellow-500` | `color: color-yellow-500 token;` |
+| `text-yellow-600` | `color: color-yellow-600 token;` |
+| `text-yellow-700` | `color: color-yellow-700 token;` |
+| `text-yellow-800` | `color: color-yellow-800 token;` |
+| `text-yellow-900` | `color: color-yellow-900 token;` |
+| `text-yellow-950` | `color: color-yellow-950 token;` |
+| `text-lime-50` | `color: color-lime-50 token;` |
+| `text-lime-100` | `color: color-lime-100 token;` |
+| `text-lime-200` | `color: color-lime-200 token;` |
+| `text-lime-300` | `color: color-lime-300 token;` |
+| `text-lime-400` | `color: color-lime-400 token;` |
+| `text-lime-500` | `color: color-lime-500 token;` |
+| `text-lime-600` | `color: color-lime-600 token;` |
+| `text-lime-700` | `color: color-lime-700 token;` |
+| `text-lime-800` | `color: color-lime-800 token;` |
+| `text-lime-900` | `color: color-lime-900 token;` |
+| `text-lime-950` | `color: color-lime-950 token;` |
+| `text-green-50` | `color: color-green-50 token;` |
+| `text-green-100` | `color: color-green-100 token;` |
+| `text-green-200` | `color: color-green-200 token;` |
+| `text-green-300` | `color: color-green-300 token;` |
+| `text-green-400` | `color: color-green-400 token;` |
+| `text-green-500` | `color: color-green-500 token;` |
+| `text-green-600` | `color: color-green-600 token;` |
+| `text-green-700` | `color: color-green-700 token;` |
+| `text-green-800` | `color: color-green-800 token;` |
+| `text-green-900` | `color: color-green-900 token;` |
+| `text-green-950` | `color: color-green-950 token;` |
+| `text-emerald-50` | `color: color-emerald-50 token;` |
+| `text-emerald-100` | `color: color-emerald-100 token;` |
+| `text-emerald-200` | `color: color-emerald-200 token;` |
+| `text-emerald-300` | `color: color-emerald-300 token;` |
+| `text-emerald-400` | `color: color-emerald-400 token;` |
+| `text-emerald-500` | `color: color-emerald-500 token;` |
+| `text-emerald-600` | `color: color-emerald-600 token;` |
+| `text-emerald-700` | `color: color-emerald-700 token;` |
+| `text-emerald-800` | `color: color-emerald-800 token;` |
+| `text-emerald-900` | `color: color-emerald-900 token;` |
+| `text-emerald-950` | `color: color-emerald-950 token;` |
+| `text-teal-50` | `color: color-teal-50 token;` |
+| `text-teal-100` | `color: color-teal-100 token;` |
+| `text-teal-200` | `color: color-teal-200 token;` |
+| `text-teal-300` | `color: color-teal-300 token;` |
+| `text-teal-400` | `color: color-teal-400 token;` |
+| `text-teal-500` | `color: color-teal-500 token;` |
+| `text-teal-600` | `color: color-teal-600 token;` |
+| `text-teal-700` | `color: color-teal-700 token;` |
+| `text-teal-800` | `color: color-teal-800 token;` |
+| `text-teal-900` | `color: color-teal-900 token;` |
+| `text-teal-950` | `color: color-teal-950 token;` |
+| `text-cyan-50` | `color: color-cyan-50 token;` |
+| `text-cyan-100` | `color: color-cyan-100 token;` |
+| `text-cyan-200` | `color: color-cyan-200 token;` |
+| `text-cyan-300` | `color: color-cyan-300 token;` |
+| `text-cyan-400` | `color: color-cyan-400 token;` |
+| `text-cyan-500` | `color: color-cyan-500 token;` |
+| `text-cyan-600` | `color: color-cyan-600 token;` |
+| `text-cyan-700` | `color: color-cyan-700 token;` |
+| `text-cyan-800` | `color: color-cyan-800 token;` |
+| `text-cyan-900` | `color: color-cyan-900 token;` |
+| `text-cyan-950` | `color: color-cyan-950 token;` |
+| `text-sky-50` | `color: color-sky-50 token;` |
+| `text-sky-100` | `color: color-sky-100 token;` |
+| `text-sky-200` | `color: color-sky-200 token;` |
+| `text-sky-300` | `color: color-sky-300 token;` |
+| `text-sky-400` | `color: color-sky-400 token;` |
+| `text-sky-500` | `color: color-sky-500 token;` |
+| `text-sky-600` | `color: color-sky-600 token;` |
+| `text-sky-700` | `color: color-sky-700 token;` |
+| `text-sky-800` | `color: color-sky-800 token;` |
+| `text-sky-900` | `color: color-sky-900 token;` |
+| `text-sky-950` | `color: color-sky-950 token;` |
+| `text-blue-50` | `color: color-blue-50 token;` |
+| `text-blue-100` | `color: color-blue-100 token;` |
+| `text-blue-200` | `color: color-blue-200 token;` |
+| `text-blue-300` | `color: color-blue-300 token;` |
+| `text-blue-400` | `color: color-blue-400 token;` |
+| `text-blue-500` | `color: color-blue-500 token;` |
+| `text-blue-600` | `color: color-blue-600 token;` |
+| `text-blue-700` | `color: color-blue-700 token;` |
+| `text-blue-800` | `color: color-blue-800 token;` |
+| `text-blue-900` | `color: color-blue-900 token;` |
+| `text-blue-950` | `color: color-blue-950 token;` |
+| `text-indigo-50` | `color: color-indigo-50 token;` |
+| `text-indigo-100` | `color: color-indigo-100 token;` |
+| `text-indigo-200` | `color: color-indigo-200 token;` |
+| `text-indigo-300` | `color: color-indigo-300 token;` |
+| `text-indigo-400` | `color: color-indigo-400 token;` |
+| `text-indigo-500` | `color: color-indigo-500 token;` |
+| `text-indigo-600` | `color: color-indigo-600 token;` |
+| `text-indigo-700` | `color: color-indigo-700 token;` |
+| `text-indigo-800` | `color: color-indigo-800 token;` |
+| `text-indigo-900` | `color: color-indigo-900 token;` |
+| `text-indigo-950` | `color: color-indigo-950 token;` |
+| `text-violet-50` | `color: color-violet-50 token;` |
+| `text-violet-100` | `color: color-violet-100 token;` |
+| `text-violet-200` | `color: color-violet-200 token;` |
+| `text-violet-300` | `color: color-violet-300 token;` |
+| `text-violet-400` | `color: color-violet-400 token;` |
+| `text-violet-500` | `color: color-violet-500 token;` |
+| `text-violet-600` | `color: color-violet-600 token;` |
+| `text-violet-700` | `color: color-violet-700 token;` |
+| `text-violet-800` | `color: color-violet-800 token;` |
+| `text-violet-900` | `color: color-violet-900 token;` |
+| `text-violet-950` | `color: color-violet-950 token;` |
+| `text-purple-50` | `color: color-purple-50 token;` |
+| `text-purple-100` | `color: color-purple-100 token;` |
+| `text-purple-200` | `color: color-purple-200 token;` |
+| `text-purple-300` | `color: color-purple-300 token;` |
+| `text-purple-400` | `color: color-purple-400 token;` |
+| `text-purple-500` | `color: color-purple-500 token;` |
+| `text-purple-600` | `color: color-purple-600 token;` |
+| `text-purple-700` | `color: color-purple-700 token;` |
+| `text-purple-800` | `color: color-purple-800 token;` |
+| `text-purple-900` | `color: color-purple-900 token;` |
+| `text-purple-950` | `color: color-purple-950 token;` |
+| `text-fuchsia-50` | `color: color-fuchsia-50 token;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="color-0" width={608} height={92} alt="color: Basic example" />
+
+```odin
+if ui.p("max-w-md text-base/7 font-medium text-gray-950 dark:text-white") {
+    ui.span("The quick brown fox ")
+    ui.span("jumps over", "text-sky-500 dark:text-sky-400")
+    ui.span(" the lazy dog.")
+}
+```
+
+### Changing the opacity
+
+<Preview src="color-1" width={608} height={184} alt="color: Changing the opacity" />
+
+```odin
+if ui.div("flex flex-col gap-2") {
+    for a in ([]string{"text-blue-600/100", "text-blue-600/75", "text-blue-600/50", "text-blue-600/25"}) {
+        ui.key(a)
+        ui.text(SAMPLE, ui.cx("text-base font-medium dark:text-blue-400", a))
+    }
+}
+```

@@ -1,0 +1,23 @@
+---
+title: "background-repeat"
+description: "Utilities for controlling the repetition of an element's background image. Tailwind-style background-repeat utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the repetition of an element's background image.
+
+| Class | Effect |
+| --- | --- |
+| `bg-repeat` | `background-repeat: repeat;` |
+| `bg-repeat-x` | `background-repeat: repeat-x;` |
+| `bg-repeat-y` | `background-repeat: repeat-y;` |
+| `bg-repeat-space` | `background-repeat: space;` |
+| `bg-repeat-round` | `background-repeat: round;` |
+| `bg-no-repeat` | `background-repeat: no-repeat;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

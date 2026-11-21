@@ -1,0 +1,32 @@
+---
+title: "text-transform"
+description: "Utilities for controlling the capitalization of text. Tailwind-style text-transform utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 22
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the capitalization of text.
+
+| Class | Effect |
+| --- | --- |
+| `uppercase` | `text-transform: uppercase;` |
+| `lowercase` | `text-transform: lowercase;` |
+| `capitalize` | `text-transform: capitalize;` |
+| `normal-case` | `text-transform: none;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-transform-0" width={608} height={316} alt="text-transform: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"normal-case", "uppercase", "lowercase", "capitalize"}) {
+        ui.key(c)
+        specimen(c, ui.cx("text-lg font-medium", c))
+    }
+}
+```

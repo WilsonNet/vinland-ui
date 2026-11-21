@@ -1,0 +1,20 @@
+---
+title: "scrollbar-width"
+description: "Utilities for controlling the width of an element's scrollbar. Tailwind-style scrollbar-width utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the width of an element's scrollbar.
+
+| Class | Effect |
+| --- | --- |
+| `scrollbar-auto` | `scrollbar-width: auto;` |
+| `scrollbar-thin` | `scrollbar-width: thin;` |
+| `scrollbar-none` | `scrollbar-width: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

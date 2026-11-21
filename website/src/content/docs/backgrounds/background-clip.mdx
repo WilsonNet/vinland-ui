@@ -1,0 +1,21 @@
+---
+title: "background-clip"
+description: "Utilities for controlling the bounding box of an element's background. Tailwind-style background-clip utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the bounding box of an element's background.
+
+| Class | Effect |
+| --- | --- |
+| `bg-clip-border` | `background-clip: border-box;` |
+| `bg-clip-padding` | `background-clip: padding-box;` |
+| `bg-clip-content` | `background-clip: content-box;` |
+| `bg-clip-text` | `background-clip: text;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

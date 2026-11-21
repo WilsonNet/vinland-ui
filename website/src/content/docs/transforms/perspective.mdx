@@ -1,0 +1,24 @@
+---
+title: "perspective"
+description: "Utilities for controlling an element's perspective when placed in 3D space. Tailwind-style perspective utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling an element's perspective when placed in 3D space.
+
+| Class | Effect |
+| --- | --- |
+| `perspective-dramatic` | `perspective: 100px;` |
+| `perspective-near` | `perspective: 300px;` |
+| `perspective-normal` | `perspective: 500px;` |
+| `perspective-midrange` | `perspective: 800px;` |
+| `perspective-distant` | `perspective: 1200px;` |
+| `perspective-none` | `perspective: none;` |
+| `perspective-[<value>]` | `perspective: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

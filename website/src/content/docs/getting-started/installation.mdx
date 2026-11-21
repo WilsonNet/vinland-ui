@@ -1,0 +1,62 @@
+---
+title: "Installation"
+description: "Add vinland-ui to an Odin project and open your first window."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Add vinland-ui to an Odin project and open your first window.
+
+## Requirements
+
+Odin (dev-2026-11 or newer), SDL3 development files and an OpenGL 3.3 driver. Fonts and icons are embedded, so there is nothing else to install.
+
+```odin
+# Arch
+sudo pacman -S sdl3
+# Debian / Ubuntu
+sudo apt install libsdl3-dev
+```
+
+## Add the packages
+
+Clone the repository next to your project (or as a git submodule) and import the packages by path, or register a collection with `-collection:vinland=path/to/vinland-ui`.
+
+```odin
+git clone https://github.com/WilsonNet/vinland-ui
+odin build my_app -collection:vinland=vinland-ui
+```
+
+## A first window
+
+```odin
+package my_app
+
+import ui "vinland:vui"
+import "vinland:vui/app"
+import "vinland:vui/fonts"
+
+main :: proc() {
+    ctx: ui.Context
+    ui.init(&ctx)
+    defer ui.destroy(&ctx)
+    fonts.register(&ctx)
+
+    a: app.App
+    if !app.init(&a, {title = "Hello", size = {960, 640}, control_port = 7420}, &ctx) do return
+    defer app.shutdown(&a)
+
+    for app.next_frame(&a) {
+        if ui.div("flex h-full items-center justify-center bg-white dark:bg-gray-950") {
+            ui.text("Hello from Odin", "text-4xl font-semibold tracking-tight text-gray-950 dark:text-white")
+        }
+        app.end_frame(&a)
+    }
+}
+```
+
+## Bring your own renderer
+
+Games that already own a render loop (raylib, Vulkan, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; the GLSL in `vui/app/gl.odin` is the reference implementation of the uber-shader.

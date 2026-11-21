@@ -1,0 +1,35 @@
+---
+title: "letter-spacing"
+description: "Utilities for controlling the tracking, or letter spacing, of an element. Tailwind-style letter-spacing utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the tracking, or letter spacing, of an element.
+
+| Class | Effect |
+| --- | --- |
+| `tracking-tighter` | `letter-spacing: -0.05em;` |
+| `tracking-tight` | `letter-spacing: -0.025em;` |
+| `tracking-normal` | `letter-spacing: 0em;` |
+| `tracking-wide` | `letter-spacing: 0.025em;` |
+| `tracking-wider` | `letter-spacing: 0.05em;` |
+| `tracking-widest` | `letter-spacing: 0.1em;` |
+| `tracking-[<value>]` | `letter-spacing: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="letter-spacing-0" width={608} height={452} alt="letter-spacing: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"tracking-tighter", "tracking-tight", "tracking-normal", "tracking-wide", "tracking-wider", "tracking-widest"}) {
+        ui.key(c)
+        specimen(c, ui.cx(c, "text-lg font-medium"))
+    }
+}
+```

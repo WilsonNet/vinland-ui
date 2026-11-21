@@ -1,0 +1,19 @@
+---
+title: "list-style-image"
+description: "Utilities for controlling the marker images for list items. Tailwind-style list-style-image utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the marker images for list items.
+
+| Class | Effect |
+| --- | --- |
+| `list-image-[<value>]` | `list-style-image: <value>;` |
+| `list-image-none` | `list-style-image: none;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

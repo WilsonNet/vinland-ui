@@ -1,0 +1,40 @@
+---
+title: "border-style"
+description: "Utilities for controlling the style of an element's borders. Tailwind-style border-style utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the style of an element's borders.
+
+| Class | Effect |
+| --- | --- |
+| `border-solid` | `border-style: solid;` |
+| `border-dashed` | `border-style: dashed;` |
+| `border-dotted` | `border-style: dotted;` |
+| `border-double` | `border-style: double;` |
+| `border-hidden` | `border-style: hidden;` |
+| `border-none` | `border-style: none;` |
+| `divide-solid` | `& > :not(:last-child) { border-style: solid; }` |
+| `divide-dashed` | `& > :not(:last-child) { border-style: dashed; }` |
+| `divide-dotted` | `& > :not(:last-child) { border-style: dotted; }` |
+| `divide-double` | `& > :not(:last-child) { border-style: double; }` |
+| `divide-hidden` | `& > :not(:last-child) { border-style: hidden; }` |
+| `divide-none` | `& > :not(:last-child) { border-style: none; }` |
+
+## Examples
+
+### Basic example
+
+<Preview src="border-style-0" width={608} height={216} alt="border-style: Basic example" />
+
+```odin
+if ui.div("grid grid-cols-3 gap-6") {
+    for c in ([]string{"border-solid", "border-dashed", "border-dotted", "border-double"}) {
+        ui.key(c)
+        ui.text(c, ui.cx("flex h-16 w-32 items-center justify-center rounded-lg border-4 border-indigo-500 font-mono text-xs text-gray-600 dark:text-gray-300", c))
+    }
+}
+```

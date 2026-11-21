@@ -1,0 +1,36 @@
+---
+title: "grid-auto-flow"
+description: "Utilities for controlling how elements in a grid are auto-placed. Tailwind-style grid-auto-flow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how elements in a grid are auto-placed.
+
+| Class | Effect |
+| --- | --- |
+| `grid-flow-row` | `grid-auto-flow: row;` |
+| `grid-flow-col` | `grid-auto-flow: column;` |
+| `grid-flow-dense` | `grid-auto-flow: dense;` |
+| `grid-flow-row-dense` | `grid-auto-flow: row dense;` |
+| `grid-flow-col-dense` | `grid-auto-flow: column dense;` |
+
+## Examples
+
+### Basic example
+
+Use `grid-flow-row` or `grid-flow-col` to control how auto-placed items fill the grid.
+
+<Preview src="grid-auto-flow-0" width={608} height={252} alt="grid-auto-flow: Basic example" />
+
+```odin
+if ui.div("grid grid-flow-row grid-cols-3 gap-4") {
+    tile("01", "col-span-2")
+    tile("02")
+    tile("03")
+    tile("04", "col-span-2")
+    tile("05")
+}
+```

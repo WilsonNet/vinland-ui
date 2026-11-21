@@ -1,0 +1,47 @@
+---
+title: "transition-property"
+description: "Utilities for controlling which CSS properties transition. Tailwind-style transition-property utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling which CSS properties transition.
+
+| Class | Effect |
+| --- | --- |
+| `transition` | `transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-all` | `transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-colors` | `transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-opacity` | `transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-shadow` | `transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-transform` | `transition-property: transform, translate, scale, rotate; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+| `transition-none` | `transition-property: none;` |
+| `transition-[<value>]` | `transition-property: <value>; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;` |
+
+## Examples
+
+### Basic example
+
+Use `transition` to animate color, opacity, shadow and transform changes. Hover the button: background, lift and scale all ease together.
+
+<Preview src="transition-property-0" width={608} height={132} alt="transition-property: Basic example" />
+
+```odin
+ui.button("Save changes", "rounded-full bg-blue-500 px-5 py-2 text-sm font-semibold text-white shadow-md transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 hover:shadow-xl")
+```
+
+### Choosing what animates
+
+`transition-colors`, `transition-opacity`, `transition-shadow` and `transition-transform` limit which properties animate.
+
+<Preview src="transition-property-1" width={608} height={128} alt="transition-property: Choosing what animates" />
+
+```odin
+if ui.div("flex gap-6") {
+    ui.button("colors", "rounded-lg bg-gray-100 px-4 py-2 font-mono text-xs font-medium text-gray-700 transition-colors duration-500 hover:bg-violet-500 hover:text-white hover:scale-110 dark:bg-white/10 dark:text-gray-200")
+    ui.button("transform", "rounded-lg bg-gray-100 px-4 py-2 font-mono text-xs font-medium text-gray-700 transition-transform duration-500 hover:bg-violet-500 hover:text-white hover:scale-110 dark:bg-white/10 dark:text-gray-200")
+    ui.button("all", "rounded-lg bg-gray-100 px-4 py-2 font-mono text-xs font-medium text-gray-700 transition-all duration-500 hover:bg-violet-500 hover:text-white hover:scale-110 dark:bg-white/10 dark:text-gray-200")
+}
+```

@@ -1,0 +1,23 @@
+---
+title: "color-scheme"
+description: "Utilities for controlling the color scheme of an element. Tailwind-style color-scheme utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the color scheme of an element.
+
+| Class | Effect |
+| --- | --- |
+| `scheme-normal` | `color-scheme: normal;` |
+| `scheme-dark` | `color-scheme: dark;` |
+| `scheme-light` | `color-scheme: light;` |
+| `scheme-light-dark` | `color-scheme: light dark;` |
+| `scheme-only-dark` | `color-scheme: only dark;` |
+| `scheme-only-light` | `color-scheme: only light;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

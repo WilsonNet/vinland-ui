@@ -1,0 +1,47 @@
+---
+title: "Styling with utility classes"
+description: "Build any design by combining single-purpose classes directly in your Odin code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Build any design by combining single-purpose classes directly in your Odin code.
+
+Each class does one thing: `p-6` sets padding, `rounded-xl` sets the corner radius, `shadow-lg` adds an elevation shadow. You combine them on the element instead of writing a style sheet.
+
+<Preview src="utility-classes-0" width={608} height={164} alt="Styling with utility classes: Styling with utility classes" />
+
+```odin
+if ui.div("flex w-full max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10") {
+    if ui.div("flex size-12 shrink-0 items-center justify-center rounded-full bg-sky-500") {
+        ui.icon(IC.chat_bubble_left, "size-6 text-white")
+    }
+    if ui.div() {
+        ui.text("ChitChat", "text-xl font-medium text-black dark:text-white")
+        ui.text("You have a new message!", "text-gray-500 dark:text-gray-400")
+    }
+}
+```
+
+## Why it works
+
+Class strings are parsed once and cached, so a frame costs a hash lookup per element, not a parse. Because styling stays next to structure, you can read a component and know exactly how it looks.
+
+## Dynamic values
+
+When a value comes from data, build the string with `ui.cx` or set the style directly after the classes are applied with `ui.style()` or `ui.last_style()`.
+
+<Preview src="utility-classes-1" width={608} height={100} alt="Styling with utility classes: Dynamic values" />
+
+```odin
+pct := remember_progress()
+if ui.div("w-full max-w-sm") {
+    if ui.div("h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10") {
+        ui.el("h-full rounded-full bg-violet-500")
+        ui.last_style().width = ui.pct(pct^)
+    }
+    ui.text(fmt.tprintf("%.0f%% complete", pct^), "mt-2 text-sm text-gray-600 dark:text-gray-400")
+}
+```

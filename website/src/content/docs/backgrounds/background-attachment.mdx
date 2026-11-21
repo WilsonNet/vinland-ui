@@ -1,0 +1,20 @@
+---
+title: "background-attachment"
+description: "Utilities for controlling how a background image behaves when scrolling. Tailwind-style background-attachment utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how a background image behaves when scrolling.
+
+| Class | Effect |
+| --- | --- |
+| `bg-fixed` | `background-attachment: fixed;` |
+| `bg-local` | `background-attachment: local;` |
+| `bg-scroll` | `background-attachment: scroll;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

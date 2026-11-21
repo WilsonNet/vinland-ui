@@ -1,0 +1,27 @@
+---
+title: "background-position"
+description: "Utilities for controlling the position of an element's background image. Tailwind-style background-position utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the position of an element's background image.
+
+| Class | Effect |
+| --- | --- |
+| `bg-top-left` | `background-position: top left;` |
+| `bg-top` | `background-position: top;` |
+| `bg-top-right` | `background-position: top right;` |
+| `bg-left` | `background-position: left;` |
+| `bg-center` | `background-position: center;` |
+| `bg-right` | `background-position: right;` |
+| `bg-bottom-left` | `background-position: bottom left;` |
+| `bg-bottom` | `background-position: bottom;` |
+| `bg-bottom-right` | `background-position: bottom right;` |
+| `bg-position-[<value>]` | `background-position: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

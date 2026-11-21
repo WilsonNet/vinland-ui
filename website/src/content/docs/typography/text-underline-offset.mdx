@@ -1,0 +1,32 @@
+---
+title: "text-underline-offset"
+description: "Utilities for controlling the offset of a text underline. Tailwind-style text-underline-offset utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 21
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the offset of a text underline.
+
+| Class | Effect |
+| --- | --- |
+| `underline-offset-<number>` | `text-underline-offset: <number>px;` |
+| `-underline-offset-<number>` | `text-underline-offset: calc(<number>px * -1);` |
+| `underline-offset-auto` | `text-underline-offset: auto;` |
+| `underline-offset-[<value>]` | `text-underline-offset: <value>;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-underline-offset-0" width={608} height={316} alt="text-underline-offset: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"underline-offset-1", "underline-offset-2", "underline-offset-4", "underline-offset-8"}) {
+        ui.key(c)
+        specimen(c, ui.cx("text-lg font-medium underline", c))
+    }
+}
+```

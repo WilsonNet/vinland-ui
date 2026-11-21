@@ -1,0 +1,46 @@
+---
+title: "inline-size"
+description: "Utilities for setting the inline size of an element. Tailwind-style inline-size utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the inline size of an element.
+
+| Class | Effect |
+| --- | --- |
+| `inline-<number>` | `inline-size: calc(var(--spacing) * <number>);` |
+| `inline-<fraction>` | `inline-size: calc(<fraction> * 100%);` |
+| `inline-3xs` | `inline-size: 16rem (256px);` |
+| `inline-2xs` | `inline-size: 18rem (288px);` |
+| `inline-xs` | `inline-size: 20rem (320px);` |
+| `inline-sm` | `inline-size: 24rem (384px);` |
+| `inline-md` | `inline-size: 28rem (448px);` |
+| `inline-lg` | `inline-size: 32rem (512px);` |
+| `inline-xl` | `inline-size: 36rem (576px);` |
+| `inline-2xl` | `inline-size: 42rem (672px);` |
+| `inline-3xl` | `inline-size: 48rem (768px);` |
+| `inline-4xl` | `inline-size: 56rem (896px);` |
+| `inline-5xl` | `inline-size: 64rem (1024px);` |
+| `inline-6xl` | `inline-size: 72rem (1152px);` |
+| `inline-7xl` | `inline-size: 80rem (1280px);` |
+| `inline-auto` | `inline-size: auto;` |
+| `inline-px` | `inline-size: 1px;` |
+| `inline-full` | `inline-size: 100%;` |
+| `inline-screen` | `inline-size: 100vw;` |
+| `inline-dvw` | `inline-size: 100dvw;` |
+| `inline-dvh` | `inline-size: 100dvh;` |
+| `inline-lvw` | `inline-size: 100lvw;` |
+| `inline-lvh` | `inline-size: 100lvh;` |
+| `inline-svw` | `inline-size: 100svw;` |
+| `inline-svh` | `inline-size: 100svh;` |
+| `inline-min` | `inline-size: min-content;` |
+| `inline-max` | `inline-size: max-content;` |
+| `inline-fit` | `inline-size: fit-content;` |
+| `inline-[<value>]` | `inline-size: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

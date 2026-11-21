@@ -1,0 +1,23 @@
+---
+title: "mask-origin"
+description: "Utilities for controlling how an element's mask image is positioned relative to borders, padding, and content. Tailwind-style mask-origin utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 10
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an element's mask image is positioned relative to borders, padding, and content.
+
+| Class | Effect |
+| --- | --- |
+| `mask-origin-border` | `mask-origin: border-box;` |
+| `mask-origin-padding` | `mask-origin: padding-box;` |
+| `mask-origin-content` | `mask-origin: content-box;` |
+| `mask-origin-fill` | `mask-origin: fill-box;` |
+| `mask-origin-stroke` | `mask-origin: stroke-box;` |
+| `mask-origin-view` | `mask-origin: view-box;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

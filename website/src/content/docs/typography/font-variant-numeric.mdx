@@ -1,0 +1,42 @@
+---
+title: "font-variant-numeric"
+description: "Utilities for controlling the variant of numbers. Tailwind-style font-variant-numeric utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the variant of numbers.
+
+| Class | Effect |
+| --- | --- |
+| `normal-nums` | `font-variant-numeric: normal;` |
+| `ordinal` | `font-variant-numeric: ordinal;` |
+| `slashed-zero` | `font-variant-numeric: slashed-zero;` |
+| `lining-nums` | `font-variant-numeric: lining-nums;` |
+| `oldstyle-nums` | `font-variant-numeric: oldstyle-nums;` |
+| `proportional-nums` | `font-variant-numeric: proportional-nums;` |
+| `tabular-nums` | `font-variant-numeric: tabular-nums;` |
+| `diagonal-fractions` | `font-variant-numeric: diagonal-fractions;` |
+| `stacked-fractions` | `font-variant-numeric: stacked-fractions;` |
+
+## Examples
+
+### Tabular figures
+
+Use `tabular-nums` so digits line up in columns. Inter's figures are already tabular, so the class is accepted for compatibility.
+
+<Preview src="font-variant-numeric-0" width={608} height={174} alt="font-variant-numeric: Tabular figures" />
+
+```odin
+if ui.div("w-64 divide-y divide-gray-200 dark:divide-white/10") {
+    for row in ([][2]string{{"Coffee", "$4.20"}, {"Croissant", "$11.95"}, {"Tea", "$3.05"}}) {
+        ui.key(row[0])
+        if ui.div("flex justify-between py-2 text-sm") {
+            ui.text(row[0], "text-gray-600 dark:text-gray-400")
+            ui.text(row[1], "font-medium tabular-nums text-gray-950 dark:text-white")
+        }
+    }
+}
+```

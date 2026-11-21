@@ -1,0 +1,41 @@
+---
+title: "justify-self"
+description: "Utilities for controlling how an individual grid item is aligned along its inline axis. Tailwind-style justify-self utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 18
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how an individual grid item is aligned along its inline axis.
+
+| Class | Effect |
+| --- | --- |
+| `justify-self-auto` | `justify-self: auto;` |
+| `justify-self-start` | `justify-self: start;` |
+| `justify-self-center` | `justify-self: center;` |
+| `justify-self-center-safe` | `justify-self: safe center;` |
+| `justify-self-end` | `justify-self: end;` |
+| `justify-self-end-safe` | `justify-self: safe end;` |
+| `justify-self-stretch` | `justify-self: stretch;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="justify-self-0" width={608} height={184} alt="justify-self: Basic example" />
+
+```odin
+if ui.div("grid grid-cols-3 gap-4") {
+    tile("01")
+    if ui.div("rounded-lg bg-stripes stripes-violet-500/25 grid") {
+        tile("02", "w-14 justify-self-center")
+    }
+    tile("03")
+    tile("04")
+    if ui.div("rounded-lg bg-stripes stripes-violet-500/25 grid") {
+        tile("05", "w-14 justify-self-end")
+    }
+    tile("06")
+}
+```

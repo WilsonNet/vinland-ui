@@ -1,0 +1,185 @@
+---
+title: "caret-color"
+description: "Utilities for controlling the color of the text input cursor. Tailwind-style caret-color utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the color of the text input cursor.
+
+| Class | Effect |
+| --- | --- |
+| `caret-inherit` | `caret-color: inherit;` |
+| `caret-current` | `caret-color: currentColor;` |
+| `caret-transparent` | `caret-color: transparent;` |
+| `caret-black` | `caret-color: #000;` |
+| `caret-white` | `caret-color: #fff;` |
+| `caret-red-50` | `caret-color: color-red-50 token;` |
+| `caret-red-100` | `caret-color: color-red-100 token;` |
+| `caret-red-200` | `caret-color: color-red-200 token;` |
+| `caret-red-300` | `caret-color: color-red-300 token;` |
+| `caret-red-400` | `caret-color: color-red-400 token;` |
+| `caret-red-500` | `caret-color: color-red-500 token;` |
+| `caret-red-600` | `caret-color: color-red-600 token;` |
+| `caret-red-700` | `caret-color: color-red-700 token;` |
+| `caret-red-800` | `caret-color: color-red-800 token;` |
+| `caret-red-900` | `caret-color: color-red-900 token;` |
+| `caret-red-950` | `caret-color: color-red-950 token;` |
+| `caret-orange-50` | `caret-color: color-orange-50 token;` |
+| `caret-orange-100` | `caret-color: color-orange-100 token;` |
+| `caret-orange-200` | `caret-color: color-orange-200 token;` |
+| `caret-orange-300` | `caret-color: color-orange-300 token;` |
+| `caret-orange-400` | `caret-color: color-orange-400 token;` |
+| `caret-orange-500` | `caret-color: color-orange-500 token;` |
+| `caret-orange-600` | `caret-color: color-orange-600 token;` |
+| `caret-orange-700` | `caret-color: color-orange-700 token;` |
+| `caret-orange-800` | `caret-color: color-orange-800 token;` |
+| `caret-orange-900` | `caret-color: color-orange-900 token;` |
+| `caret-orange-950` | `caret-color: color-orange-950 token;` |
+| `caret-amber-50` | `caret-color: color-amber-50 token;` |
+| `caret-amber-100` | `caret-color: color-amber-100 token;` |
+| `caret-amber-200` | `caret-color: color-amber-200 token;` |
+| `caret-amber-300` | `caret-color: color-amber-300 token;` |
+| `caret-amber-400` | `caret-color: color-amber-400 token;` |
+| `caret-amber-500` | `caret-color: color-amber-500 token;` |
+| `caret-amber-600` | `caret-color: color-amber-600 token;` |
+| `caret-amber-700` | `caret-color: color-amber-700 token;` |
+| `caret-amber-800` | `caret-color: color-amber-800 token;` |
+| `caret-amber-900` | `caret-color: color-amber-900 token;` |
+| `caret-amber-950` | `caret-color: color-amber-950 token;` |
+| `caret-yellow-50` | `caret-color: color-yellow-50 token;` |
+| `caret-yellow-100` | `caret-color: color-yellow-100 token;` |
+| `caret-yellow-200` | `caret-color: color-yellow-200 token;` |
+| `caret-yellow-300` | `caret-color: color-yellow-300 token;` |
+| `caret-yellow-400` | `caret-color: color-yellow-400 token;` |
+| `caret-yellow-500` | `caret-color: color-yellow-500 token;` |
+| `caret-yellow-600` | `caret-color: color-yellow-600 token;` |
+| `caret-yellow-700` | `caret-color: color-yellow-700 token;` |
+| `caret-yellow-800` | `caret-color: color-yellow-800 token;` |
+| `caret-yellow-900` | `caret-color: color-yellow-900 token;` |
+| `caret-yellow-950` | `caret-color: color-yellow-950 token;` |
+| `caret-lime-50` | `caret-color: color-lime-50 token;` |
+| `caret-lime-100` | `caret-color: color-lime-100 token;` |
+| `caret-lime-200` | `caret-color: color-lime-200 token;` |
+| `caret-lime-300` | `caret-color: color-lime-300 token;` |
+| `caret-lime-400` | `caret-color: color-lime-400 token;` |
+| `caret-lime-500` | `caret-color: color-lime-500 token;` |
+| `caret-lime-600` | `caret-color: color-lime-600 token;` |
+| `caret-lime-700` | `caret-color: color-lime-700 token;` |
+| `caret-lime-800` | `caret-color: color-lime-800 token;` |
+| `caret-lime-900` | `caret-color: color-lime-900 token;` |
+| `caret-lime-950` | `caret-color: color-lime-950 token;` |
+| `caret-green-50` | `caret-color: color-green-50 token;` |
+| `caret-green-100` | `caret-color: color-green-100 token;` |
+| `caret-green-200` | `caret-color: color-green-200 token;` |
+| `caret-green-300` | `caret-color: color-green-300 token;` |
+| `caret-green-400` | `caret-color: color-green-400 token;` |
+| `caret-green-500` | `caret-color: color-green-500 token;` |
+| `caret-green-600` | `caret-color: color-green-600 token;` |
+| `caret-green-700` | `caret-color: color-green-700 token;` |
+| `caret-green-800` | `caret-color: color-green-800 token;` |
+| `caret-green-900` | `caret-color: color-green-900 token;` |
+| `caret-green-950` | `caret-color: color-green-950 token;` |
+| `caret-emerald-50` | `caret-color: color-emerald-50 token;` |
+| `caret-emerald-100` | `caret-color: color-emerald-100 token;` |
+| `caret-emerald-200` | `caret-color: color-emerald-200 token;` |
+| `caret-emerald-300` | `caret-color: color-emerald-300 token;` |
+| `caret-emerald-400` | `caret-color: color-emerald-400 token;` |
+| `caret-emerald-500` | `caret-color: color-emerald-500 token;` |
+| `caret-emerald-600` | `caret-color: color-emerald-600 token;` |
+| `caret-emerald-700` | `caret-color: color-emerald-700 token;` |
+| `caret-emerald-800` | `caret-color: color-emerald-800 token;` |
+| `caret-emerald-900` | `caret-color: color-emerald-900 token;` |
+| `caret-emerald-950` | `caret-color: color-emerald-950 token;` |
+| `caret-teal-50` | `caret-color: color-teal-50 token;` |
+| `caret-teal-100` | `caret-color: color-teal-100 token;` |
+| `caret-teal-200` | `caret-color: color-teal-200 token;` |
+| `caret-teal-300` | `caret-color: color-teal-300 token;` |
+| `caret-teal-400` | `caret-color: color-teal-400 token;` |
+| `caret-teal-500` | `caret-color: color-teal-500 token;` |
+| `caret-teal-600` | `caret-color: color-teal-600 token;` |
+| `caret-teal-700` | `caret-color: color-teal-700 token;` |
+| `caret-teal-800` | `caret-color: color-teal-800 token;` |
+| `caret-teal-900` | `caret-color: color-teal-900 token;` |
+| `caret-teal-950` | `caret-color: color-teal-950 token;` |
+| `caret-cyan-50` | `caret-color: color-cyan-50 token;` |
+| `caret-cyan-100` | `caret-color: color-cyan-100 token;` |
+| `caret-cyan-200` | `caret-color: color-cyan-200 token;` |
+| `caret-cyan-300` | `caret-color: color-cyan-300 token;` |
+| `caret-cyan-400` | `caret-color: color-cyan-400 token;` |
+| `caret-cyan-500` | `caret-color: color-cyan-500 token;` |
+| `caret-cyan-600` | `caret-color: color-cyan-600 token;` |
+| `caret-cyan-700` | `caret-color: color-cyan-700 token;` |
+| `caret-cyan-800` | `caret-color: color-cyan-800 token;` |
+| `caret-cyan-900` | `caret-color: color-cyan-900 token;` |
+| `caret-cyan-950` | `caret-color: color-cyan-950 token;` |
+| `caret-sky-50` | `caret-color: color-sky-50 token;` |
+| `caret-sky-100` | `caret-color: color-sky-100 token;` |
+| `caret-sky-200` | `caret-color: color-sky-200 token;` |
+| `caret-sky-300` | `caret-color: color-sky-300 token;` |
+| `caret-sky-400` | `caret-color: color-sky-400 token;` |
+| `caret-sky-500` | `caret-color: color-sky-500 token;` |
+| `caret-sky-600` | `caret-color: color-sky-600 token;` |
+| `caret-sky-700` | `caret-color: color-sky-700 token;` |
+| `caret-sky-800` | `caret-color: color-sky-800 token;` |
+| `caret-sky-900` | `caret-color: color-sky-900 token;` |
+| `caret-sky-950` | `caret-color: color-sky-950 token;` |
+| `caret-blue-50` | `caret-color: color-blue-50 token;` |
+| `caret-blue-100` | `caret-color: color-blue-100 token;` |
+| `caret-blue-200` | `caret-color: color-blue-200 token;` |
+| `caret-blue-300` | `caret-color: color-blue-300 token;` |
+| `caret-blue-400` | `caret-color: color-blue-400 token;` |
+| `caret-blue-500` | `caret-color: color-blue-500 token;` |
+| `caret-blue-600` | `caret-color: color-blue-600 token;` |
+| `caret-blue-700` | `caret-color: color-blue-700 token;` |
+| `caret-blue-800` | `caret-color: color-blue-800 token;` |
+| `caret-blue-900` | `caret-color: color-blue-900 token;` |
+| `caret-blue-950` | `caret-color: color-blue-950 token;` |
+| `caret-indigo-50` | `caret-color: color-indigo-50 token;` |
+| `caret-indigo-100` | `caret-color: color-indigo-100 token;` |
+| `caret-indigo-200` | `caret-color: color-indigo-200 token;` |
+| `caret-indigo-300` | `caret-color: color-indigo-300 token;` |
+| `caret-indigo-400` | `caret-color: color-indigo-400 token;` |
+| `caret-indigo-500` | `caret-color: color-indigo-500 token;` |
+| `caret-indigo-600` | `caret-color: color-indigo-600 token;` |
+| `caret-indigo-700` | `caret-color: color-indigo-700 token;` |
+| `caret-indigo-800` | `caret-color: color-indigo-800 token;` |
+| `caret-indigo-900` | `caret-color: color-indigo-900 token;` |
+| `caret-indigo-950` | `caret-color: color-indigo-950 token;` |
+| `caret-violet-50` | `caret-color: color-violet-50 token;` |
+| `caret-violet-100` | `caret-color: color-violet-100 token;` |
+| `caret-violet-200` | `caret-color: color-violet-200 token;` |
+| `caret-violet-300` | `caret-color: color-violet-300 token;` |
+| `caret-violet-400` | `caret-color: color-violet-400 token;` |
+| `caret-violet-500` | `caret-color: color-violet-500 token;` |
+| `caret-violet-600` | `caret-color: color-violet-600 token;` |
+| `caret-violet-700` | `caret-color: color-violet-700 token;` |
+| `caret-violet-800` | `caret-color: color-violet-800 token;` |
+| `caret-violet-900` | `caret-color: color-violet-900 token;` |
+| `caret-violet-950` | `caret-color: color-violet-950 token;` |
+| `caret-purple-50` | `caret-color: color-purple-50 token;` |
+| `caret-purple-100` | `caret-color: color-purple-100 token;` |
+| `caret-purple-200` | `caret-color: color-purple-200 token;` |
+| `caret-purple-300` | `caret-color: color-purple-300 token;` |
+| `caret-purple-400` | `caret-color: color-purple-400 token;` |
+| `caret-purple-500` | `caret-color: color-purple-500 token;` |
+| `caret-purple-600` | `caret-color: color-purple-600 token;` |
+| `caret-purple-700` | `caret-color: color-purple-700 token;` |
+| `caret-purple-800` | `caret-color: color-purple-800 token;` |
+| `caret-purple-900` | `caret-color: color-purple-900 token;` |
+| `caret-purple-950` | `caret-color: color-purple-950 token;` |
+| `caret-fuchsia-50` | `caret-color: color-fuchsia-50 token;` |
+
+## Examples
+
+### Basic example
+
+Use `caret-<color>` to color the text cursor and `selection:bg-*` for the selection highlight. Click into the field and type.
+
+<Preview src="caret-color-0" width={608} height={100} alt="caret-color: Basic example" />
+
+```odin
+ui.text_input(&s.demo.text, "w-80 rounded-lg bg-white px-3 py-2 text-sm text-gray-950 ring-1 ring-gray-300 caret-pink-500 selection:bg-pink-500/25 focus:ring-2 focus:ring-pink-500 dark:bg-gray-900 dark:text-white dark:ring-white/15", "Type something…")
+```

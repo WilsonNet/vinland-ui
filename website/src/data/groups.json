@@ -1,0 +1,70 @@
+[
+ {
+  "label": "Getting started",
+  "directory": "getting-started"
+ },
+ {
+  "label": "Core concepts",
+  "directory": "core-concepts"
+ },
+ {
+  "label": "Layout",
+  "directory": "layout"
+ },
+ {
+  "label": "Flexbox & Grid",
+  "directory": "flexbox-grid"
+ },
+ {
+  "label": "Spacing",
+  "directory": "spacing"
+ },
+ {
+  "label": "Sizing",
+  "directory": "sizing"
+ },
+ {
+  "label": "Typography",
+  "directory": "typography"
+ },
+ {
+  "label": "Backgrounds",
+  "directory": "backgrounds"
+ },
+ {
+  "label": "Borders",
+  "directory": "borders"
+ },
+ {
+  "label": "Effects",
+  "directory": "effects"
+ },
+ {
+  "label": "Filters",
+  "directory": "filters"
+ },
+ {
+  "label": "Tables",
+  "directory": "tables"
+ },
+ {
+  "label": "Transitions & Animation",
+  "directory": "transitions-animation"
+ },
+ {
+  "label": "Transforms",
+  "directory": "transforms"
+ },
+ {
+  "label": "Interactivity",
+  "directory": "interactivity"
+ },
+ {
+  "label": "SVG",
+  "directory": "svg"
+ },
+ {
+  "label": "Accessibility",
+  "directory": "accessibility"
+ }
+]

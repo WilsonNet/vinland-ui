@@ -1,0 +1,44 @@
+---
+title: "text-decoration-line"
+description: "Utilities for controlling the decoration of text. Tailwind-style text-decoration-line utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the decoration of text.
+
+| Class | Effect |
+| --- | --- |
+| `underline` | `text-decoration-line: underline;` |
+| `overline` | `text-decoration-line: overline;` |
+| `line-through` | `text-decoration-line: line-through;` |
+| `no-underline` | `text-decoration-line: none;` |
+
+## Examples
+
+### Basic example
+
+<Preview src="text-decoration-line-0" width={608} height={316} alt="text-decoration-line: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-5") {
+    for c in ([]string{"underline", "overline", "line-through", "no-underline"}) {
+        ui.key(c)
+        specimen(c, ui.cx(c, "text-lg font-medium"))
+    }
+}
+```
+
+### Applying on hover
+
+<Preview src="text-decoration-line-1" width={608} height={88} alt="text-decoration-line: Applying on hover" />
+
+```odin
+if ui.p("text-base text-gray-700 dark:text-gray-300") {
+    ui.span("The ")
+    ui.span("quick brown fox", "font-semibold text-sky-600 underline decoration-sky-400/50 underline-offset-4")
+    ui.span(" jumps over the lazy dog.")
+}
+```

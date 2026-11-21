@@ -1,0 +1,27 @@
+---
+title: "perspective-origin"
+description: "Utilities for controlling an element's perspective origin when placed in 3D space. Tailwind-style perspective-origin utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling an element's perspective origin when placed in 3D space.
+
+| Class | Effect |
+| --- | --- |
+| `perspective-origin-center` | `perspective-origin: center;` |
+| `perspective-origin-top` | `perspective-origin: top;` |
+| `perspective-origin-top-right` | `perspective-origin: top right;` |
+| `perspective-origin-right` | `perspective-origin: right;` |
+| `perspective-origin-bottom-right` | `perspective-origin: bottom right;` |
+| `perspective-origin-bottom` | `perspective-origin: bottom;` |
+| `perspective-origin-bottom-left` | `perspective-origin: bottom left;` |
+| `perspective-origin-left` | `perspective-origin: left;` |
+| `perspective-origin-top-left` | `perspective-origin: top left;` |
+| `perspective-origin-[<value>]` | `perspective-origin: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

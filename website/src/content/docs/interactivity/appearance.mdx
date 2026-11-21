@@ -1,0 +1,19 @@
+---
+title: "appearance"
+description: "Utilities for suppressing native form control styling. Tailwind-style appearance utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for suppressing native form control styling.
+
+| Class | Effect |
+| --- | --- |
+| `appearance-none` | `appearance: none;` |
+| `appearance-auto` | `appearance: auto;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

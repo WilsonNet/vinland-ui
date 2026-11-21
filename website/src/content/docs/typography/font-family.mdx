@@ -1,0 +1,33 @@
+---
+title: "font-family"
+description: "Utilities for controlling the font family of an element. Tailwind-style font-family utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling the font family of an element.
+
+| Class | Effect |
+| --- | --- |
+| `font-sans` | `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';` |
+| `font-serif` | `font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;` |
+| `font-mono` | `font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;` |
+| `font-[<value>]` | `font-family: <value>;` |
+
+## Examples
+
+### Basic example
+
+Use `font-sans`, `font-serif` and `font-mono`. Each is a token that maps to a registered family, so a theme can swap faces app-wide.
+
+<Preview src="font-family-0" width={608} height={256} alt="font-family: Basic example" />
+
+```odin
+if ui.div("flex flex-col gap-6") {
+    specimen("font-sans", "font-sans text-xl font-medium")
+    specimen("font-serif", "font-serif text-xl font-medium")
+    specimen("font-mono", "font-mono text-xl font-medium")
+}
+```

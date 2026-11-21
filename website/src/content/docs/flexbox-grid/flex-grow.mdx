@@ -1,0 +1,44 @@
+---
+title: "flex-grow"
+description: "Utilities for controlling how flex items grow. Tailwind-style flex-grow utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how flex items grow.
+
+| Class | Effect |
+| --- | --- |
+| `grow` | `flex-grow: 1;` |
+| `grow-<number>` | `flex-grow: <number>;` |
+| `grow-[<value>]` | `flex-grow: <value>;` |
+
+## Examples
+
+### Allowing items to grow
+
+Use `grow` to let an item fill any available space.
+
+<Preview src="flex-grow-0" width={608} height={120} alt="flex-grow: Allowing items to grow" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "size-14 flex-none")
+    tile("02", "h-14 grow")
+    tile("03", "size-14 flex-none")
+}
+```
+
+### Growing items based on factor
+
+<Preview src="flex-grow-1" width={608} height={120} alt="flex-grow: Growing items based on factor" />
+
+```odin
+if ui.div("flex gap-4") {
+    tile("01", "h-14 w-12 grow")
+    tile("02", "h-14 w-12 grow-3")
+    tile("03", "h-14 w-12 grow-7")
+}
+```

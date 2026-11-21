@@ -1,0 +1,46 @@
+---
+title: "min-inline-size"
+description: "Utilities for setting the minimum inline size of an element. Tailwind-style min-inline-size utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for setting the minimum inline size of an element.
+
+| Class | Effect |
+| --- | --- |
+| `min-inline-<number>` | `min-inline-size: calc(var(--spacing) * <number>);` |
+| `min-inline-<fraction>` | `min-inline-size: calc(<fraction> * 100%);` |
+| `min-inline-3xs` | `min-inline-size: 16rem (256px);` |
+| `min-inline-2xs` | `min-inline-size: 18rem (288px);` |
+| `min-inline-xs` | `min-inline-size: 20rem (320px);` |
+| `min-inline-sm` | `min-inline-size: 24rem (384px);` |
+| `min-inline-md` | `min-inline-size: 28rem (448px);` |
+| `min-inline-lg` | `min-inline-size: 32rem (512px);` |
+| `min-inline-xl` | `min-inline-size: 36rem (576px);` |
+| `min-inline-2xl` | `min-inline-size: 42rem (672px);` |
+| `min-inline-3xl` | `min-inline-size: 48rem (768px);` |
+| `min-inline-4xl` | `min-inline-size: 56rem (896px);` |
+| `min-inline-5xl` | `min-inline-size: 64rem (1024px);` |
+| `min-inline-6xl` | `min-inline-size: 72rem (1152px);` |
+| `min-inline-7xl` | `min-inline-size: 80rem (1280px);` |
+| `min-inline-auto` | `min-inline-size: auto;` |
+| `min-inline-px` | `min-inline-size: 1px;` |
+| `min-inline-full` | `min-inline-size: 100%;` |
+| `min-inline-screen` | `min-inline-size: 100vw;` |
+| `min-inline-dvw` | `min-inline-size: 100dvw;` |
+| `min-inline-dvh` | `min-inline-size: 100dvh;` |
+| `min-inline-lvw` | `min-inline-size: 100lvw;` |
+| `min-inline-lvh` | `min-inline-size: 100lvh;` |
+| `min-inline-svw` | `min-inline-size: 100svw;` |
+| `min-inline-svh` | `min-inline-size: 100svh;` |
+| `min-inline-min` | `min-inline-size: min-content;` |
+| `min-inline-max` | `min-inline-size: max-content;` |
+| `min-inline-fit` | `min-inline-size: fit-content;` |
+| `min-inline-[<value>]` | `min-inline-size: <value>;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

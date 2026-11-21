@@ -1,0 +1,190 @@
+---
+title: "fill"
+description: "Utilities for styling the fill of SVG elements. Tailwind-style fill utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for styling the fill of SVG elements.
+
+| Class | Effect |
+| --- | --- |
+| `fill-none` | `fill: none;` |
+| `fill-inherit` | `fill: inherit;` |
+| `fill-current` | `fill: currentColor;` |
+| `fill-transparent` | `fill: transparent;` |
+| `fill-black` | `fill: #000;` |
+| `fill-white` | `fill: #fff;` |
+| `fill-red-50` | `fill: color-red-50 token;` |
+| `fill-red-100` | `fill: color-red-100 token;` |
+| `fill-red-200` | `fill: color-red-200 token;` |
+| `fill-red-300` | `fill: color-red-300 token;` |
+| `fill-red-400` | `fill: color-red-400 token;` |
+| `fill-red-500` | `fill: color-red-500 token;` |
+| `fill-red-600` | `fill: color-red-600 token;` |
+| `fill-red-700` | `fill: color-red-700 token;` |
+| `fill-red-800` | `fill: color-red-800 token;` |
+| `fill-red-900` | `fill: color-red-900 token;` |
+| `fill-red-950` | `fill: color-red-950 token;` |
+| `fill-orange-50` | `fill: color-orange-50 token;` |
+| `fill-orange-100` | `fill: color-orange-100 token;` |
+| `fill-orange-200` | `fill: color-orange-200 token;` |
+| `fill-orange-300` | `fill: color-orange-300 token;` |
+| `fill-orange-400` | `fill: color-orange-400 token;` |
+| `fill-orange-500` | `fill: color-orange-500 token;` |
+| `fill-orange-600` | `fill: color-orange-600 token;` |
+| `fill-orange-700` | `fill: color-orange-700 token;` |
+| `fill-orange-800` | `fill: color-orange-800 token;` |
+| `fill-orange-900` | `fill: color-orange-900 token;` |
+| `fill-orange-950` | `fill: color-orange-950 token;` |
+| `fill-amber-50` | `fill: color-amber-50 token;` |
+| `fill-amber-100` | `fill: color-amber-100 token;` |
+| `fill-amber-200` | `fill: color-amber-200 token;` |
+| `fill-amber-300` | `fill: color-amber-300 token;` |
+| `fill-amber-400` | `fill: color-amber-400 token;` |
+| `fill-amber-500` | `fill: color-amber-500 token;` |
+| `fill-amber-600` | `fill: color-amber-600 token;` |
+| `fill-amber-700` | `fill: color-amber-700 token;` |
+| `fill-amber-800` | `fill: color-amber-800 token;` |
+| `fill-amber-900` | `fill: color-amber-900 token;` |
+| `fill-amber-950` | `fill: color-amber-950 token;` |
+| `fill-yellow-50` | `fill: color-yellow-50 token;` |
+| `fill-yellow-100` | `fill: color-yellow-100 token;` |
+| `fill-yellow-200` | `fill: color-yellow-200 token;` |
+| `fill-yellow-300` | `fill: color-yellow-300 token;` |
+| `fill-yellow-400` | `fill: color-yellow-400 token;` |
+| `fill-yellow-500` | `fill: color-yellow-500 token;` |
+| `fill-yellow-600` | `fill: color-yellow-600 token;` |
+| `fill-yellow-700` | `fill: color-yellow-700 token;` |
+| `fill-yellow-800` | `fill: color-yellow-800 token;` |
+| `fill-yellow-900` | `fill: color-yellow-900 token;` |
+| `fill-yellow-950` | `fill: color-yellow-950 token;` |
+| `fill-lime-50` | `fill: color-lime-50 token;` |
+| `fill-lime-100` | `fill: color-lime-100 token;` |
+| `fill-lime-200` | `fill: color-lime-200 token;` |
+| `fill-lime-300` | `fill: color-lime-300 token;` |
+| `fill-lime-400` | `fill: color-lime-400 token;` |
+| `fill-lime-500` | `fill: color-lime-500 token;` |
+| `fill-lime-600` | `fill: color-lime-600 token;` |
+| `fill-lime-700` | `fill: color-lime-700 token;` |
+| `fill-lime-800` | `fill: color-lime-800 token;` |
+| `fill-lime-900` | `fill: color-lime-900 token;` |
+| `fill-lime-950` | `fill: color-lime-950 token;` |
+| `fill-green-50` | `fill: color-green-50 token;` |
+| `fill-green-100` | `fill: color-green-100 token;` |
+| `fill-green-200` | `fill: color-green-200 token;` |
+| `fill-green-300` | `fill: color-green-300 token;` |
+| `fill-green-400` | `fill: color-green-400 token;` |
+| `fill-green-500` | `fill: color-green-500 token;` |
+| `fill-green-600` | `fill: color-green-600 token;` |
+| `fill-green-700` | `fill: color-green-700 token;` |
+| `fill-green-800` | `fill: color-green-800 token;` |
+| `fill-green-900` | `fill: color-green-900 token;` |
+| `fill-green-950` | `fill: color-green-950 token;` |
+| `fill-emerald-50` | `fill: color-emerald-50 token;` |
+| `fill-emerald-100` | `fill: color-emerald-100 token;` |
+| `fill-emerald-200` | `fill: color-emerald-200 token;` |
+| `fill-emerald-300` | `fill: color-emerald-300 token;` |
+| `fill-emerald-400` | `fill: color-emerald-400 token;` |
+| `fill-emerald-500` | `fill: color-emerald-500 token;` |
+| `fill-emerald-600` | `fill: color-emerald-600 token;` |
+| `fill-emerald-700` | `fill: color-emerald-700 token;` |
+| `fill-emerald-800` | `fill: color-emerald-800 token;` |
+| `fill-emerald-900` | `fill: color-emerald-900 token;` |
+| `fill-emerald-950` | `fill: color-emerald-950 token;` |
+| `fill-teal-50` | `fill: color-teal-50 token;` |
+| `fill-teal-100` | `fill: color-teal-100 token;` |
+| `fill-teal-200` | `fill: color-teal-200 token;` |
+| `fill-teal-300` | `fill: color-teal-300 token;` |
+| `fill-teal-400` | `fill: color-teal-400 token;` |
+| `fill-teal-500` | `fill: color-teal-500 token;` |
+| `fill-teal-600` | `fill: color-teal-600 token;` |
+| `fill-teal-700` | `fill: color-teal-700 token;` |
+| `fill-teal-800` | `fill: color-teal-800 token;` |
+| `fill-teal-900` | `fill: color-teal-900 token;` |
+| `fill-teal-950` | `fill: color-teal-950 token;` |
+| `fill-cyan-50` | `fill: color-cyan-50 token;` |
+| `fill-cyan-100` | `fill: color-cyan-100 token;` |
+| `fill-cyan-200` | `fill: color-cyan-200 token;` |
+| `fill-cyan-300` | `fill: color-cyan-300 token;` |
+| `fill-cyan-400` | `fill: color-cyan-400 token;` |
+| `fill-cyan-500` | `fill: color-cyan-500 token;` |
+| `fill-cyan-600` | `fill: color-cyan-600 token;` |
+| `fill-cyan-700` | `fill: color-cyan-700 token;` |
+| `fill-cyan-800` | `fill: color-cyan-800 token;` |
+| `fill-cyan-900` | `fill: color-cyan-900 token;` |
+| `fill-cyan-950` | `fill: color-cyan-950 token;` |
+| `fill-sky-50` | `fill: color-sky-50 token;` |
+| `fill-sky-100` | `fill: color-sky-100 token;` |
+| `fill-sky-200` | `fill: color-sky-200 token;` |
+| `fill-sky-300` | `fill: color-sky-300 token;` |
+| `fill-sky-400` | `fill: color-sky-400 token;` |
+| `fill-sky-500` | `fill: color-sky-500 token;` |
+| `fill-sky-600` | `fill: color-sky-600 token;` |
+| `fill-sky-700` | `fill: color-sky-700 token;` |
+| `fill-sky-800` | `fill: color-sky-800 token;` |
+| `fill-sky-900` | `fill: color-sky-900 token;` |
+| `fill-sky-950` | `fill: color-sky-950 token;` |
+| `fill-blue-50` | `fill: color-blue-50 token;` |
+| `fill-blue-100` | `fill: color-blue-100 token;` |
+| `fill-blue-200` | `fill: color-blue-200 token;` |
+| `fill-blue-300` | `fill: color-blue-300 token;` |
+| `fill-blue-400` | `fill: color-blue-400 token;` |
+| `fill-blue-500` | `fill: color-blue-500 token;` |
+| `fill-blue-600` | `fill: color-blue-600 token;` |
+| `fill-blue-700` | `fill: color-blue-700 token;` |
+| `fill-blue-800` | `fill: color-blue-800 token;` |
+| `fill-blue-900` | `fill: color-blue-900 token;` |
+| `fill-blue-950` | `fill: color-blue-950 token;` |
+| `fill-indigo-50` | `fill: color-indigo-50 token;` |
+| `fill-indigo-100` | `fill: color-indigo-100 token;` |
+| `fill-indigo-200` | `fill: color-indigo-200 token;` |
+| `fill-indigo-300` | `fill: color-indigo-300 token;` |
+| `fill-indigo-400` | `fill: color-indigo-400 token;` |
+| `fill-indigo-500` | `fill: color-indigo-500 token;` |
+| `fill-indigo-600` | `fill: color-indigo-600 token;` |
+| `fill-indigo-700` | `fill: color-indigo-700 token;` |
+| `fill-indigo-800` | `fill: color-indigo-800 token;` |
+| `fill-indigo-900` | `fill: color-indigo-900 token;` |
+| `fill-indigo-950` | `fill: color-indigo-950 token;` |
+| `fill-violet-50` | `fill: color-violet-50 token;` |
+| `fill-violet-100` | `fill: color-violet-100 token;` |
+| `fill-violet-200` | `fill: color-violet-200 token;` |
+| `fill-violet-300` | `fill: color-violet-300 token;` |
+| `fill-violet-400` | `fill: color-violet-400 token;` |
+| `fill-violet-500` | `fill: color-violet-500 token;` |
+| `fill-violet-600` | `fill: color-violet-600 token;` |
+| `fill-violet-700` | `fill: color-violet-700 token;` |
+| `fill-violet-800` | `fill: color-violet-800 token;` |
+| `fill-violet-900` | `fill: color-violet-900 token;` |
+| `fill-violet-950` | `fill: color-violet-950 token;` |
+| `fill-purple-50` | `fill: color-purple-50 token;` |
+| `fill-purple-100` | `fill: color-purple-100 token;` |
+| `fill-purple-200` | `fill: color-purple-200 token;` |
+| `fill-purple-300` | `fill: color-purple-300 token;` |
+| `fill-purple-400` | `fill: color-purple-400 token;` |
+| `fill-purple-500` | `fill: color-purple-500 token;` |
+| `fill-purple-600` | `fill: color-purple-600 token;` |
+| `fill-purple-700` | `fill: color-purple-700 token;` |
+| `fill-purple-800` | `fill: color-purple-800 token;` |
+| `fill-purple-900` | `fill: color-purple-900 token;` |
+| `fill-purple-950` | `fill: color-purple-950 token;` |
+
+## Examples
+
+### Coloring icons
+
+Icons take `text-*` (current color) or an explicit `fill-*`.
+
+<Preview src="fill-0" width={608} height={104} alt="fill: Coloring icons" />
+
+```odin
+if ui.div("flex gap-6") {
+    ui.icon(IC.heart, "size-10 fill-pink-500")
+    ui.icon(IC.star, "size-10 fill-amber-400")
+    ui.icon(IC.bolt, "size-10 fill-violet-500")
+    ui.icon(IC.fire, "size-10 fill-orange-500")
+}
+```

@@ -1,0 +1,29 @@
+---
+title: "user-select"
+description: "Utilities for controlling whether the user can select text in an element. Tailwind-style user-select utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 19
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling whether the user can select text in an element.
+
+| Class | Effect |
+| --- | --- |
+| `select-none` | `user-select: none;` |
+| `select-text` | `user-select: text;` |
+| `select-all` | `user-select: all;` |
+| `select-auto` | `user-select: auto;` |
+
+## Examples
+
+### Basic example
+
+`select-none` marks text as not selectable; the cursor stays an arrow over it.
+
+<Preview src="user-select-0" width={608} height={84} alt="user-select: Basic example" />
+
+```odin
+ui.text("The quick brown fox jumps over the lazy dog.", "select-none text-sm text-gray-700 dark:text-gray-300")
+```

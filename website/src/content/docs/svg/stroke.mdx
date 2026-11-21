@@ -1,0 +1,177 @@
+---
+title: "stroke"
+description: "Utilities for styling the stroke of SVG elements. Tailwind-style stroke utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for styling the stroke of SVG elements.
+
+| Class | Effect |
+| --- | --- |
+| `stroke-none` | `stroke: none;` |
+| `stroke-inherit` | `stroke: inherit;` |
+| `stroke-current` | `stroke: currentColor;` |
+| `stroke-transparent` | `stroke: transparent;` |
+| `stroke-black` | `stroke: #000;` |
+| `stroke-white` | `stroke: #fff;` |
+| `stroke-red-50` | `stroke: color-red-50 token;` |
+| `stroke-red-100` | `stroke: color-red-100 token;` |
+| `stroke-red-200` | `stroke: color-red-200 token;` |
+| `stroke-red-300` | `stroke: color-red-300 token;` |
+| `stroke-red-400` | `stroke: color-red-400 token;` |
+| `stroke-red-500` | `stroke: color-red-500 token;` |
+| `stroke-red-600` | `stroke: color-red-600 token;` |
+| `stroke-red-700` | `stroke: color-red-700 token;` |
+| `stroke-red-800` | `stroke: color-red-800 token;` |
+| `stroke-red-900` | `stroke: color-red-900 token;` |
+| `stroke-red-950` | `stroke: color-red-950 token;` |
+| `stroke-orange-50` | `stroke: color-orange-50 token;` |
+| `stroke-orange-100` | `stroke: color-orange-100 token;` |
+| `stroke-orange-200` | `stroke: color-orange-200 token;` |
+| `stroke-orange-300` | `stroke: color-orange-300 token;` |
+| `stroke-orange-400` | `stroke: color-orange-400 token;` |
+| `stroke-orange-500` | `stroke: color-orange-500 token;` |
+| `stroke-orange-600` | `stroke: color-orange-600 token;` |
+| `stroke-orange-700` | `stroke: color-orange-700 token;` |
+| `stroke-orange-800` | `stroke: color-orange-800 token;` |
+| `stroke-orange-900` | `stroke: color-orange-900 token;` |
+| `stroke-orange-950` | `stroke: color-orange-950 token;` |
+| `stroke-amber-50` | `stroke: color-amber-50 token;` |
+| `stroke-amber-100` | `stroke: color-amber-100 token;` |
+| `stroke-amber-200` | `stroke: color-amber-200 token;` |
+| `stroke-amber-300` | `stroke: color-amber-300 token;` |
+| `stroke-amber-400` | `stroke: color-amber-400 token;` |
+| `stroke-amber-500` | `stroke: color-amber-500 token;` |
+| `stroke-amber-600` | `stroke: color-amber-600 token;` |
+| `stroke-amber-700` | `stroke: color-amber-700 token;` |
+| `stroke-amber-800` | `stroke: color-amber-800 token;` |
+| `stroke-amber-900` | `stroke: color-amber-900 token;` |
+| `stroke-amber-950` | `stroke: color-amber-950 token;` |
+| `stroke-yellow-50` | `stroke: color-yellow-50 token;` |
+| `stroke-yellow-100` | `stroke: color-yellow-100 token;` |
+| `stroke-yellow-200` | `stroke: color-yellow-200 token;` |
+| `stroke-yellow-300` | `stroke: color-yellow-300 token;` |
+| `stroke-yellow-400` | `stroke: color-yellow-400 token;` |
+| `stroke-yellow-500` | `stroke: color-yellow-500 token;` |
+| `stroke-yellow-600` | `stroke: color-yellow-600 token;` |
+| `stroke-yellow-700` | `stroke: color-yellow-700 token;` |
+| `stroke-yellow-800` | `stroke: color-yellow-800 token;` |
+| `stroke-yellow-900` | `stroke: color-yellow-900 token;` |
+| `stroke-yellow-950` | `stroke: color-yellow-950 token;` |
+| `stroke-lime-50` | `stroke: color-lime-50 token;` |
+| `stroke-lime-100` | `stroke: color-lime-100 token;` |
+| `stroke-lime-200` | `stroke: color-lime-200 token;` |
+| `stroke-lime-300` | `stroke: color-lime-300 token;` |
+| `stroke-lime-400` | `stroke: color-lime-400 token;` |
+| `stroke-lime-500` | `stroke: color-lime-500 token;` |
+| `stroke-lime-600` | `stroke: color-lime-600 token;` |
+| `stroke-lime-700` | `stroke: color-lime-700 token;` |
+| `stroke-lime-800` | `stroke: color-lime-800 token;` |
+| `stroke-lime-900` | `stroke: color-lime-900 token;` |
+| `stroke-lime-950` | `stroke: color-lime-950 token;` |
+| `stroke-green-50` | `stroke: color-green-50 token;` |
+| `stroke-green-100` | `stroke: color-green-100 token;` |
+| `stroke-green-200` | `stroke: color-green-200 token;` |
+| `stroke-green-300` | `stroke: color-green-300 token;` |
+| `stroke-green-400` | `stroke: color-green-400 token;` |
+| `stroke-green-500` | `stroke: color-green-500 token;` |
+| `stroke-green-600` | `stroke: color-green-600 token;` |
+| `stroke-green-700` | `stroke: color-green-700 token;` |
+| `stroke-green-800` | `stroke: color-green-800 token;` |
+| `stroke-green-900` | `stroke: color-green-900 token;` |
+| `stroke-green-950` | `stroke: color-green-950 token;` |
+| `stroke-emerald-50` | `stroke: color-emerald-50 token;` |
+| `stroke-emerald-100` | `stroke: color-emerald-100 token;` |
+| `stroke-emerald-200` | `stroke: color-emerald-200 token;` |
+| `stroke-emerald-300` | `stroke: color-emerald-300 token;` |
+| `stroke-emerald-400` | `stroke: color-emerald-400 token;` |
+| `stroke-emerald-500` | `stroke: color-emerald-500 token;` |
+| `stroke-emerald-600` | `stroke: color-emerald-600 token;` |
+| `stroke-emerald-700` | `stroke: color-emerald-700 token;` |
+| `stroke-emerald-800` | `stroke: color-emerald-800 token;` |
+| `stroke-emerald-900` | `stroke: color-emerald-900 token;` |
+| `stroke-emerald-950` | `stroke: color-emerald-950 token;` |
+| `stroke-teal-50` | `stroke: color-teal-50 token;` |
+| `stroke-teal-100` | `stroke: color-teal-100 token;` |
+| `stroke-teal-200` | `stroke: color-teal-200 token;` |
+| `stroke-teal-300` | `stroke: color-teal-300 token;` |
+| `stroke-teal-400` | `stroke: color-teal-400 token;` |
+| `stroke-teal-500` | `stroke: color-teal-500 token;` |
+| `stroke-teal-600` | `stroke: color-teal-600 token;` |
+| `stroke-teal-700` | `stroke: color-teal-700 token;` |
+| `stroke-teal-800` | `stroke: color-teal-800 token;` |
+| `stroke-teal-900` | `stroke: color-teal-900 token;` |
+| `stroke-teal-950` | `stroke: color-teal-950 token;` |
+| `stroke-cyan-50` | `stroke: color-cyan-50 token;` |
+| `stroke-cyan-100` | `stroke: color-cyan-100 token;` |
+| `stroke-cyan-200` | `stroke: color-cyan-200 token;` |
+| `stroke-cyan-300` | `stroke: color-cyan-300 token;` |
+| `stroke-cyan-400` | `stroke: color-cyan-400 token;` |
+| `stroke-cyan-500` | `stroke: color-cyan-500 token;` |
+| `stroke-cyan-600` | `stroke: color-cyan-600 token;` |
+| `stroke-cyan-700` | `stroke: color-cyan-700 token;` |
+| `stroke-cyan-800` | `stroke: color-cyan-800 token;` |
+| `stroke-cyan-900` | `stroke: color-cyan-900 token;` |
+| `stroke-cyan-950` | `stroke: color-cyan-950 token;` |
+| `stroke-sky-50` | `stroke: color-sky-50 token;` |
+| `stroke-sky-100` | `stroke: color-sky-100 token;` |
+| `stroke-sky-200` | `stroke: color-sky-200 token;` |
+| `stroke-sky-300` | `stroke: color-sky-300 token;` |
+| `stroke-sky-400` | `stroke: color-sky-400 token;` |
+| `stroke-sky-500` | `stroke: color-sky-500 token;` |
+| `stroke-sky-600` | `stroke: color-sky-600 token;` |
+| `stroke-sky-700` | `stroke: color-sky-700 token;` |
+| `stroke-sky-800` | `stroke: color-sky-800 token;` |
+| `stroke-sky-900` | `stroke: color-sky-900 token;` |
+| `stroke-sky-950` | `stroke: color-sky-950 token;` |
+| `stroke-blue-50` | `stroke: color-blue-50 token;` |
+| `stroke-blue-100` | `stroke: color-blue-100 token;` |
+| `stroke-blue-200` | `stroke: color-blue-200 token;` |
+| `stroke-blue-300` | `stroke: color-blue-300 token;` |
+| `stroke-blue-400` | `stroke: color-blue-400 token;` |
+| `stroke-blue-500` | `stroke: color-blue-500 token;` |
+| `stroke-blue-600` | `stroke: color-blue-600 token;` |
+| `stroke-blue-700` | `stroke: color-blue-700 token;` |
+| `stroke-blue-800` | `stroke: color-blue-800 token;` |
+| `stroke-blue-900` | `stroke: color-blue-900 token;` |
+| `stroke-blue-950` | `stroke: color-blue-950 token;` |
+| `stroke-indigo-50` | `stroke: color-indigo-50 token;` |
+| `stroke-indigo-100` | `stroke: color-indigo-100 token;` |
+| `stroke-indigo-200` | `stroke: color-indigo-200 token;` |
+| `stroke-indigo-300` | `stroke: color-indigo-300 token;` |
+| `stroke-indigo-400` | `stroke: color-indigo-400 token;` |
+| `stroke-indigo-500` | `stroke: color-indigo-500 token;` |
+| `stroke-indigo-600` | `stroke: color-indigo-600 token;` |
+| `stroke-indigo-700` | `stroke: color-indigo-700 token;` |
+| `stroke-indigo-800` | `stroke: color-indigo-800 token;` |
+| `stroke-indigo-900` | `stroke: color-indigo-900 token;` |
+| `stroke-indigo-950` | `stroke: color-indigo-950 token;` |
+| `stroke-violet-50` | `stroke: color-violet-50 token;` |
+| `stroke-violet-100` | `stroke: color-violet-100 token;` |
+| `stroke-violet-200` | `stroke: color-violet-200 token;` |
+| `stroke-violet-300` | `stroke: color-violet-300 token;` |
+| `stroke-violet-400` | `stroke: color-violet-400 token;` |
+| `stroke-violet-500` | `stroke: color-violet-500 token;` |
+| `stroke-violet-600` | `stroke: color-violet-600 token;` |
+| `stroke-violet-700` | `stroke: color-violet-700 token;` |
+| `stroke-violet-800` | `stroke: color-violet-800 token;` |
+| `stroke-violet-900` | `stroke: color-violet-900 token;` |
+| `stroke-violet-950` | `stroke: color-violet-950 token;` |
+| `stroke-purple-50` | `stroke: color-purple-50 token;` |
+| `stroke-purple-100` | `stroke: color-purple-100 token;` |
+| `stroke-purple-200` | `stroke: color-purple-200 token;` |
+| `stroke-purple-300` | `stroke: color-purple-300 token;` |
+| `stroke-purple-400` | `stroke: color-purple-400 token;` |
+| `stroke-purple-500` | `stroke: color-purple-500 token;` |
+| `stroke-purple-600` | `stroke: color-purple-600 token;` |
+| `stroke-purple-700` | `stroke: color-purple-700 token;` |
+| `stroke-purple-800` | `stroke: color-purple-800 token;` |
+| `stroke-purple-900` | `stroke: color-purple-900 token;` |
+| `stroke-purple-950` | `stroke: color-purple-950 token;` |
+
+:::note
+vinland-ui parses these classes so markup ports cleanly between projects, but the native renderer does not draw this property yet. Unknown or unsupported utilities never crash: they are reported by `vui-ctl info` under `unknown_classes` when they fail to parse.
+:::

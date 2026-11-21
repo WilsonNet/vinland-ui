@@ -1,0 +1,50 @@
+---
+title: "object-fit"
+description: "Utilities for controlling how a replaced element's content should be resized. Tailwind-style object-fit utilities for native Odin apps with vinland-ui, with live examples and copyable code."
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Utilities for controlling how a replaced element's content should be resized.
+
+| Class | Effect |
+| --- | --- |
+| `object-contain` | `object-fit: contain;` |
+| `object-cover` | `object-fit: cover;` |
+| `object-fill` | `object-fit: fill;` |
+| `object-none` | `object-fit: none;` |
+| `object-scale-down` | `object-fit: scale-down;` |
+
+## Examples
+
+:::note
+The landscape in these examples is generated in code at startup (synthetic), so the binary carries no image assets.
+:::
+
+### Resizing to cover
+
+Use `object-cover` to fill the box while keeping the image's aspect ratio, cropping what does not fit.
+
+<Preview src="object-fit-0" width={608} height={256} alt="object-fit: Resizing to cover" />
+
+```odin
+ui.image(DEMO_IMAGE, "h-48 w-96 rounded-lg bg-gray-200 object-cover dark:bg-white/5")
+```
+
+### Containing within
+
+<Preview src="object-fit-1" width={608} height={256} alt="object-fit: Containing within" />
+
+```odin
+ui.image(DEMO_IMAGE, "h-48 w-96 rounded-lg bg-gray-200 object-contain dark:bg-white/5")
+```
+
+### Stretching to fit
+
+<Preview src="object-fit-2" width={608} height={256} alt="object-fit: Stretching to fit" />
+
+```odin
+ui.image(DEMO_IMAGE, "h-48 w-96 rounded-lg bg-gray-200 object-fill dark:bg-white/5")
+```
