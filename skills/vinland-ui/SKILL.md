@@ -52,6 +52,29 @@ real scale when judging text crispness, e.g. 1.3333 on a 4/3 fractional display)
 
 Check `info.unknown_classes` after every change: it lists class tokens that failed to parse.
 
+## Validate every UI change with an e2e suite (always)
+
+Write a `.vt` suite next to the app and run it with `vinland-ui/build/vui-test`; it launches the
+app headless and sandboxed per test, so it is safe to run any number of times:
+
+```
+app ../bin/my-app --data {test}/data     # {test}: fresh scratch dir per test
+size 1180x760
+baselines baselines
+test "save flow"
+  click "Save"                  # exact-text match first, then substring
+  expect-text "saved"
+  expect-class "Save" bg-sky-600
+  drag-text "Volume" 0 -40      # drags: also drag X1 Y1 X2 Y2
+  type ":"   key escape   scroll -120 400 300   resize 900 620
+  expect-frame-ms 40            # perf budget (software renderer)
+  screenshot saved              # diffed against baselines/saved.png
+```
+
+Look at the screenshots (report.html) after each run; never claim a UI works without them.
+Never run a GUI app on the real GPU from an agent: always `VUI_HIDDEN=1` (sandboxed) and never
+set `VUI_HIDDEN_GPU`.
+
 ## Minimal app
 
 ```odin

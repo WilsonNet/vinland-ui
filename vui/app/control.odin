@@ -23,7 +23,8 @@ import vui ".."
 //   {"cmd":"tree","depth":8}  {"cmd":"info"}  {"cmd":"wait","frames":10}  {"cmd":"settle"}
 //   {"cmd":"gamma","value":1.0}  {"cmd":"quit"}
 //   {"cmd":"down","x":..,"y":..} {"cmd":"up","x":..,"y":..}   drags: down, move..., up
-//   {"cmd":"find","text":"Save","nth":0}   -> found, count, rect, text
+//   {"cmd":"find","text":"Save","nth":0,"exact":true}   -> found, count, rect, text
+//   click_text and find match case-insensitive substrings; "exact":true matches the whole text
 // Any other command is forwarded to App.on_command.
 
 Control_Request :: struct {
@@ -333,6 +334,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		// {"cmd":"find","text":"Save","nth":0} -> rect of the nth visible text match and the match count
 		needle := strings.to_lower(arg_s(obj, "text"), context.temp_allocator)
 		nth := int(arg_f(obj, "nth", 0))
+		exact, _ := obj["exact"].(json.Boolean)
 		count := 0
 		hit: vui.Rect
 		hit_text := ""
@@ -345,7 +347,8 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 				strings.write_string(&b, sp.text)
 			}
 			t := strings.to_string(b)
-			if strings.contains(strings.to_lower(t, context.temp_allocator), needle) {
+			lt := strings.to_lower(t, context.temp_allocator)
+			if (bool(exact) && strings.trim_space(lt) == needle) || (!bool(exact) && strings.contains(lt, needle)) {
 				if count == nth {
 					hit = n.rect
 					hit_text = t
@@ -359,7 +362,8 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		strings.write_string(&sb, "}")
 		respond(req, strings.to_string(sb))
 	case "click_text":
-		p, found := vui.find_text(ctx, arg_s(obj, "text"), int(arg_f(obj, "nth", 0)))
+		exact, _ := obj["exact"].(json.Boolean)
+		p, found := vui.find_text(ctx, arg_s(obj, "text"), int(arg_f(obj, "nth", 0)), bool(exact))
 		if !found {
 			respond_err(req, "text not found")
 			return

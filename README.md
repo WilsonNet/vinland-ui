@@ -120,6 +120,35 @@ VUI_HIDDEN=1 VUI_SCALE=2 ./build/showroom &      # offscreen, 2x
 
 See `vui-ctl --help` and the "Agent skill & CLI" page in the showroom.
 
+## End-to-end tests (`vui-test`)
+
+Playwright-style suites for any vinland-ui app: launch, click by text, drag, type, assert on the
+element tree, take screenshots and diff them against baselines, with an HTML report.
+
+```
+# tests/e2e/showroom.vt
+app ../../build/showroom
+baselines baselines
+
+test "navigate to canvas page"
+  click "Canvas & charts"
+  expect-text "Drawing primitives"
+  expect-class "Canvas & charts" text-accent
+  expect-frame-ms 40
+  screenshot canvas
+```
+
+```bash
+./build/vui-test tests/e2e/showroom.vt            # --update rewrites baselines
+```
+
+**Headless runs cannot touch your desktop.** `VUI_HIDDEN=1` (used by `vui-test`, agents and the
+site generator) runs on SDL's offscreen video driver with Mesa's llvmpipe software rasterizer: no
+compositor connection, no GPU memory, no `/dev/dri` handles, the same isolation headless browsers
+get from SwiftShader. The app refuses to start headless on a hardware renderer, and `vui-test`
+refuses to drive an app that is not sandboxed. `VUI_HIDDEN_GPU=1` opts into the GPU deliberately.
+Visible windows keep at most one frame in flight on the GPU.
+
 ## Layout of the repo
 
 | Path | |
@@ -129,6 +158,7 @@ See `vui-ctl --help` and the "Agent skill & CLI" page in the showroom.
 | `vui/fonts/` | embedded Inter, IBM Plex Mono, Source Serif 4 (OFL) |
 | `vui/icons/` | Heroicons (MIT) |
 | `tools/vui-ctl/` | control CLI |
+| `tools/vui-test/` | end-to-end test runner (suites in `tests/e2e/`) |
 | `tools/gen/` | generators for the palette, icons and reference tables |
 | `showroom/` | documentation app |
 | `skills/vinland-ui/` | skill for coding agents |

@@ -1,0 +1,40 @@
+# Showroom end-to-end suite. Run: ./build/vui-test tests/e2e/showroom.vt
+app ../../build/showroom
+size 1280x800
+scale 1
+baselines baselines
+threshold 0.002
+
+test "home renders"
+  expect-text "Introduction"
+  expect-text "Canvas & charts"
+  expect-frame-ms 40
+  screenshot home
+
+test "navigate to canvas page"
+  click "Canvas & charts"
+  wait 3
+  expect-text "Drawing primitives"
+  expect-class "Canvas & charts" text-accent
+  screenshot canvas
+
+test "search palette filters"
+  key k ctrl
+  wait 3
+  type padding
+  wait 3
+  expect-text "padding"
+  key escape
+  wait 2
+
+test "dark mode toggle"
+  dark on
+  wait 3
+  screenshot home-dark
+  dark off
+
+test "responsive drawer"
+  resize 700 800
+  wait 4
+  expect-no-text "Theme tokens"
+  screenshot narrow

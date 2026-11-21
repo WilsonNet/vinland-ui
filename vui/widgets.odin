@@ -521,7 +521,7 @@ json_str :: proc(sb: ^strings.Builder, s: string) {
 }
 
 // Finds the first node whose text contains `needle` (case-insensitive). Returns its center.
-find_text :: proc(ctx: ^Context, needle: string, nth := 0) -> (center: [2]f32, ok: bool) {
+find_text :: proc(ctx: ^Context, needle: string, nth := 0, exact := false) -> (center: [2]f32, ok: bool) {
 	lower := strings.to_lower(needle, context.temp_allocator)
 	count := 0
 	for &n, i in ctx.nodes {
@@ -535,7 +535,7 @@ find_text :: proc(ctx: ^Context, needle: string, nth := 0) -> (center: [2]f32, o
 			strings.write_string(&b, sp.text)
 		}
 		t := strings.to_lower(strings.to_string(b), context.temp_allocator)
-		if strings.contains(t, lower) {
+		if (exact && strings.trim_space(t) == lower) || (!exact && strings.contains(t, lower)) {
 			if count == nth {
 				c := [2]f32{n.rect.x + n.rect.w / 2, n.rect.y + n.rect.h / 2}
 				return xform_apply(n.xform, c), true
