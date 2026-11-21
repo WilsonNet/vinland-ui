@@ -248,6 +248,22 @@ push_click :: proc(app: ^App, p: [2]f32, button: vui.Mouse_Button, clicks: int) 
 	}
 }
 
+// "mods":"shift+ctrl" on key and pointer commands
+@(private)
+mods_arg :: proc(obj: json.Object) -> (mods: vui.Mods) {
+	ms := arg_s(obj, "mods")
+	if strings.contains(ms, "shift") {
+		mods += {.Shift}
+	}
+	if strings.contains(ms, "ctrl") {
+		mods += {.Ctrl}
+	}
+	if strings.contains(ms, "alt") {
+		mods += {.Alt}
+	}
+	return
+}
+
 @(private)
 wait_then_respond :: proc(app: ^App, req: ^Control_Request, frames: int) {
 	append(&app.wait_requests, Wait_Request{req = req, frames = frames})
@@ -306,7 +322,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		append(&app.screenshot_requests, req)
 		app.dirty_frames = max(app.dirty_frames, 1)
 	case "move":
-		append(&app.synthetic, Synthetic{kind = .Move, pos = {arg_f(obj, "x"), arg_f(obj, "y")}})
+		append(&app.synthetic, Synthetic{kind = .Move, pos = {arg_f(obj, "x"), arg_f(obj, "y")}, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 2)
 	case "click":
 		b := vui.Mouse_Button.Left
@@ -328,7 +344,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		}
 		pos := [2]f32{arg_f(obj, "x", app.mouse.x), arg_f(obj, "y", app.mouse.y)}
 		append(&app.synthetic, Synthetic{kind = .Move, pos = pos})
-		append(&app.synthetic, Synthetic{kind = .Down if cmd == "down" else .Up, pos = pos, button = b, clicks = 1})
+		append(&app.synthetic, Synthetic{kind = .Down if cmd == "down" else .Up, pos = pos, button = b, clicks = 1, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 2)
 	case "find":
 		// {"cmd":"find","text":"Save","nth":0} -> rect of the nth visible text match and the match count
@@ -378,7 +394,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 	case "scroll":
 		p := [2]f32{arg_f(obj, "x", app.logical.x / 2), arg_f(obj, "y", app.logical.y / 2)}
 		append(&app.synthetic, Synthetic{kind = .Move, pos = p})
-		append(&app.synthetic, Synthetic{kind = .Wheel, pos = p, wheel = {arg_f(obj, "dx"), arg_f(obj, "dy")}})
+		append(&app.synthetic, Synthetic{kind = .Wheel, pos = p, wheel = {arg_f(obj, "dx"), arg_f(obj, "dy")}, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 20)
 	case "type":
 		append(&app.synthetic, Synthetic{kind = .Text, text = strings.clone(arg_s(obj, "text"))})
@@ -389,18 +405,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 			respond_err(req, "unknown key")
 			return
 		}
-		mods: vui.Mods
-		ms := arg_s(obj, "mods")
-		if strings.contains(ms, "shift") {
-			mods += {.Shift}
-		}
-		if strings.contains(ms, "ctrl") {
-			mods += {.Ctrl}
-		}
-		if strings.contains(ms, "alt") {
-			mods += {.Alt}
-		}
-		append(&app.synthetic, Synthetic{kind = .Key, key = k, mods = mods})
+		append(&app.synthetic, Synthetic{kind = .Key, key = k, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 2)
 	case "resize":
 		// clamp in float first (NaN/inf/negative safe); the framebuffer is capped again

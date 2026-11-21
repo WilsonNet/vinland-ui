@@ -17,8 +17,9 @@
 //   threshold 0.001                           allowed fraction of differing pixels
 //   test "name"                               starts a test; steps follow (indentation optional)
 // Steps:
-//   click TEXT [nth]   dblclick TEXT   click-at X Y   move X Y   drag X1 Y1 X2 Y2 [steps]
-//   drag-text TEXT DX DY   type TEXT   key NAME [mods]   scroll DY [X Y]   wait FRAMES
+//   click TEXT [nth]   dblclick TEXT   click-at X Y   move X Y   drag X1 Y1 X2 Y2 [steps] [mods]
+//   drag-text TEXT DX DY [mods]   type TEXT   key NAME [mods]   scroll DY [X Y [mods]]   wait FRAMES
+//   (mods: shift, ctrl, alt, joined with +)
 //   settle   resize W H   dark on|off   raw JSON
 //   expect-text TEXT [count] (substring)   expect-exact TEXT [count] (whole text)   expect-no-text TEXT
 // Locators (click, dblclick, drag-text) prefer an exact whole-text match, then a substring.
@@ -532,6 +533,7 @@ run_step :: proc(s: ^Suite, t: ^Test, st: Step) -> (res: Step_Result) {
 	case "drag", "drag-text":
 		x1, y1, x2, y2: f64
 		steps := 8
+		mods := arg(a, 4) if a[0] == "drag-text" else arg(a, 6)
 		if a[0] == "drag-text" {
 			obj, _, ok := locate(arg(a, 1))
 			if !ok {
@@ -552,19 +554,19 @@ run_step :: proc(s: ^Suite, t: ^Test, st: Step) -> (res: Step_Result) {
 				steps, _ = strconv.parse_int(a[5])
 			}
 		}
-		send(&res, fmt.tprintf(`{{"cmd":"down","x":%.1f,"y":%.1f}}`, x1, y1))
+		send(&res, fmt.tprintf(`{{"cmd":"down","x":%.1f,"y":%.1f,"mods":%s}}`, x1, y1, jstr(mods)))
 		for i in 1 ..= steps {
 			f := f64(i) / f64(steps)
-			send(&res, fmt.tprintf(`{{"cmd":"move","x":%.1f,"y":%.1f}}`, x1 + (x2 - x1) * f, y1 + (y2 - y1) * f))
+			send(&res, fmt.tprintf(`{{"cmd":"move","x":%.1f,"y":%.1f,"mods":%s}}`, x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, jstr(mods)))
 		}
-		send(&res, fmt.tprintf(`{{"cmd":"up","x":%.1f,"y":%.1f}}`, x2, y2))
+		send(&res, fmt.tprintf(`{{"cmd":"up","x":%.1f,"y":%.1f,"mods":%s}}`, x2, y2, jstr(mods)))
 	case "type":
 		send(&res, fmt.tprintf(`{{"cmd":"type","text":%s}}`, jstr(arg(a, 1))))
 	case "key":
 		send(&res, fmt.tprintf(`{{"cmd":"key","key":%s,"mods":%s}}`, jstr(arg(a, 1)), jstr(arg(a, 2))))
 	case "scroll":
 		if len(a) > 3 {
-			send(&res, fmt.tprintf(`{{"cmd":"scroll","dy":%s,"x":%s,"y":%s}}`, arg(a, 1), arg(a, 2), arg(a, 3)))
+			send(&res, fmt.tprintf(`{{"cmd":"scroll","dy":%s,"x":%s,"y":%s,"mods":%s}}`, arg(a, 1), arg(a, 2), arg(a, 3), jstr(arg(a, 4))))
 		} else {
 			send(&res, fmt.tprintf(`{{"cmd":"scroll","dy":%s}}`, arg(a, 1)))
 		}

@@ -63,6 +63,7 @@ process_input :: proc(ctx: ^Context) {
 		st.clicked = false
 		st.right_clicked = false
 		st.double_clicked = false
+		st.clicked_self = false
 		st.pressed_now = false
 		st.released_now = false
 	}
@@ -162,6 +163,7 @@ process_input :: proc(ctx: ^Context) {
 				st.released_now = true
 				if st.hovered {
 					st.clicked = true
+					st.clicked_self = id == ctx.press_id && ctx.hover_id == id
 					if in_.click_count >= 2 {
 						st.double_clicked = true
 					}

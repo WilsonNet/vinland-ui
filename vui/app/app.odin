@@ -93,6 +93,7 @@ App :: struct {
 	clear_color:   vui.Color,
 	screenshot_requests: [dynamic]^Control_Request,
 	synthetic_mods: bool, // a synthetic key set modifiers; clear them next frame
+	synthetic_held: vui.Mods, // modifiers held by a synthetic pointer gesture
 	sandboxed:     bool, // headless on the offscreen driver + software GL (cannot touch the GPU)
 	gl_renderer:   string,
 	wait_requests: [dynamic]Wait_Request,
@@ -411,6 +412,9 @@ map_mods :: proc(m: sdl.Keymod) -> vui.Mods {
 @(private)
 handle_event :: proc(app: ^App, e: ^sdl.Event) {
 	in_ := &app.input
+	if e.type == .KEY_DOWN || e.type == .KEY_UP {
+		in_.mods = map_mods(e.key.mod) // keep modifiers current even when the app consumes keys
+	}
 	if app.on_event != nil && app.on_event(app, e) {
 		return
 	}
@@ -497,8 +501,18 @@ apply_synthetic :: proc(app: ^App) -> bool {
 		delete(s.text)
 	case .Key:
 		in_.keys_pressed += {s.key}
+	}
+	if s.kind == .Key || s.mods != {} {
 		in_.mods = s.mods
 		app.synthetic_mods = true
+	}
+	// modifiers sent with pointer steps stay held until the button is released, so the
+	// idle frames between drag steps still see them (shift-drag)
+	if s.kind == .Down || s.kind == .Move || s.kind == .Wheel {
+		app.synthetic_held = s.mods
+	}
+	if s.kind == .Up {
+		app.synthetic_held = {}
 	}
 	return true
 }
@@ -517,8 +531,8 @@ next_frame :: proc(app: ^App) -> bool {
 	app.input.text = ""
 	strings.builder_reset(&app.text_buf)
 	if app.synthetic_mods {
-		app.input.mods = {}
-		app.synthetic_mods = false
+		app.input.mods = app.synthetic_held
+		app.synthetic_mods = app.synthetic_held != {}
 	}
 
 	busy := ctx.animating || app.dirty_frames > 0 || len(app.synthetic) > 0 || len(app.wait_requests) > 0 || len(app.screenshot_requests) > 0

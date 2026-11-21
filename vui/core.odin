@@ -160,6 +160,7 @@ Elem_State :: struct {
 	clicked:        bool,
 	right_clicked:  bool,
 	double_clicked: bool,
+	clicked_self:   bool, // clicked, and this element was the topmost hit (not a descendant)
 	pressed_now:    bool,
 	released_now:   bool,
 	prev_children:  i32,
@@ -1045,6 +1046,11 @@ right_clicked :: proc() -> bool {
 }
 double_clicked :: proc() -> bool {
 	return cur_node().state.double_clicked
+}
+// Clicked on this element itself rather than on a descendant (backdrops, empty areas).
+// Clicks are reported to every ancestor of the topmost hit, like DOM event bubbling.
+clicked_self :: proc() -> bool {
+	return cur_node().state.clicked_self
 }
 
 last_hovered :: proc() -> bool {
