@@ -629,6 +629,10 @@ end_frame :: proc(app: ^App) {
 		if app.backend == .GL {
 			_ = sdl.GL_SwapWindow(app.window)
 		}
+		if app.backend == .GPU && app.gpu.occluded {
+			// occluded windows get no vsync; pace them instead of spinning the GPU
+			sdl.Delay(16)
+		}
 	} else {
 		// no vsync offscreen: always pace at ~60 fps. An unpaced offscreen loop can
 		// queue GPU work faster than it retires and exhaust shared VRAM.

@@ -16,6 +16,7 @@ Gpu_Renderer :: struct {
 	// fence of the previous frame: at most one frame in flight, so cycled upload
 	// buffers can never pile up in VRAM (offscreen rendering has no swapchain pacing)
 	frame_fence: ^sdl.GPUFence,
+	occluded:    bool, // last present found no swapchain image
 	window:      ^sdl.Window,
 	pipeline:    ^sdl.GPUGraphicsPipeline,
 	inst_buf:    ^sdl.GPUBuffer,
@@ -338,7 +339,10 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 	if present {
 		swap: ^sdl.GPUTexture
 		sw, sh: u32
-		if sdl.WaitAndAcquireGPUSwapchainTexture(cmd, r.window, &swap, &sw, &sh) && swap != nil {
+		acquired := sdl.WaitAndAcquireGPUSwapchainTexture(cmd, r.window, &swap, &sw, &sh)
+		// no image = window occluded/minimized (e.g. on a hidden workspace): no vsync pacing
+		r.occluded = !acquired || swap == nil
+		if !r.occluded {
 			sdl.BlitGPUTexture(cmd, sdl.GPUBlitInfo{
 				source = {texture = r.target, w = u32(fb_w), h = u32(fb_h)},
 				destination = {texture = swap, w = sw, h = sh},
