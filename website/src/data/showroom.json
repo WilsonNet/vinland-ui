@@ -56,6 +56,11 @@
    "group": "Core concepts"
   },
   {
+   "slug": "canvas",
+   "title": "Canvas & charts",
+   "group": "Core concepts"
+  },
+  {
    "slug": "text-rendering",
    "title": "Text rendering",
    "group": "Core concepts"
@@ -1780,6 +1785,139 @@
       608.0,
       112.0
      ]
+    }
+   ]
+  },
+  {
+   "ok": true,
+   "slug": "canvas",
+   "title": "Canvas & charts",
+   "group": "Core concepts",
+   "desc": "Draw charts, meters and dials with vector primitives inside the layout: lines, arcs, curves and gradient fills.",
+   "content_bottom": 3330.0,
+   "blocks": [
+    {
+     "kind": "Para",
+     "text": "Draw charts, meters and dials with vector primitives inside the layout: lines, arcs, curves and gradient fills."
+    },
+    {
+     "kind": "Para",
+     "text": "Utilities cover boxes and text. For charts, meters, dials and anything else that is drawn rather than laid out, use ui.canvas: the element takes part in layout like any other box, and a procedure you supply draws into its rect with vector primitives."
+    },
+    {
+     "kind": "H2",
+     "text": "Drawing primitives"
+    },
+    {
+     "kind": "Table",
+     "rows": [
+      [
+       "ui.canvas(class, draw, data)",
+       "box whose content is drawn by draw(ctx, rect, data) every frame"
+      ],
+      [
+       "ui.draw_rect(ctx, rect, color, radius)",
+       "filled (rounded) rectangle"
+      ],
+      [
+       "ui.draw_line(ctx, a, b, color, width)",
+       "anti-aliased segment with round caps"
+      ],
+      [
+       "ui.draw_polyline(ctx, points, color, width)",
+       "connected segments: curves, waveforms"
+      ],
+      [
+       "ui.draw_arc(ctx, center, r, start, sweep, color, width)",
+       "stroked arc, radians clockwise from +x"
+      ],
+      [
+       "ui.draw_circle(ctx, center, r, color)",
+       "filled disc"
+      ],
+      [
+       "ui.draw_area(ctx, points, base_y, top, bottom)",
+       "fill under a curve with a vertical gradient"
+      ],
+      [
+       "ui.oklch(l, c, h)",
+       "colors in OKLCH, the same space as Tailwind v4 and modern CSS"
+      ]
+     ]
+    },
+    {
+     "kind": "Para",
+     "text": "Coordinates are logical pixels in window space; the renderer scales them to the display. Every primitive is one GPU instance shaded with a signed distance function, so edges are anti-aliased at any scale and nothing is tessellated on the CPU. A 160-point curve costs 160 instances; a full mixing-desk screen stays around 600."
+    },
+    {
+     "kind": "H2",
+     "text": "Frequency response"
+    },
+    {
+     "kind": "Para",
+     "text": "draw_area fills under the curve with a gradient, draw_polyline strokes it, draw_circle marks the band nodes."
+    },
+    {
+     "kind": "Example",
+     "code": "ui.canvas(\"h-40 w-full\", eq_chart)",
+     "rect": [
+      356.0,
+      1393.0,
+      608.0,
+      208.0
+     ],
+     "size": [
+      608.0,
+      208.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Dials"
+    },
+    {
+     "kind": "Para",
+     "text": "A 270\u00b0 dial is two arcs and a pointer line. The canvas sits in a normal flex layout with its label underneath."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"flex gap-8\") {\n    values := [4]f32{0.15, 0.4, 0.65, 0.9}\n    for v, i in values {\n        ui.push_id(i)\n        if ui.div(\"flex flex-col items-center gap-1\") {\n            d := new(f32, context.temp_allocator)\n            d^ = v\n            ui.canvas(\"size-12\", dial, d)\n            ui.text(DIAL_LABELS[i], \"text-xs font-medium tracking-wide text-gray-500 dark:text-gray-400\")\n        }\n        ui.pop_id()\n    }\n}",
+     "rect": [
+      356.0,
+      1857.0,
+      608.0,
+      132.0
+     ],
+     "size": [
+      608.0,
+      132.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Live sparklines"
+    },
+    {
+     "kind": "Para",
+     "text": "Canvases redraw every frame, so they can follow live data. These lines are driven by the clock."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"grid grid-cols-3 gap-4\") {\n    for i in 0 ..< 3 {\n        ui.push_id(i)\n        if ui.div(\"rounded-lg p-3 ring-1 ring-gray-950/10 dark:ring-white/10\") {\n            ui.text(SPARK_LABELS[i], \"text-xs font-medium text-gray-500 dark:text-gray-400\")\n            d := new(int, context.temp_allocator)\n            d^ = i\n            ui.canvas(\"mt-2 h-12 w-full\", sparkline, d)\n        }\n        ui.pop_id()\n    }\n}",
+     "rect": [
+      356.0,
+      2533.0,
+      608.0,
+      144.0
+     ],
+     "size": [
+      608.0,
+      144.0
+     ]
+    },
+    {
+     "kind": "Note",
+     "text": "Draw procedures run during painting. Keep them allocation-free or use context.temp_allocator, which is reset after each frame."
     }
    ]
   },

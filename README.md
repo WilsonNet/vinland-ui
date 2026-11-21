@@ -40,6 +40,10 @@ first in the renderer and hands the second to a vocabulary people already know.
   behaviour only; every pixel comes from your classes.
 - **Real layout.** Block flow, flexbox (grow/shrink/wrap/auto margins), grid (fr/px/auto tracks,
   spans), absolute/fixed positioning, scroll containers.
+- **Vector canvas.** `ui.canvas` boxes draw charts, meters and dials with GPU primitives
+  (`draw_line`, `draw_polyline`, `draw_arc`, `draw_area`, `draw_circle`), anti-aliased by SDF.
+- **Fast.** Idle apps sleep; one instanced draw call per frame; a full mixing-desk UI renders in
+  about 2 ms.
 - **Agent-drivable.** Apps expose a local control port; `vui-ctl` clicks, types, scrolls, resizes,
   toggles dark mode, dumps the element tree and takes screenshots. An agent skill ships in
   [`skills/vinland-ui`](skills/vinland-ui/SKILL.md).
@@ -49,7 +53,7 @@ Inspired by Jetpack Compose (UI in the host language), Flutter (own the renderer
 
 ## Quick start
 
-Requirements: Odin `dev-2026-11` or newer, SDL3 development files, an OpenGL 3.3 driver.
+Requirements: Odin `dev-2026-11` or newer, SDL3 development files, a Vulkan driver (or OpenGL 3.3).
 
 ```bash
 git clone https://github.com/WilsonNet/vinland-ui
@@ -121,13 +125,18 @@ See `vui-ctl --help` and the "Agent skill & CLI" page in the showroom.
 | Path | |
 |---|---|
 | `vui/` | core: tree builder, utility parser, tokens, layout, text, paint |
-| `vui/app/` | SDL3 + OpenGL 3.3 host and control server |
+| `vui/app/` | SDL3 host (Vulkan via SDL GPU, OpenGL 3.3 fallback) and control server |
 | `vui/fonts/` | embedded Inter, IBM Plex Mono, Source Serif 4 (OFL) |
 | `vui/icons/` | Heroicons (MIT) |
 | `tools/vui-ctl/` | control CLI |
 | `tools/gen/` | generators for the palette, icons and reference tables |
 | `showroom/` | documentation app |
 | `skills/vinland-ui/` | skill for coding agents |
+
+## Used by
+
+- [tracker](https://github.com/WilsonNet/tracker): a keyboard-first multitrack recorder; its
+  whole window (track strips, knobs, meters, FX rack graphs) is vinland-ui.
 
 ## Status
 

@@ -318,6 +318,11 @@ def capture_only(img_parent: str, data_path: str, only: set):
     """Captures example images into <img_parent>/img and writes page data as JSON."""
     print("capturing pages from the showroom…", flush=True)
     pages, data = capture(img_parent, only, True)
+    if only and os.path.exists(data_path):
+        # partial capture: merge into the existing export, keeping showroom order
+        old = {d["slug"]: d for d in json.load(open(data_path))["docs"]}
+        old.update({d["slug"]: d for d in data})
+        data = [old[p["slug"]] for p in pages if p["slug"] in old]
     os.makedirs(os.path.dirname(data_path), exist_ok=True)
     with open(data_path, "w") as f:
         json.dump({"pages": pages, "docs": data}, f, indent=1)

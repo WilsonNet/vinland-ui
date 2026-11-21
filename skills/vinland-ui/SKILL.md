@@ -162,6 +162,41 @@ Parsed but not drawn (accepted so markup ports): `blur-*`, `backdrop-*`, `mix-bl
 `float`, `columns`, scroll-snap, 3D transforms, tables (`border-collapse` etc.). Do not rely on them
 for visible results; build the effect another way.
 
+## Custom drawing: charts, meters, dials
+
+`ui.canvas(class, draw, data)` is a normal laid-out box whose content is drawn by
+`draw :: proc(ctx: ^ui.Context, r: ui.Rect, data: rawptr)` each frame, in logical window
+coordinates. Primitives (one GPU instance each, SDF anti-aliased, no CPU tessellation):
+
+| Call | Draws |
+|---|---|
+| `ui.draw_rect(ctx, rect, color, radius)` | filled rounded rect |
+| `ui.draw_line(ctx, a, b, color, width)` | segment, round caps |
+| `ui.draw_polyline(ctx, pts, color, width)` | curve / waveform |
+| `ui.draw_arc(ctx, center, r, start, sweep, color, width)` | arc, radians clockwise from +x |
+| `ui.draw_circle(ctx, center, r, color)` | disc |
+| `ui.draw_area(ctx, pts, base_y, top, bottom)` | gradient fill under a curve (x ascending) |
+
+Pass per-instance data with `d := new(T, context.temp_allocator)` (reset after each frame).
+Read colors from tokens: `ui.theme().colors["accent"].dark`. A 270° knob is
+`draw_arc(c, r, 0.75*PI, 1.5*PI, track)` + `draw_arc(..., 1.5*PI*v, accent)` + a `draw_line`
+pointer. Drag: inside the element, `ui.active() && .Left in ui.ctx_get().input.pressed` starts it;
+follow `ctx.input.mouse` while `.Left in ctx.input.buttons`.
+
+Colors: `ui.oklch(l, c, h)` and `"oklch(...)"` in JSON themes, same space as Tailwind v4.
+
+## Performance rules
+
+vinland-ui must beat a webview, so keep frames cheap: the loop idles when nothing changes
+(`app.next_frame` blocks); call `app.request_redraw(&a)` only while something is live (meters,
+playback). Avoid per-frame heap allocation (use `context.temp_allocator`). Prefer one canvas with
+many primitives over hundreds of tiny elements. Check `vui-ctl info` → `frame_ms`, `draw_cmds`.
+
+## Host hooks
+
+`app.Config.app_id` sets the Wayland app id / X11 class (window rules). `a.on_event = proc(app, e)
+-> bool` sees raw SDL events first (return true to consume): use it for global keymaps.
+
 ## Design tokens
 
 `ctx.theme` (`ui.Theme`) holds spacing unit, colors, radii, shadows, type scale, weights, tracking,
@@ -197,11 +232,14 @@ Themes also load from JSON: `ui.theme_load_json(&ctx.theme, "theme.json")` with 
 ## Gotchas
 
 - `ui.div` without `if` closes at the end of the *enclosing* block and swallows later siblings.
+- `leading-[1.4]` is a multiplier (CSS semantics); `leading-[22px]` is absolute.
+- Offscreen runs (`VUI_HIDDEN=1`) are paced at 60 fps with one frame in flight; keep captures
+  at normal window sizes (the framebuffer is capped at 4096 px).
 - Strings passed to `ui.text`/`ui.span` are copied into the frame arena, so `fmt.tprintf` is fine.
 - In Odin's `fmt`, `{` and `}` are format characters: write `{{` and `}}` for literal braces.
 - Text is drawn at physical pixels; never scale a text element with a transform to "zoom" text,
   change `text-*` instead (transforms are fine for animation).
-- The renderer is OpenGL 3.3 via SDL3; games with their own renderer can call `ui.begin_frame`,
+- The renderer is SDL3 GPU (Vulkan) with an OpenGL 3.3 fallback (`VUI_BACKEND=gl`); games with their own renderer can call `ui.begin_frame`,
   build, `ui.end_frame` and draw the returned `Draw_List` (see `vui/app/gl.odin` for the shader).
 
 ## Workflow for a new screen

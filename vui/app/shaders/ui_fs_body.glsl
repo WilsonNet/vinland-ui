@@ -170,6 +170,37 @@ void main() {
 		a = pow(a, u_text_gamma);
 		a = clamp((a - 0.5) * u_text_contrast + 0.5, 0.0, 1.0) * step(0.0001, a) + 0.0;
 		col = pm(f_fill0) * a;
+	} else if (kind == 5) {
+		// segment with round caps: fill1 = a.xy b.xy (local px), fill2.x = half width
+		vec2 pa = v_local - f_fill1.xy;
+		vec2 ba = f_fill1.zw - f_fill1.xy;
+		float h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+		float d = (length(pa - ba * h) - f_fill2.x) / k;
+		col = pm(f_fill0) * clamp(0.5 - d, 0.0, 1.0);
+	} else if (kind == 6) {
+		// arc around the quad centre: fill1 = radius, half width, start angle, sweep (rad, y down)
+		float r = f_fill1.x;
+		float th = f_fill1.y;
+		float a0 = f_fill1.z;
+		float sw = f_fill1.w;
+		float ang = mod(atan(p.y, p.x) - a0, 6.28318530718);
+		float d;
+		if (ang <= sw) {
+			d = abs(length(p) - r) - th;
+		} else {
+			vec2 e0 = r * vec2(cos(a0), sin(a0));
+			vec2 e1 = r * vec2(cos(a0 + sw), sin(a0 + sw));
+			d = min(length(p - e0), length(p - e1)) - th;
+		}
+		col = pm(f_fill0) * clamp(0.5 - d / k, 0.0, 1.0);
+	} else if (kind == 7) {
+		// area column: top edge from (0, fill1.x) to (w, fill1.y), filled down to the quad
+		// bottom; vertical gradient fill0 (top) -> fill2 (bottom)
+		float slope = (f_fill1.y - f_fill1.x) / max(size.x, 1e-4);
+		float ty = f_fill1.x + slope * v_local.x;
+		float d = (ty - v_local.y) / sqrt(1.0 + slope * slope);
+		float cov = clamp(0.5 - d / k, 0.0, 1.0);
+		col = mix(pm(f_fill0), pm(f_fill2), clamp(v_local.y / max(size.y, 1e-4), 0.0, 1.0)) * cov;
 	} else {
 		vec2 tc = f_uv.xy + v_local / max(size, vec2(1e-4)) * f_uv.zw;
 		vec4 t = texture(u_image, tc);

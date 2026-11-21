@@ -16,6 +16,7 @@ register_pages :: proc() {
 	page("Core concepts", "theme-tokens", "Theme tokens", "Every utility resolves through a Theme. Change the tokens and the whole app follows, without touching component code.", page_tokens)
 	page("Core concepts", "colors", "Colors", "The default palette: 26 families with 11 shades each, matching Tailwind CSS v4 converted to sRGB.", page_colors)
 	page("Core concepts", "layout-engine", "Layout engine", "How boxes are measured and placed: block flow, flexbox, grid and positioning.", page_layout_engine)
+	page("Core concepts", "canvas", "Canvas & charts", "Draw charts, meters and dials with vector primitives inside the layout: lines, arcs, curves and gradient fills.", page_canvas)
 	page("Core concepts", "text-rendering", "Text rendering", "Why text in vinland-ui looks as sharp as in a browser, and the rules the renderer follows.", page_text_rendering)
 
 	register_layout_examples()

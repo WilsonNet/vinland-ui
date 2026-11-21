@@ -1742,6 +1742,13 @@ parse_utility :: proc(b: ^Builder, u: string, neg: bool) -> bool {
 			push(b, {prop = .Line_Height, f = {v, 0, 0, 0}, i = 0})
 			return true
 		}
+		// leading-[1.4]: unitless arbitrary value is a multiplier, like CSS
+		if strings.has_prefix(rest, "[") && strings.has_suffix(rest, "]") {
+			if v, ok := strconv.parse_f32(rest[1:len(rest) - 1]); ok {
+				push(b, {prop = .Line_Height, f = {v, 0, 0, 0}, i = 0})
+				return true
+			}
+		}
 		if v, ok := spacing(t, rest); ok {
 			push(b, {prop = .Line_Height, f = {v, 0, 0, 0}, i = 1})
 			return true

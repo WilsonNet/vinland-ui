@@ -753,6 +753,7 @@ open_node :: proc(ctx: ^Context, kind: Node_Kind, class: string, flags: Elem_Fla
 	if class != "" {
 		cs := class_set_for(ctx, class)
 		n.cs = cs
+		n.class = cs.source // cache-owned: callers may pass temp strings (cx, tprintf)
 		apply_class_set(&n.style, cs, &ms, ctx.dark)
 		if cs.is_group {
 			n.flags += {.Has_Group}

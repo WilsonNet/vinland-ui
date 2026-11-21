@@ -30,6 +30,7 @@ Config :: struct {
 	scale:        f32, // force UI scale (0 = use display scale)
 	control_port: int, // 0 = disabled
 	vsync:        bool,
+	app_id:       string, // Wayland app id / X11 class (window rules); "" = SDL default
 }
 
 Backend :: enum u8 {
@@ -87,6 +88,8 @@ App :: struct {
 	// app hook for custom control commands: return JSON (or "" if unknown)
 	on_command:    proc(app: ^App, cmd: string, args: map[string]string) -> string,
 	user_data:     rawptr,
+	// raw SDL event hook (keyboard shortcuts, drag-and-drop...): return true to consume the event
+	on_event:      proc(app: ^App, e: ^sdl.Event) -> bool,
 	clear_color:   vui.Color,
 	screenshot_requests: [dynamic]^Control_Request,
 	synthetic_mods: bool, // a synthetic key set modifiers; clear them next frame
@@ -150,6 +153,9 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		app.cfg.size = {1280, 800}
 	}
 	_ = sdl.SetHint(sdl.HINT_VIDEO_WAYLAND_SCALE_TO_DISPLAY, "0")
+	if cfg.app_id != "" {
+		_ = sdl.SetHint(sdl.HINT_APP_ID, strings.clone_to_cstring(cfg.app_id, context.temp_allocator))
+	}
 	if !sdl.Init({.VIDEO, .EVENTS}) {
 		fmt.eprintln("vui: SDL_Init failed:", sdl.GetError())
 		return false
@@ -373,6 +379,9 @@ map_mods :: proc(m: sdl.Keymod) -> vui.Mods {
 @(private)
 handle_event :: proc(app: ^App, e: ^sdl.Event) {
 	in_ := &app.input
+	if app.on_event != nil && app.on_event(app, e) {
+		return
+	}
 	#partial switch e.type {
 	case .QUIT, .WINDOW_CLOSE_REQUESTED:
 		app.running = false
@@ -593,8 +602,9 @@ end_frame :: proc(app: ^App) {
 			_ = sdl.GL_SwapWindow(app.window)
 		}
 	} else {
-		// no vsync offscreen: pace animations at ~60 fps
-		sdl.Delay(app.ctx.animating ? 16 : 1)
+		// no vsync offscreen: always pace at ~60 fps. An unpaced offscreen loop can
+		// queue GPU work faster than it retires and exhaust shared VRAM.
+		sdl.Delay(16)
 	}
 	free_all(context.temp_allocator)
 	_ = time.Duration(0)

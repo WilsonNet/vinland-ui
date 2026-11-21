@@ -21,6 +21,7 @@ SOURCES := [?]Src {
 	{"pages_visual.odin", #load("pages_visual.odin", string)},
 	{"pages_motion.odin", #load("pages_motion.odin", string)},
 	{"pages_interactivity.odin", #load("pages_interactivity.odin", string)},
+	{"pages_canvas.odin", #load("pages_canvas.odin", string)},
 	{"demos.odin", #load("demos/demos.odin", string)},
 }
 

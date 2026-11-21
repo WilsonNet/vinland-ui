@@ -15,6 +15,9 @@ Cmd_Kind :: enum u32 {
 	Inset_Shadow = 2,
 	Glyph        = 3,
 	Image        = 4,
+	Segment      = 5,
+	Arc          = 6,
+	Area         = 7,
 }
 
 // GPU instance layout (15 x vec4). Keep in sync with the backend shader.
@@ -154,6 +157,81 @@ draw_rect :: proc(ctx: ^Context, r: Rect, color: Color, radius: f32 = 0) {
 	c.radii = scaled_radii(ctx, {radius, radius, radius, radius}, r.w, r.h)
 	c.fill0 = col4(color, 1)
 	emit(ctx, c)
+}
+
+// Anti-aliased line segment with round caps (logical coordinates).
+draw_line :: proc(ctx: ^Context, a, b: [2]f32, color: Color, thickness: f32 = 1) {
+	hw := thickness * 0.5
+	x0 := min(a.x, b.x) - hw - 1
+	y0 := min(a.y, b.y) - hw - 1
+	r := Rect{x0, y0, abs(a.x - b.x) + thickness + 2, abs(a.y - b.y) + thickness + 2}
+	ps := Paint_State{clip = NO_CLIP, opacity = 1, xf = XFORM_IDENTITY}
+	c := base_cmd(ctx, &ps, r, .Segment)
+	sc := ctx.scale
+	c.fill0 = col4(color, 1)
+	c.fill1 = {(a.x - x0) * sc, (a.y - y0) * sc, (b.x - x0) * sc, (b.y - y0) * sc}
+	c.fill2 = {hw * sc, 0, 0, 0}
+	emit(ctx, c)
+}
+
+// Connected line segments.
+draw_polyline :: proc(ctx: ^Context, pts: [][2]f32, color: Color, thickness: f32 = 1) {
+	for i in 1 ..< len(pts) {
+		draw_line(ctx, pts[i - 1], pts[i], color, thickness)
+	}
+}
+
+// Stroked circular arc with round caps. Angles in radians, clockwise from +x (screen y down).
+draw_arc :: proc(ctx: ^Context, center: [2]f32, radius, start, sweep: f32, color: Color, thickness: f32 = 1) {
+	ext := radius + thickness * 0.5 + 1
+	r := Rect{center.x - ext, center.y - ext, ext * 2, ext * 2}
+	ps := Paint_State{clip = NO_CLIP, opacity = 1, xf = XFORM_IDENTITY}
+	c := base_cmd(ctx, &ps, r, .Arc)
+	sc := ctx.scale
+	a0 := math.mod(start, math.TAU)
+	if a0 < 0 {
+		a0 += math.TAU
+	}
+	c.fill0 = col4(color, 1)
+	c.fill1 = {radius * sc, thickness * 0.5 * sc, a0, clamp(sweep, 0, math.TAU)}
+	emit(ctx, c)
+}
+
+// Filled area between a polyline (x ascending) and a horizontal baseline, with a
+// vertical gradient from `top` (at the highest point) to `bottom` (at the baseline).
+// Chart fills: frequency responses, envelopes, sparklines.
+draw_area :: proc(ctx: ^Context, pts: [][2]f32, base_y: f32, top: Color, bottom: Color) {
+	if len(pts) < 2 {
+		return
+	}
+	hi := base_y
+	for p in pts {
+		hi = min(hi, p.y)
+	}
+	span := max(base_y - hi, 1e-3)
+	sc := ctx.scale
+	ps := Paint_State{clip = NO_CLIP, opacity = 1, xf = XFORM_IDENTITY}
+	for i in 1 ..< len(pts) {
+		a, b := pts[i - 1], pts[i]
+		if b.x <= a.x {
+			continue
+		}
+		y0 := min(a.y, b.y) - 1
+		if y0 >= base_y {
+			continue
+		}
+		r := Rect{a.x, y0, b.x - a.x, base_y - y0}
+		c := base_cmd(ctx, &ps, r, .Area)
+		c.fill0 = col4(color_lerp(top, bottom, clamp((y0 - hi) / span, 0, 1)), 1)
+		c.fill2 = col4(bottom, 1)
+		c.fill1 = {(a.y - y0) * sc, (b.y - y0) * sc, 0, 0}
+		emit(ctx, c)
+	}
+}
+
+// Filled circle.
+draw_circle :: proc(ctx: ^Context, center: [2]f32, radius: f32, color: Color) {
+	draw_rect(ctx, {center.x - radius, center.y - radius, radius * 2, radius * 2}, color, radius)
 }
 
 // ---------------------------------------------------------------------------

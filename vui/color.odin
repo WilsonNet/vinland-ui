@@ -20,6 +20,31 @@ rgb :: proc "contextless" (hex: u32, alpha: f32 = 1) -> Color {
 	}
 }
 
+// CSS oklch(L C H): L 0..1, C chroma, H degrees. Out-of-gamut values are clipped.
+oklch :: proc "contextless" (l, c, h: f32, alpha: f32 = 1) -> Color {
+	hr := h * math.PI / 180
+	a := c * math.cos(hr)
+	b := c * math.sin(hr)
+	l_ := l + 0.3963377774 * a + 0.2158037573 * b
+	m_ := l - 0.1055613458 * a - 0.0638541728 * b
+	s_ := l - 0.0894841775 * a - 1.2914855480 * b
+	L := l_ * l_ * l_
+	M := m_ * m_ * m_
+	S := s_ * s_ * s_
+	lin := [3]f32 {
+		4.0767416621 * L - 3.3077115913 * M + 0.2309699292 * S,
+		-1.2684380046 * L + 2.6097574011 * M - 0.3413193965 * S,
+		-0.0041960863 * L - 0.7034186147 * M + 1.7076147010 * S,
+	}
+	out: Color
+	for i in 0 ..< 3 {
+		v := clamp(lin[i], 0, 1)
+		out[i] = v <= 0.0031308 ? 12.92 * v : 1.055 * math.pow(v, 1 / 2.4) - 0.055
+	}
+	out[3] = alpha
+	return out
+}
+
 with_alpha :: proc "contextless" (c: Color, a: f32) -> Color {
 	return {c.r, c.g, c.b, a}
 }
@@ -88,6 +113,35 @@ parse_css_color :: proc(s: string) -> (c: Color, ok: bool) {
 	t := strings.trim_space(s)
 	if strings.has_prefix(t, "#") {
 		return parse_hex_color(t)
+	}
+	if strings.has_prefix(t, "oklch(") {
+		close := strings.last_index_byte(t, ')')
+		if close < 0 {
+			return {}, false
+		}
+		inner := t[6:close]
+		vals: [4]f32 = {0, 0, 0, 1}
+		n := 0
+		for part in strings.fields_iterator(&inner) {
+			p := strings.trim(part, ",/ ")
+			if p == "" {
+				continue
+			}
+			pct := strings.has_suffix(p, "%")
+			f, fok := strconv.parse_f32(strings.trim_suffix(strings.trim_suffix(p, "%"), "deg"))
+			if !fok || n >= 4 {
+				return {}, false
+			}
+			if pct {
+				f /= 100
+			}
+			vals[n] = f
+			n += 1
+		}
+		if n < 3 {
+			return {}, false
+		}
+		return oklch(vals[0], vals[1], vals[2], vals[3]), true
 	}
 	if strings.has_prefix(t, "rgb") {
 		open := strings.index_byte(t, '(')

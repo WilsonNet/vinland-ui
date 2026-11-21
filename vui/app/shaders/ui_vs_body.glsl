@@ -4,7 +4,7 @@ void main() {
 	vec2 corner = vec2(float(gl_VertexID & 1), float((gl_VertexID >> 1) & 1));
 	float pad = 1.0;
 	if (kind == 1) pad = 3.0 * a_params.y + 2.0;
-	if (kind == 3 || kind == 4) pad = 0.0;
+	if (kind == 3 || kind == 4 || kind == 7) pad = 0.0;
 	vec2 local = mix(vec2(-pad), a_size.xy + vec2(pad), corner);
 	mat2 m = mat2(a_xf.x, a_xf.z, a_xf.y, a_xf.w);
 	vec2 world = m * local + a_xt.xy;

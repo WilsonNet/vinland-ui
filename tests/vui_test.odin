@@ -258,3 +258,62 @@ variant_rules_win_over_base_regardless_of_order :: proc(t: ^testing.T) {
 	testing.expect_value(t, s.bg, ui.BLACK)
 	testing.expect_value(t, s.padding[0], 16) // lg beats md and base
 }
+
+@(test)
+oklch_matches_css :: proc(t: ^testing.T) {
+	// oklch(0.637 0.237 25.331) is Tailwind v4 red-500 = #fb2c36
+	c := ui.oklch(0.637, 0.237, 25.331)
+	testing.expect(t, abs(c.r - 0xfb / 255.0) < 0.02 && abs(c.g - 0x2c / 255.0) < 0.03 && abs(c.b - 0x36 / 255.0) < 0.03)
+	p, ok := ui.parse_css_color("oklch(63.7% 0.237 25.331 / 0.5)")
+	testing.expect(t, ok)
+	testing.expect(t, abs(p.r - c.r) < 0.001 && abs(p.a - 0.5) < 0.001)
+}
+
+@(test)
+arbitrary_unitless_leading_is_multiplier :: proc(t: ^testing.T) {
+	th := ui.theme_default()
+	defer ui.theme_destroy(&th)
+	a := ui.parse_classes(&th, "leading-[1.4]")
+	defer ui.class_set_destroy(a)
+	b := ui.parse_classes(&th, "leading-[22px]")
+	defer ui.class_set_destroy(b)
+	testing.expect_value(t, len(a.unknown), 0)
+	sa := ui.style_default()
+	sb := ui.style_default()
+	m := ui.Match_State{viewport = 1000}
+	ui.apply_class_set(&sa, a, &m, false)
+	ui.apply_class_set(&sb, b, &m, false)
+	testing.expect(t, !sa.line_height_px && abs(sa.line_height - 1.4) < 1e-4)
+	testing.expect(t, sb.line_height_px && sb.line_height == 22)
+}
+
+@(private)
+draw_probe :: proc(ctx: ^ui.Context, r: ui.Rect, data: rawptr) {
+	ui.draw_line(ctx, {r.x, r.y}, {r.x + r.w, r.y + r.h}, ui.WHITE, 2)
+	ui.draw_arc(ctx, {r.x + 20, r.y + 20}, 10, 0, 3, ui.WHITE, 2)
+	pts := [3][2]f32{{r.x, r.y + 10}, {r.x + 10, r.y + 5}, {r.x + 20, r.y + 8}}
+	ui.draw_area(ctx, pts[:], r.y + r.h, ui.WHITE, ui.BLACK)
+	(^int)(data)^ += 1
+}
+
+@(test)
+canvas_primitives_emit_instances :: proc(t: ^testing.T) {
+	ctx: ui.Context
+	setup(&ctx)
+	defer ui.destroy(&ctx)
+	calls := 0
+	@(static) g_calls: ^int
+	g_calls = &calls
+	build :: proc() {
+		ui.canvas("h-20 w-40", draw_probe, g_calls)
+	}
+	frame(&ctx, build)
+	testing.expect_value(t, calls, 1)
+	kinds: [8]int
+	for c in ctx.draw.cmds {
+		kinds[int(c.params.x)] += 1
+	}
+	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Segment)], 1)
+	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Arc)], 1)
+	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Area)], 2)
+}

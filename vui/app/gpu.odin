@@ -13,6 +13,9 @@ FRAG_SPV :: #load("shaders/ui.frag.spv")
 
 Gpu_Renderer :: struct {
 	dev:         ^sdl.GPUDevice,
+	// fence of the previous frame: at most one frame in flight, so cycled upload
+	// buffers can never pile up in VRAM (offscreen rendering has no swapchain pacing)
+	frame_fence: ^sdl.GPUFence,
 	window:      ^sdl.Window,
 	pipeline:    ^sdl.GPUGraphicsPipeline,
 	inst_buf:    ^sdl.GPUBuffer,
@@ -137,6 +140,7 @@ gpu_init :: proc(r: ^Gpu_Renderer, dev: ^sdl.GPUDevice, window: ^sdl.Window, vsy
 
 gpu_destroy :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context) {
 	dev := r.dev
+	gpu_wait_frame(r)
 	_ = sdl.WaitForGPUIdle(dev)
 	for &img in ctx.images {
 		if img.handle != 0 {
@@ -262,6 +266,7 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 	if fb_w <= 0 || fb_h <= 0 {
 		return
 	}
+	gpu_wait_frame(r)
 	ensure_target(r, fb_w, fb_h)
 	sync_gpu_images(r, ctx)
 	cmd := sdl.AcquireGPUCommandBuffer(r.dev)
@@ -342,7 +347,16 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 			})
 		}
 	}
-	_ = sdl.SubmitGPUCommandBuffer(cmd)
+	r.frame_fence = sdl.SubmitGPUCommandBufferAndAcquireFence(cmd)
+}
+
+@(private)
+gpu_wait_frame :: proc(r: ^Gpu_Renderer) {
+	if r.frame_fence != nil {
+		_ = sdl.WaitForGPUFences(r.dev, true, &r.frame_fence, 1)
+		sdl.ReleaseGPUFence(r.dev, r.frame_fence)
+		r.frame_fence = nil
+	}
 }
 
 // Reads back the last rendered frame (RGBA8, top-down rows, straight alpha).
