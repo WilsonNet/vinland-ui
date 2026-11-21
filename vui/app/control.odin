@@ -22,6 +22,8 @@ import vui ".."
 //   {"cmd":"resize","w":1280,"h":800}  {"cmd":"dark","on":true}
 //   {"cmd":"tree","depth":8}  {"cmd":"info"}  {"cmd":"wait","frames":10}  {"cmd":"settle"}
 //   {"cmd":"gamma","value":1.0}  {"cmd":"quit"}
+//   {"cmd":"down","x":..,"y":..} {"cmd":"up","x":..,"y":..}   drags: down, move..., up
+//   {"cmd":"find","text":"Save","nth":0}   -> found, count, rect, text
 // Any other command is forwarded to App.on_command.
 
 Control_Request :: struct {
@@ -283,7 +285,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 	case "info":
 		unknown := vui.unknown_classes(ctx)
 		sb := strings.builder_make(context.temp_allocator)
-		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend)
+		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","sandboxed":%v,"gl_renderer":"%s","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend, app.sandboxed, app.gl_renderer)
 		for u, i in unknown {
 			if i > 0 {
 				strings.write_string(&sb, ",")
@@ -315,6 +317,47 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		}
 		push_click(app, {arg_f(obj, "x"), arg_f(obj, "y")}, b, int(arg_f(obj, "clicks", 1)))
 		wait_then_respond(app, req, 3)
+	case "down", "up":
+		b := vui.Mouse_Button.Left
+		switch arg_s(obj, "button") {
+		case "right":
+			b = .Right
+		case "middle":
+			b = .Middle
+		}
+		pos := [2]f32{arg_f(obj, "x", app.mouse.x), arg_f(obj, "y", app.mouse.y)}
+		append(&app.synthetic, Synthetic{kind = .Move, pos = pos})
+		append(&app.synthetic, Synthetic{kind = .Down if cmd == "down" else .Up, pos = pos, button = b, clicks = 1})
+		wait_then_respond(app, req, 2)
+	case "find":
+		// {"cmd":"find","text":"Save","nth":0} -> rect of the nth visible text match and the match count
+		needle := strings.to_lower(arg_s(obj, "text"), context.temp_allocator)
+		nth := int(arg_f(obj, "nth", 0))
+		count := 0
+		hit: vui.Rect
+		hit_text := ""
+		for &n in ctx.nodes {
+			if n.para < 0 || n.style.display == .None || n.rect.w <= 0 {
+				continue
+			}
+			b := strings.builder_make(context.temp_allocator)
+			for sp in ctx.paras[n.para].spans {
+				strings.write_string(&b, sp.text)
+			}
+			t := strings.to_string(b)
+			if strings.contains(strings.to_lower(t, context.temp_allocator), needle) {
+				if count == nth {
+					hit = n.rect
+					hit_text = t
+				}
+				count += 1
+			}
+		}
+		sb := strings.builder_make(context.temp_allocator)
+		fmt.sbprintf(&sb, `{{"ok":true,"found":%v,"count":%d,"x":%.1f,"y":%.1f,"w":%.1f,"h":%.1f,"text":`, count > nth, count, hit.x, hit.y, hit.w, hit.h)
+		vui.json_str(&sb, hit_text)
+		strings.write_string(&sb, "}")
+		respond(req, strings.to_string(sb))
 	case "click_text":
 		p, found := vui.find_text(ctx, arg_s(obj, "text"), int(arg_f(obj, "nth", 0)))
 		if !found {

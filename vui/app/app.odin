@@ -93,6 +93,8 @@ App :: struct {
 	clear_color:   vui.Color,
 	screenshot_requests: [dynamic]^Control_Request,
 	synthetic_mods: bool, // a synthetic key set modifiers; clear them next frame
+	sandboxed:     bool, // headless on the offscreen driver + software GL (cannot touch the GPU)
+	gl_renderer:   string,
 	wait_requests: [dynamic]Wait_Request,
 }
 
@@ -103,6 +105,12 @@ Wait_Request :: struct {
 
 @(private)
 g_app: ^App
+
+@(private)
+is_software_renderer :: proc(r: string) -> bool {
+	l := strings.to_lower(r, context.temp_allocator)
+	return strings.contains(l, "llvmpipe") || strings.contains(l, "softpipe") || strings.contains(l, "swrast") || strings.contains(l, "swiftshader")
+}
 
 @(private)
 clipboard_get :: proc(allocator: mem.Allocator) -> string {
@@ -156,12 +164,23 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	if cfg.app_id != "" {
 		_ = sdl.SetHint(sdl.HINT_APP_ID, strings.clone_to_cstring(cfg.app_id, context.temp_allocator))
 	}
+	// Headless runs (tests, agents, site capture) are sandboxed by default, the way headless
+	// browsers use SwiftShader: SDL's offscreen video driver (no compositor connection at all)
+	// and Mesa's llvmpipe software rasterizer (no GPU memory). A headless run can never
+	// starve or crash the user's desktop. VUI_HIDDEN_GPU=1 opts back into the real GPU.
+	app.sandboxed = cfg.hidden && os.get_env("VUI_HIDDEN_GPU", context.temp_allocator) != "1"
+	if app.sandboxed {
+		_ = sdl.SetHint(sdl.HINT_VIDEO_DRIVER, "offscreen")
+		_ = os.set_env("LIBGL_ALWAYS_SOFTWARE", "1")
+		_ = os.set_env("GALLIUM_DRIVER", "llvmpipe")
+		_ = os.set_env("MESA_LOADER_DRIVER_OVERRIDE", "swrast")
+	}
 	if !sdl.Init({.VIDEO, .EVENTS}) {
 		fmt.eprintln("vui: SDL_Init failed:", sdl.GetError())
 		return false
 	}
 	// Prefer the SDL GPU API (Vulkan); fall back to OpenGL 3.3. VUI_BACKEND=gl forces GL.
-	want_gl := os.get_env("VUI_BACKEND", context.temp_allocator) == "gl"
+	want_gl := os.get_env("VUI_BACKEND", context.temp_allocator) == "gl" || app.sandboxed
 	dev: ^sdl.GPUDevice
 	if !want_gl {
 		dev = sdl.CreateGPUDevice({.SPIRV}, false, nil)
@@ -204,6 +223,15 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		}
 		_ = sdl.GL_MakeCurrent(app.window, app.gl_ctx)
 		gl.load_up_to(3, 3, sdl.gl_set_proc_address)
+		if app.sandboxed {
+			// refuse to run headless on hardware: that is how compositors get starved
+			r := string(gl.GetString(gl.RENDERER))
+			app.gl_renderer = strings.clone(r)
+			if !is_software_renderer(r) {
+				fmt.eprintfln("vui: headless run refused: GL renderer %q is hardware, expected llvmpipe/softpipe. Install mesa, or set VUI_HIDDEN_GPU=1 to use the GPU deliberately.", r)
+				return false
+			}
+		}
 		_ = sdl.GL_SetSwapInterval(app.cfg.hidden ? 0 : 1)
 		if !renderer_init(&app.renderer) {
 			return false
@@ -214,7 +242,7 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		_ = sdl.SetWindowMinimumSize(app.window, cfg.min_size.x, cfg.min_size.y)
 	}
 	if os.get_env("VUI_QUIET", context.temp_allocator) == "" {
-		fmt.eprintfln("vui: renderer %v%s", app.backend, app.backend == .GPU ? fmt.tprintf(" (%s)", app.gpu.driver) : "")
+		fmt.eprintfln("vui: renderer %v%s%s", app.backend, app.backend == .GPU ? fmt.tprintf(" (%s)", app.gpu.driver) : "", app.sandboxed ? fmt.tprintf(" sandboxed: %s", app.gl_renderer) : "")
 	}
 	app.running = true
 	app.start_tick = sdl.GetTicksNS()
