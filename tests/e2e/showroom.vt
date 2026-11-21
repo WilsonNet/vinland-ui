@@ -38,3 +38,11 @@ test "responsive drawer"
   wait 4
   expect-no-text "Theme tokens"
   screenshot narrow
+
+test "testing docs page"
+  click "Testing"
+  wait 3
+  expect-exact "Testing"
+  expect-text "Writing a suite"
+  expect-class "Testing" text-accent
+  screenshot testing

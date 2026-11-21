@@ -75,9 +75,43 @@ Paint_State :: struct {
 	xf:      Xform, // logical-space absolute transform
 }
 
+// Hard cap on instances per frame (~60 MB of instance data). A runaway build loop must not
+// be able to allocate unbounded GPU buffers or submit seconds of fill work: a long GPU
+// job trips the amdgpu ring timeout and resets the GPU under the desktop compositor.
+MAX_DRAW_CMDS :: 1 << 18
+// Color-matrix filters per frame; the shaders index a fixed uniform array of this size.
+MAX_DRAW_FILTERS :: 16
+
 @(private)
 emit :: proc(ctx: ^Context, c: Draw_Cmd, image: Image_Id = 0) {
 	d := &ctx.draw
+	// Cull quads that cannot produce a fragment (the fragment shader discards everything
+	// outside the clip rect anyway). Written so NaN geometry is also dropped.
+	{
+		kind := u32(c.params.x)
+		pad: f32 = 1
+		if kind == u32(Cmd_Kind.Shadow) {
+			pad = 3 * c.params.y + 2
+		} else if kind == u32(Cmd_Kind.Glyph) || kind == u32(Cmd_Kind.Image) || kind == u32(Cmd_Kind.Area) {
+			pad = 0
+		}
+		lx0, ly0 := -pad, -pad
+		lx1, ly1 := c.size.x + pad, c.size.y + pad
+		a, b, cc, dd := c.xf.x, c.xf.y, c.xf.z, c.xf.w
+		ex := abs(a) * (lx1 - lx0) * 0.5 + abs(b) * (ly1 - ly0) * 0.5
+		ey := abs(cc) * (lx1 - lx0) * 0.5 + abs(dd) * (ly1 - ly0) * 0.5
+		mx := (lx0 + lx1) * 0.5
+		my := (ly0 + ly1) * 0.5
+		cx := a * mx + b * my + c.xt.x
+		cy := cc * mx + dd * my + c.xt.y
+		visible := cx + ex > c.clip.x && cx - ex < c.clip.z && cy + ey > c.clip.y && cy - ey < c.clip.w
+		if !visible {
+			return
+		}
+	}
+	if len(d.cmds) >= MAX_DRAW_CMDS {
+		return
+	}
 	n := len(d.batches)
 	if n == 0 || d.batches[n - 1].image != image {
 		append(&d.batches, Draw_Batch{first = i32(len(d.cmds)), count = 0, image = image})
@@ -379,6 +413,10 @@ build_filter :: proc(ctx: ^Context, s: ^Style, parent: i32) -> i32 {
 	}
 	if parent > 0 {
 		m = color_matrix_mul(ctx.draw.filters[parent], m)
+	}
+	if len(ctx.draw.filters) >= MAX_DRAW_FILTERS {
+		// out of shader slots: keep the inherited filter rather than index past the array
+		return parent
 	}
 	append(&ctx.draw.filters, m)
 	return i32(len(ctx.draw.filters) - 1)

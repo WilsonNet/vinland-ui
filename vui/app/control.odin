@@ -403,8 +403,13 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		append(&app.synthetic, Synthetic{kind = .Key, key = k, mods = mods})
 		wait_then_respond(app, req, 2)
 	case "resize":
-		w := i32(arg_f(obj, "w", f32(app.cfg.size.x)))
-		h := i32(arg_f(obj, "h", f32(app.cfg.size.y)))
+		// clamp in float first (NaN/inf/negative safe); the framebuffer is capped again
+		// at MAX_FRAMEBUFFER in update_metrics
+		limit := f32(MAX_FRAMEBUFFER) / max(app.scale, 1)
+		fw := arg_f(obj, "w", f32(app.cfg.size.x))
+		fh := arg_f(obj, "h", f32(app.cfg.size.y))
+		w := i32(fw >= 1 ? min(fw, limit) : 1)
+		h := i32(fh >= 1 ? min(fh, limit) : 1)
 		_ = sdl.SetWindowSize(app.window, w, h)
 		if app.cfg.hidden {
 			app.cfg.size = {w, h}
@@ -447,6 +452,10 @@ control_after_frame :: proc(app: ^App) {
 	if len(app.screenshot_requests) > 0 && len(app.synthetic) == 0 {
 		pixels, w, h := read_frame(app, context.temp_allocator)
 		for req in app.screenshot_requests {
+			if pixels == nil || w <= 0 || h <= 0 {
+				respond_err(req, "no frame to capture")
+				continue
+			}
 			root, _ := json.parse(transmute([]u8)req.line, allocator = context.temp_allocator)
 			obj, _ := root.(json.Object)
 			path := arg_s(obj, "path")

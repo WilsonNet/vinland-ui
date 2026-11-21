@@ -83,6 +83,7 @@ Doc_Block :: struct {
 	kind:  Doc_Kind,
 	text:  string, // heading / paragraph / note text (with `inline code` backticks)
 	code:  string,
+	lang:  string, // code block language for the website (default odin)
 	rows:  []Row,
 	id:    ui.Id, // example preview element
 }
@@ -247,7 +248,7 @@ example_end :: proc() {
 
 // Static code block (no preview).
 code :: proc(src: string, lang := "odin") {
-	append(&doc, Doc_Block{kind = .Code, code = src})
+	append(&doc, Doc_Block{kind = .Code, code = src, lang = lang})
 	if ui.div("mt-6 rounded-xl bg-gray-950/5 p-1 inset-ring inset-ring-gray-950/5 dark:bg-white/10 dark:inset-ring-white/10") {
 		code_panel(src)
 	}

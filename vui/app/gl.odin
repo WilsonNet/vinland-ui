@@ -9,7 +9,7 @@ import vui ".."
 // drawn by an uber-shader; rendering goes to an offscreen framebuffer so screenshots
 // read exactly what is shown (and hidden windows still render).
 
-MAX_FILTERS :: 16
+MAX_FILTERS :: vui.MAX_DRAW_FILTERS
 
 Renderer :: struct {
 	program:     u32,
@@ -32,6 +32,9 @@ Renderer :: struct {
 	u_text_gamma: i32,
 	u_text_contrast: i32,
 	white_tex:   u32,
+	// fence of the previous frame: at most one frame in flight (mirrors the GPU backend),
+	// so orphaned instance buffers cannot pile up when nothing (no swap) throttles us
+	frame_fence: gl.sync_t,
 }
 
 VS :: `#version 330 core
@@ -142,7 +145,21 @@ renderer_init :: proc(r: ^Renderer) -> bool {
 	return true
 }
 
+@(private)
+gl_wait_frame :: proc(r: ^Renderer) {
+	if r.frame_fence == nil {
+		return
+	}
+	res := gl.ClientWaitSync(r.frame_fence, gl.SYNC_FLUSH_COMMANDS_BIT, 1_000_000_000)
+	if res == gl.TIMEOUT_EXPIRED || res == gl.WAIT_FAILED {
+		gl.Finish()
+	}
+	gl.DeleteSync(r.frame_fence)
+	r.frame_fence = nil
+}
+
 renderer_destroy :: proc(r: ^Renderer) {
+	gl_wait_frame(r)
 	gl.DeleteProgram(r.program)
 	gl.DeleteBuffers(1, &r.vbo)
 	gl.DeleteVertexArrays(1, &r.vao)
@@ -159,6 +176,14 @@ renderer_destroy :: proc(r: ^Renderer) {
 @(private)
 sync_atlas :: proc(r: ^Renderer, a: ^vui.Atlas) {
 	gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
+	if r.atlas_tex != 0 && r.atlas_gen != a.generation && r.atlas_w == a.w && r.atlas_h == a.h {
+		// cleared (same size): refill the existing storage instead of re-allocating it
+		gl.BindTexture(gl.TEXTURE_2D, r.atlas_tex)
+		gl.TexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, i32(a.w), i32(a.h), gl.RED, gl.UNSIGNED_BYTE, raw_data(a.pixels))
+		r.atlas_gen = a.generation
+		a.dirty = false
+		return
+	}
 	if r.atlas_tex == 0 || r.atlas_gen != a.generation || r.atlas_w != a.w || r.atlas_h != a.h {
 		if r.atlas_tex == 0 {
 			gl.GenTextures(1, &r.atlas_tex)
@@ -192,6 +217,10 @@ sync_images :: proc(ctx: ^vui.Context) {
 		if !img.dirty || img.freed {
 			continue
 		}
+		img.dirty = false // upload once; invalid images are skipped, not retried
+		if img.w <= 0 || img.h <= 0 || len(img.pixels) < img.w * img.h * 4 {
+			continue
+		}
 		tex := u32(img.handle)
 		if tex == 0 {
 			gl.GenTextures(1, &tex)
@@ -205,7 +234,6 @@ sync_images :: proc(ctx: ^vui.Context) {
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-		img.dirty = false
 	}
 }
 
@@ -230,6 +258,10 @@ ensure_fbo :: proc(r: ^Renderer, w, h: i32) {
 
 // Renders the draw list into the offscreen target and blits it to the window.
 render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i32, clear_color: vui.Color) {
+	if fb_w <= 0 || fb_h <= 0 {
+		return
+	}
+	gl_wait_frame(r)
 	ensure_fbo(r, fb_w, fb_h)
 	sync_atlas(r, &ctx.atlas)
 	sync_images(ctx)
@@ -263,11 +295,9 @@ render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i
 
 	gl.BindVertexArray(r.vao)
 	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
-	n := len(d.cmds)
+	n := min(len(d.cmds), vui.MAX_DRAW_CMDS)
 	if n > r.vbo_cap {
-		for r.vbo_cap < n {
-			r.vbo_cap *= 2
-		}
+		r.vbo_cap = clamp(n + n / 2, 4096, vui.MAX_DRAW_CMDS)
 	}
 	gl.BufferData(gl.ARRAY_BUFFER, r.vbo_cap * size_of(vui.Draw_Cmd), nil, gl.STREAM_DRAW)
 	if n > 0 {
@@ -276,9 +306,13 @@ render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i
 	gl.ActiveTexture(gl.TEXTURE0)
 	gl.BindTexture(gl.TEXTURE_2D, r.atlas_tex)
 	for b in d.batches {
+		if b.count <= 0 || int(b.first) >= n {
+			continue
+		}
+		count := i32(min(int(b.count), n - int(b.first)))
 		gl.ActiveTexture(gl.TEXTURE1)
 		tex := r.white_tex
-		if b.image != 0 && int(b.image) <= len(ctx.images) {
+		if b.image != 0 && int(b.image) <= len(ctx.images) && ctx.images[b.image - 1].handle != 0 {
 			tex = u32(ctx.images[b.image - 1].handle)
 		}
 		gl.BindTexture(gl.TEXTURE_2D, tex)
@@ -288,7 +322,7 @@ render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i
 		for i in 0 ..< 15 {
 			gl.VertexAttribPointer(u32(i), 4, gl.FLOAT, false, stride, base + uintptr(i * 16))
 		}
-		gl.DrawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, b.count)
+		gl.DrawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count)
 	}
 	gl.BindVertexArray(0)
 
@@ -297,6 +331,7 @@ render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i
 	gl.BindFramebuffer(gl.DRAW_FRAMEBUFFER, 0)
 	gl.BlitFramebuffer(0, 0, fb_w, fb_h, 0, 0, fb_w, fb_h, gl.COLOR_BUFFER_BIT, gl.NEAREST)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
+	r.frame_fence = gl.FenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0)
 }
 
 // Reads the last rendered frame (RGBA8, top-down rows).
@@ -306,12 +341,12 @@ read_pixels :: proc(r: ^Renderer, allocator := context.allocator) -> (pixels: []
 	if w <= 0 || h <= 0 {
 		return
 	}
-	buf := make([]u8, int(w * h * 4), context.temp_allocator)
+	buf := make([]u8, int(w) * int(h) * 4, context.temp_allocator)
 	gl.BindFramebuffer(gl.READ_FRAMEBUFFER, r.fbo)
 	gl.PixelStorei(gl.PACK_ALIGNMENT, 1)
 	gl.ReadPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, raw_data(buf))
 	gl.BindFramebuffer(gl.READ_FRAMEBUFFER, 0)
-	pixels = make([]u8, int(w * h * 4), allocator)
+	pixels = make([]u8, int(w) * int(h) * 4, allocator)
 	row := int(w * 4)
 	for y in 0 ..< int(h) {
 		copy(pixels[y * row:(y + 1) * row], buf[(int(h) - 1 - y) * row:(int(h) - y) * row])

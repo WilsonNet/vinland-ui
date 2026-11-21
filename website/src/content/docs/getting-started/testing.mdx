@@ -1,0 +1,139 @@
+---
+title: "Testing"
+description: "Playwright-style end-to-end tests for native apps: click by text, assert on the element tree, diff screenshots against baselines. Headless runs are sandboxed."
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../components/Preview.astro';
+
+Playwright-style end-to-end tests for native apps: click by text, assert on the element tree, diff screenshots against baselines. Headless runs are sandboxed.
+
+`vui-test` runs end-to-end suites against a real vinland-ui app, the way Playwright tests a web app: it launches the binary, clicks and types by visible text, asserts on the element tree, and compares screenshots with committed baselines. The app is driven over the same control port `vui-ctl` uses, so a test exercises the shipping build with no test hooks compiled in.
+
+```sh
+# tests/e2e/showroom.vt
+app ../../build/showroom
+size 1280x800
+baselines baselines
+
+test "navigate to canvas page"
+  click "Canvas & charts"
+  expect-text "Drawing primitives"
+  expect-class "Canvas & charts" text-accent
+  expect-frame-ms 40
+  screenshot canvas
+```
+
+## Writing a suite
+
+A suite is a plain text file with one directive per line. Arguments with spaces go in double quotes, and `#` starts a comment. Directives at the top configure the app; each `test "name"` starts a test whose steps follow, indented or not.
+
+| Class | Effect |
+| --- | --- |
+| `app <command> [args]` | `executable and arguments, relative to cwd` |
+| `cwd <dir>` | `working directory, relative to the suite file` |
+| `env KEY=VALUE` | `extra environment for the app` |
+| `size 1180x760` | `logical window size` |
+| `scale 1.5` | `UI scale used for screenshots` |
+| `baselines <dir>` | `baseline screenshot directory, relative to the suite` |
+| `threshold 0.001` | `allowed fraction of differing pixels` |
+| `test "name"` | `starts a test` |
+
+The `app` line and `env` values expand `{out}` (the output directory), `{dir}` (the suite directory) and `{test}` (a scratch directory for the current test).
+
+### Steps
+
+| Class | Effect |
+| --- | --- |
+| `click TEXT [nth]` | `clicks the element with that text` |
+| `dblclick TEXT` | `double-clicks it` |
+| `click-at X Y / move X Y` | `pointer at logical coordinates` |
+| `drag X1 Y1 X2 Y2 [steps]` | `press, move in steps, release` |
+| `drag-text TEXT DX DY` | `drags an element by an offset` |
+| `type TEXT / key NAME [mods]` | `keyboard input, e.g. key k ctrl` |
+| `scroll DY [X Y]` | `mouse wheel, optionally at a point` |
+| `wait FRAMES / settle` | `advance frames, or wait for animations to finish` |
+| `resize W H / dark on\|off` | `window size and color scheme` |
+| `raw JSON` | `sends any control command as-is` |
+| `expect-text TEXT [count]` | `some element's text contains TEXT` |
+| `expect-exact TEXT [count]` | `some element's whole text equals TEXT` |
+| `expect-no-text TEXT` | `no element contains TEXT` |
+| `expect-class TEXT TOKEN` | `the element, or one of its 3 nearest ancestors, has the class` |
+| `expect-no-class TEXT TOKEN` | `the inverse` |
+| `expect-frame-ms MAX` | `frame time budget` |
+| `screenshot NAME` | `captures the frame and compares it with baselines/NAME.png` |
+
+### Locators
+
+`click`, `dblclick` and `drag-text` find their target by text. An element whose whole text equals the argument wins (ignoring case and surrounding spaces); only when there is none does the runner fall back to a case-insensitive substring match. In the showroom, `click "color"` therefore opens the color reference page, not background-color or border-color. Use `nth` to pick among several exact matches, counted from 0 in tree order.
+
+Scripts can use the same lookup through the control protocol: `vui-ctl raw '{"cmd":"find","text":"color","exact":true}'` returns `found`, `count`, the element's `rect` and its `text`.
+
+## Running and reading the report
+
+```sh
+./build/vui-test tests/e2e/showroom.vt
+./build/vui-test --out results tests/e2e/*.vt
+```
+
+Each test prints a pass or fail line with its duration; a failing test also prints the step and the reason. The process exits with 1 when anything failed, 2 when a suite cannot be parsed, and 0 otherwise.
+
+The output directory (`vui-test-results` by default) holds `report.html` with every step, its timing and screenshots, `report.json` with the same data for tooling, and `app.log` with the app's stdout and stderr. When a step fails the runner captures `FAIL-<test>.png` of the window at that moment and stops the test.
+
+## Baselines
+
+`screenshot NAME` compares the frame with `baselines/NAME.png`. When the baseline does not exist yet it is written and the step passes, so a new test records its own reference on its first run. A mismatch fails the step and writes `diff-<test>--<name>.png`, with differing pixels in red over a gray copy of the frame.
+
+After an intended visual change, rerun with `--update` to rewrite the baselines, review the images in your diff, and commit them. `threshold` absorbs small antialiasing differences; size mismatches always fail.
+
+```sh
+./build/vui-test --update tests/e2e/showroom.vt
+git diff --stat tests/e2e/baselines
+```
+
+## Performance budgets
+
+`expect-frame-ms MAX` waits for the app to settle, reads `frame_ms` from `info` and fails when the last frame took longer than MAX milliseconds. Put it after the steps that build an expensive screen to catch regressions in layout or painting.
+
+:::note
+Tests render on the software rasterizer, which is several times slower than a GPU. Set budgets from measured sandboxed runs and treat them as regression guards, not as the frame time users see.
+:::
+
+## Isolation
+
+Every test starts a fresh app process and stops it at the end, the way each Playwright test gets a new browser context. State from one test, such as dark mode or a scrolled page, never leaks into the next.
+
+`{test}` expands to an empty directory created for each test under `<out>/tmp/`. Point the app's data or config at it to start every test from a clean slate:
+
+```sh
+app ../bin/notes --data {test}/data
+env NOTES_CONFIG={test}/config.toml
+```
+
+The runner owns the `VUI_*` environment. It drops any `VUI_*` variables it inherits and sets `VUI_HIDDEN=1`, the port, size and scale itself, so a stray setting in your shell cannot change how tests run.
+
+## The sandbox
+
+Tests are safe to run while you work. A headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. Headless browsers get the same isolation from SwiftShader. A runaway test can use CPU time, but it cannot freeze or crash the desktop.
+
+The guarantee is checked at two points. A headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` from `info` and refuses to drive an app that reports false.
+
+`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU for headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above.
+
+## Continuous integration
+
+CI machines need SDL3 and Mesa's llvmpipe driver, and nothing else: no display server, no GPU, no virtual framebuffer. Build, run the suites, and keep the output directory as an artifact so failures can be inspected from the report.
+
+```yaml
+# .github/workflows/e2e.yml (steps)
+# SDL3 and Odin installed by earlier steps
+- run: sudo apt-get install -y libgl1-mesa-dri
+- run: ./build.sh
+- run: ./build/vui-test --out e2e-results tests/e2e/*.vt
+- if: failure()
+  uses: actions/upload-artifact@v4
+  with: { name: e2e-results, path: e2e-results }
+```
+
+llvmpipe renders the same pixels for the same input, so baselines recorded locally match on CI when both use the same Mesa release. If they differ, record the baselines on CI with `--update` once and commit them.

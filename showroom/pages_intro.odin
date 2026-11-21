@@ -8,6 +8,7 @@ register_pages :: proc() {
 	page("Getting started", "introduction", "Introduction", "vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density.", page_introduction)
 	page("Getting started", "installation", "Installation", "Add vinland-ui to an Odin project and open your first window.", page_installation)
 	page("Getting started", "agents", "Agent skill & CLI", "Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests.", page_agents)
+	page("Getting started", "testing", "Testing", "Playwright-style end-to-end tests for native apps: click by text, assert on the element tree, diff screenshots against baselines. Headless runs are sandboxed.", page_testing)
 	page("Getting started", "showcase", "Component showcase", "Interfaces assembled from utilities only. Nothing on this page is a built-in widget style.", page_showcase)
 	page("Core concepts", "utility-classes", "Styling with utility classes", "Build any design by combining single-purpose classes directly in your Odin code.", page_utility_classes)
 	page("Core concepts", "states", "Hover, focus and other states", "Prefix a utility with a variant to apply it conditionally.", page_states)
@@ -153,7 +154,7 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 ./build/vui-ctl screenshot shadow-dark.png
 ./build/vui-ctl click-text "Show all"
 ./build/vui-ctl scroll 600
-./build/vui-ctl tree 6 | jq '.nodes[] | select(.t)'`)
+./build/vui-ctl tree 6 | jq '.nodes[] | select(.t)'`, "sh")
 	h2("Commands")
 	ref_table({
 		{"info", "viewport, scale, frame time, node count, unknown classes"},

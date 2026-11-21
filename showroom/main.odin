@@ -194,6 +194,10 @@ export_page :: proc() -> string {
 			strings.write_string(&sb, `,"code":`)
 			ui.json_str(&sb, b.code)
 		}
+		if b.lang != "" && b.lang != "odin" {
+			strings.write_string(&sb, `,"lang":`)
+			ui.json_str(&sb, b.lang)
+		}
 		if b.kind == .Table {
 			strings.write_string(&sb, `,"rows":[`)
 			for r, j in b.rows {

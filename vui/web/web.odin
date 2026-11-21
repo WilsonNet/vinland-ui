@@ -157,6 +157,9 @@ mount :: proc(id: string, build: proc()) -> bool {
 	s.white = gl.CreateTexture()
 	gl.BindTexture(gl.TEXTURE_2D, s.white)
 	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, 4, &white[0])
+	// the default min filter wants mipmaps: without these the texture is incomplete
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, i32(gl.NEAREST))
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, i32(gl.NEAREST))
 
 	vui.init(&s.ctx)
 	if setup_proc != nil {
@@ -320,6 +323,11 @@ frame :: proc(dt: f64, dark: bool) {
 		if r.y > win.height || r.y + r.height < 0 || size.x <= 0 || size.y <= 0 {
 			continue
 		}
+		// same framebuffer cap as the native host (vui_app.MAX_FRAMEBUFFER)
+		if dpr <= 0 || dpr != dpr {
+			dpr = 1
+		}
+		dpr = min(dpr, 4096 / max(size.x, size.y, 1))
 		if size != s.size || dpr != s.dpr || s.ctx.dark != dark {
 			s.size = size
 			s.dpr = dpr
@@ -399,6 +407,10 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 		if !img.dirty {
 			continue
 		}
+		img.dirty = false
+		if img.w <= 0 || img.h <= 0 || len(img.pixels) < img.w * img.h * 4 {
+			continue
+		}
 		if s.images[i] == 0 {
 			s.images[i] = gl.CreateTexture()
 		}
@@ -408,7 +420,6 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 		gl.GenerateMipmap(gl.TEXTURE_2D)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, i32(gl.LINEAR_MIPMAP_LINEAR))
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, i32(gl.LINEAR))
-		img.dirty = false
 	}
 
 	gl.Viewport(0, 0, fw, fh)
@@ -432,9 +443,9 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 
 	gl.BindVertexArray(s.vao)
 	gl.BindBuffer(gl.ARRAY_BUFFER, s.vbo)
-	n := len(d.cmds)
+	n := min(len(d.cmds), vui.MAX_DRAW_CMDS)
 	if n > s.vbo_cap {
-		s.vbo_cap = max(n * 2, 1024)
+		s.vbo_cap = clamp(n + n / 2, 1024, vui.MAX_DRAW_CMDS)
 		gl.BufferData(gl.ARRAY_BUFFER, s.vbo_cap * size_of(vui.Draw_Cmd), nil, gl.DYNAMIC_DRAW)
 	}
 	if n > 0 {
@@ -444,6 +455,10 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 	gl.BindTexture(gl.TEXTURE_2D, s.atlas)
 	stride := size_of(vui.Draw_Cmd)
 	for b in d.batches {
+		if b.count <= 0 || int(b.first) >= n {
+			continue
+		}
+		count := min(int(b.count), n - int(b.first))
 		gl.ActiveTexture(gl.TEXTURE1)
 		tex := s.white
 		if b.image != 0 && int(b.image) <= len(s.images) && s.images[b.image - 1] != 0 {
@@ -454,6 +469,6 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 		for i in 0 ..< 15 {
 			gl.VertexAttribPointer(i32(i), 4, gl.FLOAT, false, stride, base + uintptr(i * 16))
 		}
-		gl.DrawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, int(b.count))
+		gl.DrawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count)
 	}
 }

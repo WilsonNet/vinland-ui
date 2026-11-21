@@ -179,12 +179,24 @@ gpu_destroy :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context) {
 @(private)
 upload_texture :: proc(r: ^Gpu_Renderer, tex: ^sdl.GPUTexture, pixels: []u8, x, y, w, h: int, bpp: int) {
 	size := w * h * bpp
+	if tex == nil || size <= 0 || len(pixels) < size {
+		return
+	}
 	xfer := sdl.CreateGPUTransferBuffer(r.dev, {usage = .UPLOAD, size = u32(size)})
+	if xfer == nil {
+		return
+	}
 	defer sdl.ReleaseGPUTransferBuffer(r.dev, xfer)
 	dst := sdl.MapGPUTransferBuffer(r.dev, xfer, false)
+	if dst == nil {
+		return
+	}
 	copy((cast([^]u8)dst)[:size], pixels[:size])
 	sdl.UnmapGPUTransferBuffer(r.dev, xfer)
 	cmd := sdl.AcquireGPUCommandBuffer(r.dev)
+	if cmd == nil {
+		return
+	}
 	cp := sdl.BeginGPUCopyPass(cmd)
 	sdl.UploadToGPUTexture(cp, {transfer_buffer = xfer, pixels_per_row = u32(w), rows_per_layer = u32(h)}, {texture = tex, x = u32(x), y = u32(y), w = u32(w), h = u32(h), d = 1}, false)
 	sdl.EndGPUCopyPass(cp)
@@ -194,14 +206,21 @@ upload_texture :: proc(r: ^Gpu_Renderer, tex: ^sdl.GPUTexture, pixels: []u8, x, 
 @(private)
 sync_gpu_atlas :: proc(r: ^Gpu_Renderer, cp: ^sdl.GPUCopyPass, a: ^vui.Atlas) {
 	full := false
-	if r.atlas == nil || r.atlas_gen != a.generation || r.atlas_w != a.w || r.atlas_h != a.h {
+	if r.atlas == nil || r.atlas_w != a.w || r.atlas_h != a.h {
 		if r.atlas != nil {
 			sdl.ReleaseGPUTexture(r.dev, r.atlas)
 		}
 		r.atlas = make_texture(r.dev, a.w, a.h, .R8_UNORM, {.SAMPLER})
-		r.atlas_gen = a.generation
+		if r.atlas == nil {
+			return
+		}
 		r.atlas_w = a.w
 		r.atlas_h = a.h
+		full = true
+	}
+	if r.atlas_gen != a.generation {
+		// cleared (same size): re-upload into the existing texture instead of re-creating it
+		r.atlas_gen = a.generation
 		full = true
 	}
 	if !full && !a.dirty {
@@ -220,8 +239,18 @@ sync_gpu_atlas :: proc(r: ^Gpu_Renderer, cp: ^sdl.GPUCopyPass, a: ^vui.Atlas) {
 		}
 		r.atlas_xfer_cap = max(size, a.w * a.h)
 		r.atlas_xfer = sdl.CreateGPUTransferBuffer(r.dev, {usage = .UPLOAD, size = u32(r.atlas_xfer_cap)})
+		if r.atlas_xfer == nil {
+			r.atlas_xfer_cap = 0
+			a.dirty = true
+			return
+		}
 	}
-	dst := sdl.MapGPUTransferBuffer(r.dev, r.atlas_xfer, true)
+	// no cycling: the previous frame's fence was waited on, so the buffer is idle and
+	// cycling could only allocate another copy
+	dst := sdl.MapGPUTransferBuffer(r.dev, r.atlas_xfer, false)
+	if dst == nil {
+		return
+	}
 	copy((cast([^]u8)dst)[:size], a.pixels[y0 * a.w:y1 * a.w])
 	sdl.UnmapGPUTransferBuffer(r.dev, r.atlas_xfer)
 	sdl.UploadToGPUTexture(cp, {transfer_buffer = r.atlas_xfer, pixels_per_row = u32(a.w), rows_per_layer = u32(y1 - y0)}, {texture = r.atlas, y = u32(y0), w = u32(a.w), h = u32(y1 - y0), d = 1}, false)
@@ -236,17 +265,25 @@ sync_gpu_images :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context) {
 		if img.handle != 0 {
 			sdl.ReleaseGPUTexture(r.dev, cast(^sdl.GPUTexture)uintptr(img.handle))
 		}
+		img.handle = 0
+		img.dirty = false // upload once; a failed upload is not retried every frame
+		if img.w <= 0 || img.h <= 0 || len(img.pixels) < img.w * img.h * 4 {
+			continue
+		}
 		levels := u32(1)
 		for (img.w >> levels) > 0 || (img.h >> levels) > 0 {
 			levels += 1
 		}
 		tex := make_texture(r.dev, img.w, img.h, .R8G8B8A8_UNORM, {.SAMPLER, .COLOR_TARGET}, levels)
+		if tex == nil {
+			continue
+		}
 		upload_texture(r, tex, img.pixels, 0, 0, img.w, img.h, 4)
-		cmd := sdl.AcquireGPUCommandBuffer(r.dev)
-		sdl.GenerateMipmapsForGPUTexture(cmd, tex)
-		_ = sdl.SubmitGPUCommandBuffer(cmd)
+		if cmd := sdl.AcquireGPUCommandBuffer(r.dev); cmd != nil {
+			sdl.GenerateMipmapsForGPUTexture(cmd, tex)
+			_ = sdl.SubmitGPUCommandBuffer(cmd)
+		}
 		img.handle = u64(uintptr(tex))
-		img.dirty = false
 	}
 }
 
@@ -260,7 +297,7 @@ ensure_target :: proc(r: ^Gpu_Renderer, w, h: i32) {
 		sdl.ReleaseGPUTexture(r.dev, r.target)
 	}
 	r.target = make_texture(r.dev, int(w), int(h), TARGET_FORMAT, {.COLOR_TARGET, .SAMPLER})
-	r.target_size = {w, h}
+	r.target_size = r.target != nil ? [2]i32{w, h} : {}
 }
 
 gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i32, clear_color: vui.Color, present: bool) {
@@ -269,6 +306,9 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 	}
 	gpu_wait_frame(r)
 	ensure_target(r, fb_w, fb_h)
+	if r.target == nil {
+		return
+	}
 	sync_gpu_images(r, ctx)
 	cmd := sdl.AcquireGPUCommandBuffer(r.dev)
 	if cmd == nil {
@@ -276,23 +316,35 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 	}
 
 	// uploads
-	n := len(d.cmds)
-	bytes := n * size_of(vui.Draw_Cmd)
-	if n > 0 && (r.inst_buf == nil || r.inst_cap < n) {
+	n := min(len(d.cmds), vui.MAX_DRAW_CMDS)
+	if n > 0 && (r.inst_buf == nil || r.inst_xfer == nil || r.inst_cap < n) {
 		if r.inst_buf != nil {
 			sdl.ReleaseGPUBuffer(r.dev, r.inst_buf)
+		}
+		if r.inst_xfer != nil {
 			sdl.ReleaseGPUTransferBuffer(r.dev, r.inst_xfer)
 		}
-		r.inst_cap = max(4096, n * 2)
+		r.inst_cap = clamp(n + n / 2, 4096, vui.MAX_DRAW_CMDS)
 		r.inst_buf = sdl.CreateGPUBuffer(r.dev, {usage = {.VERTEX}, size = u32(r.inst_cap * size_of(vui.Draw_Cmd))})
 		r.inst_xfer = sdl.CreateGPUTransferBuffer(r.dev, {usage = .UPLOAD, size = u32(r.inst_cap * size_of(vui.Draw_Cmd))})
+		if r.inst_buf == nil || r.inst_xfer == nil {
+			r.inst_cap = 0 // allocation failed: draw nothing this frame, retry next frame
+		}
 	}
+	if r.inst_cap < n {
+		n = 0
+	}
+	bytes := n * size_of(vui.Draw_Cmd)
 	cp := sdl.BeginGPUCopyPass(cmd)
 	if n > 0 {
-		dst := sdl.MapGPUTransferBuffer(r.dev, r.inst_xfer, true)
-		copy((cast([^]u8)dst)[:bytes], (cast([^]u8)raw_data(d.cmds))[:bytes])
-		sdl.UnmapGPUTransferBuffer(r.dev, r.inst_xfer)
-		sdl.UploadToGPUBuffer(cp, {transfer_buffer = r.inst_xfer}, {buffer = r.inst_buf, size = u32(bytes)}, true)
+		// no cycling (see sync_gpu_atlas): the previous frame has retired
+		if dst := sdl.MapGPUTransferBuffer(r.dev, r.inst_xfer, false); dst != nil {
+			copy((cast([^]u8)dst)[:bytes], (cast([^]u8)raw_data(d.cmds))[:bytes])
+			sdl.UnmapGPUTransferBuffer(r.dev, r.inst_xfer)
+			sdl.UploadToGPUBuffer(cp, {transfer_buffer = r.inst_xfer}, {buffer = r.inst_buf, size = u32(bytes)}, false)
+		} else {
+			n = 0
+		}
 	}
 	sync_gpu_atlas(r, cp, &ctx.atlas)
 	sdl.EndGPUCopyPass(cp)
@@ -307,7 +359,7 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 		cycle       = false, // cycling would allocate extra full-size targets
 	}
 	pass := sdl.BeginGPURenderPass(cmd, &target, 1, nil)
-	if n > 0 {
+	if n > 0 && r.atlas != nil && pass != nil {
 		sdl.BindGPUGraphicsPipeline(pass, r.pipeline)
 		binding := sdl.GPUBufferBinding{buffer = r.inst_buf}
 		sdl.BindGPUVertexBuffers(pass, 0, &binding, 1)
@@ -323,6 +375,10 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 		fu.contrast = 1
 		sdl.PushGPUFragmentUniformData(cmd, 0, &fu, size_of(fu))
 		for b in d.batches {
+			if b.count <= 0 || int(b.first) >= n {
+				continue
+			}
+			count := min(int(b.count), n - int(b.first))
 			img := r.white
 			smp := r.smp_linear
 			if b.image != 0 && int(b.image) <= len(ctx.images) && ctx.images[b.image - 1].handle != 0 {
@@ -331,10 +387,12 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 			}
 			binds := [2]sdl.GPUTextureSamplerBinding{{texture = r.atlas, sampler = r.smp_linear}, {texture = img, sampler = smp}}
 			sdl.BindGPUFragmentSamplers(pass, 0, &binds[0], 2)
-			sdl.DrawGPUPrimitives(pass, 4, u32(b.count), 0, u32(b.first))
+			sdl.DrawGPUPrimitives(pass, 4, u32(count), 0, u32(b.first))
 		}
 	}
-	sdl.EndGPURenderPass(pass)
+	if pass != nil {
+		sdl.EndGPURenderPass(pass)
+	}
 
 	if present {
 		swap: ^sdl.GPUTexture
@@ -352,6 +410,10 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 		}
 	}
 	r.frame_fence = sdl.SubmitGPUCommandBufferAndAcquireFence(cmd)
+	if r.frame_fence == nil {
+		// no fence to pace on: drain the queue rather than let frames pile up
+		_ = sdl.WaitForGPUIdle(r.dev)
+	}
 }
 
 @(private)
@@ -370,26 +432,37 @@ gpu_read_pixels :: proc(r: ^Gpu_Renderer, allocator := context.allocator) -> (pi
 	if r.target == nil || w <= 0 || h <= 0 {
 		return
 	}
-	size := int(w * h * 4)
-	if r.readback == nil || r.readback_cap < size {
-		if r.readback != nil {
-			sdl.ReleaseGPUTransferBuffer(r.dev, r.readback)
-		}
-		r.readback = sdl.CreateGPUTransferBuffer(r.dev, {usage = .DOWNLOAD, size = u32(size)})
-		r.readback_cap = size
+	size := int(w) * int(h) * 4
+	// screenshots are rare: a per-read download buffer, released right after, instead of
+	// keeping up to 64 MB of GPU-visible memory mapped for the life of the app
+	if r.readback != nil {
+		sdl.ReleaseGPUTransferBuffer(r.dev, r.readback)
+		r.readback = nil
+		r.readback_cap = 0
 	}
-	xfer := r.readback
+	xfer := sdl.CreateGPUTransferBuffer(r.dev, {usage = .DOWNLOAD, size = u32(size)})
 	if xfer == nil {
 		return nil, 0, 0
 	}
+	defer sdl.ReleaseGPUTransferBuffer(r.dev, xfer)
 	cmd := sdl.AcquireGPUCommandBuffer(r.dev)
+	if cmd == nil {
+		return nil, 0, 0
+	}
 	cp := sdl.BeginGPUCopyPass(cmd)
 	sdl.DownloadFromGPUTexture(cp, {texture = r.target, w = u32(w), h = u32(h), d = 1}, {transfer_buffer = xfer, pixels_per_row = u32(w), rows_per_layer = u32(h)})
 	sdl.EndGPUCopyPass(cp)
 	fence := sdl.SubmitGPUCommandBufferAndAcquireFence(cmd)
-	_ = sdl.WaitForGPUFences(r.dev, true, &fence, 1)
-	sdl.ReleaseGPUFence(r.dev, fence)
+	if fence != nil {
+		_ = sdl.WaitForGPUFences(r.dev, true, &fence, 1)
+		sdl.ReleaseGPUFence(r.dev, fence)
+	} else {
+		_ = sdl.WaitForGPUIdle(r.dev)
+	}
 	src := sdl.MapGPUTransferBuffer(r.dev, xfer, false)
+	if src == nil {
+		return nil, 0, 0
+	}
 	pixels = make([]u8, size, allocator)
 	copy(pixels, (cast([^]u8)src)[:size])
 	sdl.UnmapGPUTransferBuffer(r.dev, xfer)

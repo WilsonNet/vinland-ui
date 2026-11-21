@@ -81,7 +81,7 @@ def page_mdx(doc, order: int) -> str:
                 lines.append(f"| {cell(c)} | {cell(e)} |")
             lines.append("")
         elif kind == "Code":
-            lines += ["```odin", b["code"], "```", ""]
+            lines += ["```" + b.get("lang", "odin"), b["code"], "```", ""]
         elif kind == "Example":
             if not b.get("skip") and b.get("size"):
                 w, h = b["size"]

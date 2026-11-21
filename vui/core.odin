@@ -1118,8 +1118,15 @@ cx :: proc(parts: ..string) -> string {
 // Images
 // ---------------------------------------------------------------------------
 
+// Largest image edge accepted (a 4096^2 RGBA texture with mips is ~85 MB of GPU memory,
+// shared with the desktop compositor on integrated GPUs). Returns 0 for invalid input.
+MAX_IMAGE_SIZE :: 4096
+
 image_register :: proc(ctx: ^Context, rgba: []u8, w, h: int) -> Image_Id {
-	pix := make([]u8, len(rgba))
+	if w <= 0 || h <= 0 || w > MAX_IMAGE_SIZE || h > MAX_IMAGE_SIZE || len(rgba) < w * h * 4 {
+		return 0
+	}
+	pix := make([]u8, w * h * 4)
 	copy(pix, rgba)
 	append(&ctx.images, Image_Def{w = w, h = h, pixels = pix, dirty = true})
 	return Image_Id(len(ctx.images))

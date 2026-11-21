@@ -215,7 +215,7 @@ void main() {
 		col *= clamp(0.5 - dc, 0.0, 1.0);
 	}
 	int fi = int(f_xt.z);
-	if (fi > 0 && col.a > 0.0) {
+	if (fi > 0 && fi < 16 && col.a > 0.0) {
 		vec4 c = vec4(col.rgb / col.a, col.a);
 		c = u_filters[fi] * c + u_filter_off[fi];
 		c = clamp(c, 0.0, 1.0);

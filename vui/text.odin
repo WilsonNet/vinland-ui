@@ -275,6 +275,11 @@ atlas_grow :: proc(a: ^Atlas) -> bool {
 atlas_alloc :: proc(a: ^Atlas, w, h: int) -> (x, y: int, ok: bool) {
 	gw := w + 2
 	gh := h + 2
+	if w <= 0 || h <= 0 || gw > ATLAS_MAX || gh > ATLAS_MAX {
+		// can never fit: fail without growing to the maximum and wiping the atlas every
+		// frame (which would re-upload the full 16 MB texture each frame)
+		return 0, 0, false
+	}
 	for {
 		for &s in a.shelves {
 			if gh <= s.h && s.h <= gh + gh / 3 + 4 && s.x + gw <= a.w {

@@ -138,7 +138,7 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		app.cfg.hidden = true
 	}
 	if v := os.get_env("VUI_SCALE", context.temp_allocator); v != "" {
-		if f, ok := strconv.parse_f32(v); ok {
+		if f, ok := strconv.parse_f32(v); ok && f > 0 {
 			app.cfg.scale = f
 		}
 	}
@@ -155,6 +155,10 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 				app.cfg.size = {i32(w), i32(h)}
 			}
 		}
+	}
+	if app.cfg.scale > 0 {
+		// a wild scale (VUI_SCALE=1e9, inf) would mean wild framebuffer math
+		app.cfg.scale = clamp(app.cfg.scale, 0.25, 8)
 	}
 	cfg := app.cfg
 	if app.cfg.size == {0, 0} {
@@ -290,8 +294,8 @@ MAX_FRAMEBUFFER :: 4096
 @(private)
 update_metrics :: proc(app: ^App) {
 	defer {
-		app.pixels.x = min(app.pixels.x, MAX_FRAMEBUFFER)
-		app.pixels.y = min(app.pixels.y, MAX_FRAMEBUFFER)
+		app.pixels.x = clamp(app.pixels.x, 0, MAX_FRAMEBUFFER)
+		app.pixels.y = clamp(app.pixels.y, 0, MAX_FRAMEBUFFER)
 		app.logical = {f32(app.pixels.x) / app.scale, f32(app.pixels.y) / app.scale}
 	}
 	pw, ph: i32
@@ -632,7 +636,16 @@ end_frame :: proc(app: ^App) {
 		if app.backend == .GPU && app.gpu.occluded {
 			// occluded windows get no vsync; pace them instead of spinning the GPU
 			sdl.Delay(16)
+		} else {
+			// safety net when vsync is not honored (swap interval refused, compositor
+			// not throttling): never present faster than 250 fps
+			MIN_FRAME_NS :: 4_000_000
+			now := sdl.GetTicksNS()
+			if app.last_frame_t != 0 && now - app.last_frame_t < MIN_FRAME_NS {
+				sdl.DelayNS(MIN_FRAME_NS - (now - app.last_frame_t))
+			}
 		}
+		app.last_frame_t = sdl.GetTicksNS()
 	} else {
 		// no vsync offscreen: always pace at ~60 fps. An unpaced offscreen loop can
 		// queue GPU work faster than it retires and exhaust shared VRAM.
