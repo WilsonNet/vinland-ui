@@ -1,14 +1,17 @@
 ---
 // A rendered vinland-ui example: native screenshots for light and dark mode, upgraded to a
-// live WebAssembly/WebGL2 canvas when `live` names a demo compiled into demos.wasm.
+// live WebAssembly/WebGL2 canvas. vui.wasm is the showroom itself compiled to wasm: it reads
+// the page slug from <meta id="vui-page"> and renders example `live` (vex-<k>) into its canvas.
+// The wasm loads lazily when the first preview nears the viewport; screenshots show meanwhile.
 interface Props {
 	src: string;
 	width: number;
 	height: number;
 	alt: string;
 	live?: string;
+	page?: string;
 }
-const { src, width, height, alt, live } = Astro.props;
+const { src, width, height, alt, live, page } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -19,19 +22,34 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 </figure>
 {
 	live && (
-		<script is:inline define:vars={{ base }}>
+		<script is:inline define:vars={{ base, page }}>
 			if (!window.__vuiLive) {
 				window.__vuiLive = true;
 				const root = document.documentElement;
 				const sync = () => { root.id = 'vui-root'; root.classList.toggle('dark', root.dataset.theme !== 'light'); };
 				sync();
 				new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+				const meta = document.createElement('meta');
+				meta.id = 'vui-page';
+				meta.content = page || '';
+				document.head.appendChild(meta);
 				const ok = (() => { try { return !!document.createElement('canvas').getContext('webgl2') && !!window.WebAssembly; } catch { return false; } })();
-				if (ok) {
+				const load = () => {
 					const s = document.createElement('script');
 					s.src = base + '/odin.js';
-					s.onload = () => window.odin.runWasm(base + '/demos.wasm').catch((e) => console.warn('vinland-ui live demos unavailable', e));
+					s.onload = () => window.odin.runWasm(base + '/vui.wasm').catch((e) => console.warn('vinland-ui live examples unavailable', e));
 					document.head.appendChild(s);
+				};
+				if (ok) {
+					const start = () => {
+						const figs = document.querySelectorAll('.vui-preview canvas');
+						if (!figs.length) return;
+						const io = new IntersectionObserver((es) => {
+							if (es.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
+						}, { rootMargin: '600px' });
+						figs.forEach((f) => io.observe(f.parentElement));
+					};
+					if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 				}
 			}
 		</script>

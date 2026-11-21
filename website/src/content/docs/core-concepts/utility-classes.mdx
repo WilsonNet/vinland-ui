@@ -11,7 +11,7 @@ Build any design by combining single-purpose classes directly in your Odin code.
 
 Each class does one thing: `p-6` sets padding, `rounded-xl` sets the corner radius, `shadow-lg` adds an elevation shadow. You combine them on the element instead of writing a style sheet.
 
-<Preview src="utility-classes-0" width={608} height={164} alt="Styling with utility classes: Styling with utility classes" />
+<Preview src="utility-classes-0" width={608} height={164} alt="Styling with utility classes: Styling with utility classes" live="vex-0" page="utility-classes" />
 
 ```odin
 if ui.div("flex w-full max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10") {
@@ -33,7 +33,7 @@ Class strings are parsed once and cached, so a frame costs a hash lookup per ele
 
 When a value comes from data, build the string with `ui.cx` or set the style directly after the classes are applied with `ui.style()` or `ui.last_style()`.
 
-<Preview src="utility-classes-1" width={608} height={100} alt="Styling with utility classes: Dynamic values" />
+<Preview src="utility-classes-1" width={608} height={100} alt="Styling with utility classes: Dynamic values" live="vex-1" page="utility-classes" />
 
 ```odin
 pct := remember_progress()

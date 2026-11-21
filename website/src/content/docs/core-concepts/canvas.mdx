@@ -30,7 +30,7 @@ Coordinates are logical pixels in window space; the renderer scales them to the 
 
 draw_area fills under the curve with a gradient, draw_polyline strokes it, draw_circle marks the band nodes.
 
-<Preview src="canvas-0" width={608} height={208} alt="Canvas & charts: Frequency response" />
+<Preview src="canvas-0" width={608} height={208} alt="Canvas & charts: Frequency response" live="vex-0" page="canvas" />
 
 ```odin
 ui.canvas("h-40 w-full", eq_chart)
@@ -40,7 +40,7 @@ ui.canvas("h-40 w-full", eq_chart)
 
 A 270° dial is two arcs and a pointer line. The canvas sits in a normal flex layout with its label underneath.
 
-<Preview src="canvas-1" width={608} height={132} alt="Canvas & charts: Dials" />
+<Preview src="canvas-1" width={608} height={132} alt="Canvas & charts: Dials" live="vex-1" page="canvas" />
 
 ```odin
 if ui.div("flex gap-8") {
@@ -62,7 +62,7 @@ if ui.div("flex gap-8") {
 
 Canvases redraw every frame, so they can follow live data. These lines are driven by the clock.
 
-<Preview src="canvas-2" width={608} height={144} alt="Canvas & charts: Live sparklines" />
+<Preview src="canvas-2" width={608} height={144} alt="Canvas & charts: Live sparklines" live="vex-2" page="canvas" />
 
 ```odin
 if ui.div("grid grid-cols-3 gap-4") {

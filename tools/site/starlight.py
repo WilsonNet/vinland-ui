@@ -13,7 +13,6 @@ import shutil
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WEB = os.path.join(ROOT, "website")
 DOCS = os.path.join(WEB, "src/content/docs")
-LIVE_PAGES = {"showcase"}
 
 
 def slugify(s: str) -> str:
@@ -85,7 +84,7 @@ def page_mdx(doc, order: int) -> str:
         elif kind == "Example":
             if not b.get("skip") and b.get("size"):
                 w, h = b["size"]
-                live = f' live="vui-{slugify(heading)}"' if slug in LIVE_PAGES else ""
+                live = f' live="vex-{k}" page="{slug}"'
                 alt = f"{title}: {heading}".replace('"', "'")
                 lines += [f'<Preview src="{slug}-{k}" width={{{w:.0f}}} height={{{h:.0f}}} alt="{alt}"{live} />', ""]
             lines += ["```odin", b.get("code", ""), "```", ""]

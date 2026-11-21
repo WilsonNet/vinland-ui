@@ -29,7 +29,7 @@ Every box is border-box: `w-64 p-4 border-2` is 256px wide in total. Margins nev
 
 Text reports a min-content width (its longest word) and a max-content width (its unbroken line). Flex items default to `min-width: auto`, so a word never gets crushed. Add `min-w-0` when you want an item to shrink below its content.
 
-<Preview src="layout-engine-0" width={608} height={112} alt="Layout engine: Intrinsic sizes" />
+<Preview src="layout-engine-0" width={608} height={112} alt="Layout engine: Intrinsic sizes" live="vex-0" page="layout-engine" />
 
 ```odin
 if ui.div("flex w-full max-w-md gap-3 rounded-lg bg-gray-50 p-3 dark:bg-white/5") {

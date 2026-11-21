@@ -33,7 +33,7 @@ Utilities for controlling how an element handles content that is too large for t
 
 Use `overflow-hidden` to clip children to the padding box, including rounded corners.
 
-<Preview src="overflow-0" width={608} height={264} alt="overflow: Hiding content that overflows" />
+<Preview src="overflow-0" width={608} height={264} alt="overflow: Hiding content that overflows" live="vex-0" page="overflow" />
 
 ```odin
 if ui.div("w-64 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-800") {
@@ -46,7 +46,7 @@ if ui.div("w-64 overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-9
 
 Use `overflow-auto` (or `overflow-y-auto`) to make an element scroll when its content is larger than its box. Wheel input is smooth and the scrollbar can be dragged.
 
-<Preview src="overflow-1" width={608} height={256} alt="overflow: Scrolling if needed" />
+<Preview src="overflow-1" width={608} height={256} alt="overflow: Scrolling if needed" live="vex-1" page="overflow" />
 
 ```odin
 if ui.div("h-48 w-72 overflow-y-auto rounded-lg bg-gray-50 ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10") {
@@ -62,7 +62,7 @@ if ui.div("h-48 w-72 overflow-y-auto rounded-lg bg-gray-50 ring-1 ring-gray-950/
 
 ### Scrolling horizontally
 
-<Preview src="overflow-2" width={608} height={176} alt="overflow: Scrolling horizontally" />
+<Preview src="overflow-2" width={608} height={176} alt="overflow: Scrolling horizontally" live="vex-2" page="overflow" />
 
 ```odin
 if ui.div("w-full max-w-md overflow-x-auto rounded-lg bg-gray-50 dark:bg-white/5") {

@@ -11,7 +11,7 @@ Prefix a utility with a variant to apply it conditionally.
 
 Variants such as `hover:`, `focus-visible:` and `active:` apply a utility only while that state holds. Interaction state comes from the previous frame's hit testing, so there is no event wiring to write.
 
-<Preview src="states-0" width={608} height={100} alt="Hover, focus and other states: Hover, focus and other states" />
+<Preview src="states-0" width={608} height={100} alt="Hover, focus and other states: Hover, focus and other states" live="vex-0" page="states" />
 
 ```odin
 ui.button("Save changes", "rounded-full bg-violet-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-violet-600 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500")
@@ -21,7 +21,7 @@ ui.button("Save changes", "rounded-full bg-violet-500 px-5 py-2 text-sm font-sem
 
 Mark a parent with `group` and style children with `group-hover:` and friends.
 
-<Preview src="states-1" width={608} height={184} alt="Hover, focus and other states: Group states" />
+<Preview src="states-1" width={608} height={184} alt="Hover, focus and other states: Group states" live="vex-1" page="states" />
 
 ```odin
 if ui.button_box("group block w-full max-w-xs rounded-lg bg-white p-6 shadow-lg ring-1 ring-gray-900/5 transition hover:bg-sky-500 hover:ring-sky-500 dark:bg-white/5 dark:ring-white/10") {
@@ -35,7 +35,7 @@ if ui.button_box("group block w-full max-w-xs rounded-lg bg-white p-6 shadow-lg 
 
 ## First, last, odd and even
 
-<Preview src="states-2" width={608} height={243} alt="Hover, focus and other states: First, last, odd and even" />
+<Preview src="states-2" width={608} height={243} alt="Hover, focus and other states: First, last, odd and even" live="vex-2" page="states" />
 
 ```odin
 if ui.div("w-full max-w-sm divide-y divide-gray-200 overflow-hidden rounded-lg ring-1 ring-gray-200 dark:divide-white/10 dark:ring-white/10") {
@@ -49,7 +49,7 @@ if ui.div("w-full max-w-sm divide-y divide-gray-200 overflow-hidden rounded-lg r
 
 Pass `{.Selected}`, `{.Checked}`, `{.Disabled}` or `{.Open}` flags to light up `aria-selected:`, `checked:`, `disabled:` and `open:` variants from your own state.
 
-<Preview src="states-3" width={608} height={104} alt="Hover, focus and other states: Application state" />
+<Preview src="states-3" width={608} height={104} alt="Hover, focus and other states: Application state" live="vex-3" page="states" />
 
 ```odin
 tab := &s.demo.tab

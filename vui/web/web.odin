@@ -343,6 +343,14 @@ frame :: proc(dt: f64, dark: bool) {
 	}
 }
 
+// Canvas id of the surface being built (lets one build proc serve many canvases).
+current_id :: proc() -> string {
+	return building.id if building != nil else ""
+}
+
+@(private)
+building: ^Surface
+
 @(private)
 draw_surface :: proc(s: ^Surface, dark: bool) {
 	gl.SetCurrentContextById(s.id)
@@ -352,7 +360,9 @@ draw_surface :: proc(s: ^Surface, dark: bool) {
 	s.input.text = strings.to_string(s.text)
 	s.ctx.dark = dark
 	vui.begin_frame(&s.ctx, s.input, s.size, s.dpr, s.time)
+	building = s
 	s.build()
+	building = nil
 	d := vui.end_frame(&s.ctx)
 	s.input.pressed = {}
 	s.input.released = {}

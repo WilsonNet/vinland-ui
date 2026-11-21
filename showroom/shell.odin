@@ -1,3 +1,4 @@
+#+build !js
 package showroom
 
 import "core:fmt"

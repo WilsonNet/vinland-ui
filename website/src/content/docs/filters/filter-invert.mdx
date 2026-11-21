@@ -21,7 +21,7 @@ Utilities for applying invert filters to an element.
 
 Color filters compile into a 4×5 color matrix applied by the shader to the element and its children: `grayscale`, `sepia`, `invert`, `brightness-*`, `contrast-*`, `saturate-*`, `hue-rotate-*`.
 
-<Preview src="filter-invert-0" width={608} height={352} alt="invert: Color filters" />
+<Preview src="filter-invert-0" width={608} height={352} alt="invert: Color filters" live="vex-0" page="filter-invert" />
 
 ```odin
 if ui.div("grid grid-cols-4 gap-4") {
@@ -37,7 +37,7 @@ if ui.div("grid grid-cols-4 gap-4") {
 
 ### Applying on hover
 
-<Preview src="filter-invert-1" width={608} height={224} alt="invert: Applying on hover" />
+<Preview src="filter-invert-1" width={608} height={224} alt="invert: Applying on hover" live="vex-1" page="filter-invert" />
 
 ```odin
 ui.image(DEMO_IMAGE, "h-40 w-64 rounded-lg object-cover grayscale transition hover:grayscale-0")

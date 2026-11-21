@@ -16,5 +16,11 @@ odin build tools/vui-ctl  -out:build/vui-ctl  $flags
 odin build tools/vui-test -out:build/vui-test $flags
 odin build showroom       -out:build/showroom $flags
 odin build examples/hello -out:build/hello    $flags
+# WebAssembly build of the showroom examples (website); needs wasm-ld (LLVM)
+WASM_LD_DIR=$(dirname "$(command -v wasm-ld 2>/dev/null || ls /usr/lib/llvm*/bin/wasm-ld 2>/dev/null | tail -1)" 2>/dev/null || true)
+if [ -n "$WASM_LD_DIR" ] && [ -x "$WASM_LD_DIR/wasm-ld" ]; then
+  mkdir -p build/web
+  PATH="$WASM_LD_DIR:$PATH" odin build showroom -target:js_wasm32 -o:size -out:build/web/vui.wasm && echo "wasm: build/web/vui.wasm"
+fi
 odin test tests >/dev/null && echo "tests: ok"
 echo "built: build/showroom build/vui-ctl build/vui-test build/hello ($mode)"

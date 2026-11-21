@@ -92,6 +92,9 @@ doc: [dynamic]Doc_Block
 
 // Section heading (h2): large gap above, entry in "On this page".
 h2 :: proc(title: string, loc := #caller_location) {
+	if wm.active {
+		return
+	}
 	ui.key(title)
 	ui.text(title, "mt-16 text-xl font-semibold tracking-tight text-ink", loc = loc)
 	append(&toc, Toc_Entry{title, 2, ui.last().id})
@@ -100,6 +103,9 @@ h2 :: proc(title: string, loc := #caller_location) {
 
 // Example heading (h3).
 h3 :: proc(title: string, loc := #caller_location) {
+	if wm.active {
+		return
+	}
 	ui.key(title)
 	ui.text(title, "mt-10 text-base font-semibold text-ink", loc = loc)
 	append(&toc, Toc_Entry{title, 3, ui.last().id})
@@ -108,6 +114,9 @@ h3 :: proc(title: string, loc := #caller_location) {
 
 // Paragraph with `inline code` support.
 para :: proc(text: string, class := "mt-4", loc := #caller_location) {
+	if wm.active {
+		return
+	}
 	append(&doc, Doc_Block{kind = .Para, text = text})
 	if ui.p(ui.cx("text-base/7 text-ink-muted", class), loc = loc) {
 		rich(text)
@@ -148,6 +157,9 @@ Row :: struct {
 }
 
 ref_table :: proc(rows: []Row, loc := #caller_location) {
+	if wm.active {
+		return
+	}
 	{
 		cp := make([]Row, len(rows), ui.ctx_get().frame_alloc)
 		copy(cp, rows)
@@ -219,7 +231,18 @@ spacing_rows :: proc(prefix: string, effect: string, extra: []Row = nil) -> []Ro
 Example_Frame :: struct {
 	loc:     runtime.Source_Code_Location,
 	center:  bool,
+	skip:    bool,
 }
+
+// Website mode (WebAssembly): each canvas renders one example of a page. The page proc
+// runs as usual, docs chrome is suppressed, and only example number `target` renders,
+// as a fixed overlay filling the canvas (the rest of the page is laid out offscreen).
+Web_Mode :: struct {
+	active:  bool,
+	target:  int,
+	counter: int,
+}
+wm: Web_Mode
 
 @(private = "file")
 ex_stack: [dynamic]Example_Frame
@@ -228,6 +251,19 @@ ex_stack: [dynamic]Example_Frame
 //     if example() { ...ui code... }
 @(deferred_none = example_end)
 example :: proc(class := "p-8", center := true, loc := #caller_location) -> bool {
+	if wm.active {
+		k := wm.counter
+		wm.counter += 1
+		hit := k == wm.target
+		append(&ex_stack, Example_Frame{loc = loc, center = center, skip = !hit})
+		if !hit {
+			return false
+		}
+		ui.push_id(int(loc.line))
+		ui.open("fixed inset-0 overflow-hidden bg-white dark:bg-gray-950")
+		ui.open(ui.cx(center ? "flex flex-col items-center" : "", class))
+		return true
+	}
 	append(&ex_stack, Example_Frame{loc = loc, center = center})
 	ui.push_id(int(loc.line))
 	ui.open("mt-6 flex flex-col gap-1 rounded-xl bg-gray-950/5 p-1 inset-ring inset-ring-gray-950/5 dark:bg-white/10 dark:inset-ring-white/10")
@@ -239,6 +275,14 @@ example :: proc(class := "p-8", center := true, loc := #caller_location) -> bool
 
 example_end :: proc() {
 	f := pop(&ex_stack)
+	if wm.active {
+		if !f.skip {
+			ui.close() // content
+			ui.close() // overlay
+			ui.pop_id()
+		}
+		return
+	}
 	ui.close() // content
 	ui.close() // preview
 	code_panel(snippet_for(f.loc))
@@ -248,6 +292,9 @@ example_end :: proc() {
 
 // Static code block (no preview).
 code :: proc(src: string, lang := "odin") {
+	if wm.active {
+		return
+	}
 	append(&doc, Doc_Block{kind = .Code, code = src, lang = lang})
 	if ui.div("mt-6 rounded-xl bg-gray-950/5 p-1 inset-ring inset-ring-gray-950/5 dark:bg-white/10 dark:inset-ring-white/10") {
 		code_panel(src)
@@ -287,6 +334,9 @@ tile :: proc(label: string, class := "", loc := #caller_location) {
 }
 
 note :: proc(text: string, loc := #caller_location) {
+	if wm.active {
+		return
+	}
 	append(&doc, Doc_Block{kind = .Note, text = text})
 	if ui.div("mt-6 flex gap-3 rounded-lg bg-accent-soft px-4 py-3", loc = loc) {
 		ui.icon(IC.information_circle, "mt-0.5 size-5 shrink-0 text-accent")
