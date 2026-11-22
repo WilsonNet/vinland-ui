@@ -1,7 +1,9 @@
 package vui_tests
 
+import "core:strings"
 import "core:testing"
 import ui "../vui"
+import vapp "../vui/app"
 import "../vui/fonts"
 
 // Builds one frame with `build` at the given viewport and returns the context for inspection.
@@ -316,4 +318,14 @@ canvas_primitives_emit_instances :: proc(t: ^testing.T) {
 	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Segment)], 1)
 	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Arc)], 1)
 	testing.expect_value(t, kinds[int(ui.Cmd_Kind.Area)], 2)
+}
+
+
+@(test)
+clipboard_helper_preserves_text_and_newlines :: proc(t: ^testing.T) {
+	text, ok := vapp.clipboard_from_argv([]string{"sh", "-c", "printf 'clipboard-test\nsecond-line'"}, context.allocator)
+	defer delete(text)
+	testing.expect(t, ok, "clipboard helper ran")
+	testing.expect(t, strings.contains(text, "clipboard-test"), text)
+	testing.expect(t, strings.contains(text, "\nsecond-line"), text)
 }

@@ -113,15 +113,62 @@ is_software_renderer :: proc(r: string) -> bool {
 	return strings.contains(l, "llvmpipe") || strings.contains(l, "softpipe") || strings.contains(l, "swrast") || strings.contains(l, "swiftshader")
 }
 
+// Runs a clipboard helper and returns its stdout. Public so apps and tests can
+// use the same fallback path; no shell is involved.
+clipboard_from_argv :: proc(argv: []string, allocator: mem.Allocator) -> (string, bool) {
+	state, out, err, exec_err := os.process_exec(os.Process_Desc{command = argv}, context.allocator)
+	defer delete(err)
+	if exec_err != nil || !state.exited || state.exit_code != 0 {
+		delete(out)
+		return "", false
+	}
+	text := strings.clone(string(out), allocator)
+	delete(out)
+	return text, true
+}
+
+// SDL's clipboard can be empty on some Wayland/X11 combinations even while the
+// desktop clipboard has data. Fall back to the standard utilities so text
+// inputs stay usable in every session.
+clipboard_read :: proc(allocator: mem.Allocator) -> string {
+	t := sdl.GetClipboardText()
+	if t != nil {
+		s := string(cstring(t))
+		if s != "" {
+			// Clone before freeing SDL's buffer.
+			result := strings.clone(s, allocator)
+			sdl.free(rawptr(t))
+			return result
+		}
+		sdl.free(rawptr(t))
+	}
+	wayland := os.get_env("WAYLAND_DISPLAY", context.temp_allocator)
+	if wayland != "" {
+		if text, ok := clipboard_from_argv([]string{"wl-paste"}, allocator); ok && text != "" {
+			return text
+		} else if ok {
+			delete(text)
+		}
+	}
+	display := os.get_env("DISPLAY", context.temp_allocator)
+	if display != "" {
+		if text, ok := clipboard_from_argv([]string{"xclip", "-selection", "clipboard", "-o"}, allocator); ok && text != "" {
+			return text
+		} else if ok {
+			delete(text)
+		}
+		if text, ok := clipboard_from_argv([]string{"xsel", "--clipboard", "--output"}, allocator); ok && text != "" {
+			return text
+		} else if ok {
+			delete(text)
+		}
+	}
+	return ""
+}
+
 @(private)
 clipboard_get :: proc(allocator: mem.Allocator) -> string {
-	t := sdl.GetClipboardText()
-	if t == nil {
-		return ""
-	}
-	s := strings.clone(string(cstring(t)), allocator)
-	sdl.free(rawptr(t))
-	return s
+	return clipboard_read(allocator)
 }
 
 @(private)
