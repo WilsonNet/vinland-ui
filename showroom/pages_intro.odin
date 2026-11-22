@@ -155,13 +155,23 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 ./build/vui-ctl click-text "Show all"
 ./build/vui-ctl scroll 600
 ./build/vui-ctl tree 6 | jq '.nodes[] | select(.t)'`, "sh")
+	h2("Drive a visible app without stealing input")
+	para("Pointer and key commands are injected inside the app: they never warp or click the real OS pointer, raise the window or request focus. When the window should stay visible while someone else uses the machine, start it with `VUI_BACKGROUND=1`. It is mapped without activation and with the non-focusable hint, so a game or editor normally keeps keyboard and pointer focus. X11 window managers honor the hint; Wayland leaves focus policy to the compositor, where a no-focus rule is the reliable option.")
+	code(`VUI_BACKGROUND=1 VUI_PORT=7420 ./build/my_app &
+./build/vui-ctl info          # background:true, focusable:false, keyboard_focus:false
+./build/vui-ctl click-text "Save"
+./build/vui-ctl foreground    # escape hatch: native dialog, IME, human takeover
+./build/vui-ctl background    # back to non-focusable driving`, "sh")
+	para("A compositor may refuse to make an existing Wayland surface focusable; the foreground response reports that, and restarting without `VUI_BACKGROUND=1` is the fallback for flows that need native focus.")
 	h2("Commands")
 	ref_table({
-		{"info", "viewport, scale, frame time, node count, unknown classes"},
+		{"info", "viewport, scale, frame time, focus state, node count, unknown classes"},
 		{"screenshot <png> [x y w h]", "writes the last frame (optionally cropped)"},
-		{"click <x> <y> [right|double]", "synthetic click in logical px"},
+		{"click <x> <y> [right|double|triple]", "synthetic click in logical px"},
 		{"click-text <text> [nth]", "clicks the element whose text matches"},
 		{"move / scroll / type / key", "pointer, wheel and keyboard input"},
+		{"foreground / background", "opt into OS focus / return to non-focusable driving"},
+		{"release", "drop a stuck synthetic button or drag"},
 		{"resize <w> <h> / dark [on|off]", "window size and color scheme"},
 		{"tree [depth]", "element tree with rects, classes and text as JSON"},
 		{"settle / wait [frames]", "block until animations finish"},

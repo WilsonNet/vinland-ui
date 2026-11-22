@@ -129,6 +129,21 @@ VUI_HIDDEN=1 VUI_SCALE=2 ./build/showroom &      # offscreen, 2x
 
 See `vui-ctl --help` and the "Agent skill & CLI" page in the showroom.
 
+Input from `vui-ctl` is injected inside the app: pointer commands never warp or
+click the real OS pointer, never raise the window and never request focus. For a
+visible window that must not disturb the user (gaming, calls, another editor),
+start the app with `VUI_BACKGROUND=1`: the window is mapped without activation
+and with SDL's non-focusable hint. X11 window managers honor that hint; Wayland
+has no togglable focus flag, so the compositor still decides — use a no-focus
+window rule there, or `VUI_HIDDEN=1`, which is the only hard
+no-desktop-contact guarantee. `vui-ctl info` reports `background`, `focusable`,
+`keyboard_focus`, `mouse_inside`, `pointer_synthetic` and `video_driver` so a
+test can assert what actually happened. When a flow really needs the OS window —
+native file dialog, IME, human takeover — use `vui-ctl foreground`; on Wayland
+the compositor may refuse to make an existing surface focusable, so restart
+without `VUI_BACKGROUND=1` if the response says it could not.
+`vui-ctl background` returns to non-focusable driving afterward.
+
 ## End-to-end tests (`vui-test`)
 
 Playwright-style suites for any vinland-ui app: launch, click by text, drag, type, assert on the
@@ -151,11 +166,20 @@ test "navigate to canvas page"
 ./build/vui-test tests/e2e/showroom.vt            # --update rewrites baselines
 ```
 
+`scripts/check-background.sh` proves the background-input guarantee on a real
+X11 window under Xvfb: the window is mapped and not active, `vui-ctl click-text`
+leaves the OS pointer untouched, and `foreground`/`background` round-trip. The
+script unsets `WAYLAND_DISPLAY` and forces `SDL_VIDEO_DRIVER=x11`; without that,
+SDL would prefer the user's live Wayland compositor even inside Xvfb.
+
 **Headless runs cannot touch your desktop.** `VUI_HIDDEN=1` (used by `vui-test`, agents and the
 site generator) runs on SDL's offscreen video driver with Mesa's llvmpipe software rasterizer: no
 compositor connection, no GPU memory, no `/dev/dri` handles, the same isolation headless browsers
 get from SwiftShader. The app refuses to start headless on a hardware renderer, and `vui-test`
-refuses to drive an app that is not sandboxed. `VUI_HIDDEN_GPU=1` opts into the GPU deliberately.
+refuses to drive an app that is not sandboxed. The runner also owns `VUI_HIDDEN`,
+`SDL_VIDEO_DRIVER` and the display variables: a suite's `env` cannot override them, so a test
+cannot accidentally map a window on the live desktop. `VUI_HIDDEN_GPU=1` opts into the GPU
+deliberately.
 Visible windows keep at most one frame in flight on the GPU, and occluded windows are paced.
 
 Why this matters: on APUs with a small VRAM carveout (e.g. Radeon 680M, 2 GB), an app that queues

@@ -35,6 +35,8 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1280x800 ./build/my_app &   # needs control_po
 ./build/vui-ctl screenshot crop.png 0 0 400 300    # crop in logical px
 ./build/vui-ctl click-text "Save"         # click by visible text
 ./build/vui-ctl click 120 48              # logical px
+./build/vui-ctl foreground                # escape hatch: opt into OS focus
+./build/vui-ctl background                # back to non-focusable driving
 ./build/vui-ctl type "hello" ; ./build/vui-ctl key tab ; ./build/vui-ctl key a ctrl
 ./build/vui-ctl scroll 600 [x y]          # wheel at a point (default: window center)
 ./build/vui-ctl dark on|off               # color scheme
@@ -44,7 +46,23 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1280x800 ./build/my_app &   # needs control_po
 ./build/vui-ctl quit
 ```
 
-Environment overrides: `VUI_HIDDEN=1` (offscreen), `VUI_SCALE=<f>` (UI scale; use the user's
+Input is in-process: `click`, `type` and `scroll` never move the real OS
+pointer, never raise the window and never ask for focus. To keep a *visible*
+window while the user keeps working or gaming, start it with
+`VUI_BACKGROUND=1` (mapped without activation; X11 honors the non-focusable
+hint, Wayland leaves focus to the compositor — use a no-focus rule there).
+`vui-ctl info` reports `background`, `focusable`, `keyboard_focus`,
+`mouse_inside`, `pointer_synthetic` and `video_driver`. If a flow genuinely
+needs the OS window (native file dialog, IME, a human taking over), the explicit
+escape hatch is `./build/vui-ctl foreground`; `./build/vui-ctl background`
+returns to non-focusable driving. On Wayland a compositor may refuse to make an
+existing surface focusable, in which case restart without `VUI_BACKGROUND=1`.
+`VUI_HIDDEN=1` remains the fully offscreen mode with zero desktop contact and
+the only hard no-focus guarantee.
+
+Environment overrides: `VUI_HIDDEN=1` (offscreen, the hard no-desktop-contact mode),
+`VUI_BACKGROUND=1` (visible but not activated on show; X11 honors the non-focusable
+hint, Wayland leaves focus to the compositor), `VUI_SCALE=<f>` (UI scale; use the user's
 real scale when judging text crispness, e.g. 1.3333 on a 4/3 fractional display), `VUI_SIZE=WxH`,
 `VUI_PORT=<n>`. App-specific commands are forwarded to `App.on_command` (the showroom adds
 `nav page=<slug>`, `pages`, `search q=...`). Full-page captures: resize to a very tall window
@@ -75,7 +93,9 @@ Look at the screenshots (report.html) after each run; never claim a UI works wit
 Never run a GUI app on the real GPU from an agent: always `VUI_HIDDEN=1` (sandboxed) and never
 set `VUI_HIDDEN_GPU`, except for an explicit GPU benchmark wrapped in
 `vinland-ui/tools/gpu-guard.sh --limit 150 -- <cmd>` (kills runaway GPU memory before the
-compositor starves).
+compositor starves). `vui-test` owns the sandbox environment and rejects suite `env` overrides
+of `VUI_HIDDEN`, `SDL_VIDEO_DRIVER`, `DISPLAY` and `WAYLAND_DISPLAY`; do not try to make a
+suite visible.
 
 ## Minimal app
 

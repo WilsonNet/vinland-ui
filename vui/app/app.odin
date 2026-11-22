@@ -27,6 +27,7 @@ Config :: struct {
 	size:         [2]i32, // logical size
 	min_size:     [2]i32,
 	hidden:       bool, // render offscreen only (agents / tests)
+	background:   bool, // visible but not activated on show; drive it through the control server (compositor still decides focus)
 	scale:        f32, // force UI scale (0 = use display scale)
 	control_port: int, // 0 = disabled
 	vsync:        bool,
@@ -70,7 +71,11 @@ App :: struct {
 	input:         vui.Input,
 	mouse:         [2]f32,
 	mouse_inside:  bool,
-	buttons:       vui.Mouse_Buttons,
+	keyboard_focus: bool,
+	cursor_applied: bool,
+	pointer_synthetic: bool, // last pointer event came from vui-ctl, not the real mouse
+	buttons:       vui.Mouse_Buttons, // synthetic buttons held by vui-ctl
+	real_buttons:  vui.Mouse_Buttons, // physical buttons held by the user
 	text_buf:      strings.Builder,
 	scale:         f32,
 	logical:       [2]f32,
@@ -185,6 +190,22 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	if v := os.get_env("VUI_HIDDEN", context.temp_allocator); v == "1" || v == "true" {
 		app.cfg.hidden = true
 	}
+	// Background mode keeps the window visible but does not ask the compositor
+	// to activate it on show, so an agent can drive it with vui-ctl while the
+	// user keeps typing/clicking in another app (a game, an editor, a call).
+	// The control server is the only input path: synthetic clicks never warp the
+	// OS pointer. On X11 the non-focusable hint is honored by most WMs; on
+	// Wayland the compositor decides, so VUI_HIDDEN=1 remains the hard
+	// no-desktop-contact mode and a compositor no-focus rule is the belt-and-
+	// braces option.
+	if v := os.get_env("VUI_BACKGROUND", context.temp_allocator); v == "1" || v == "true" {
+		app.cfg.background = true
+	}
+	if app.cfg.background {
+		// Wayland uses this hint at map time; without it the compositor may
+		// activate a newly shown window even though it is not focusable.
+		_ = sdl.SetHint(sdl.HINT_WINDOW_ACTIVATE_WHEN_SHOWN, "0")
+	}
 	if v := os.get_env("VUI_SCALE", context.temp_allocator); v != "" {
 		if f, ok := strconv.parse_f32(v); ok && f > 0 {
 			app.cfg.scale = f
@@ -244,6 +265,9 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		if cfg.hidden {
 			flags += {.HIDDEN}
 		}
+		if cfg.background {
+			flags += {.NOT_FOCUSABLE}
+		}
 		if app.backend == .GL {
 			_ = sdl.GL_SetAttribute(.CONTEXT_MAJOR_VERSION, 3)
 			_ = sdl.GL_SetAttribute(.CONTEXT_MINOR_VERSION, 3)
@@ -289,6 +313,10 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 			return false
 		}
 		break
+	}
+	initial_focus := sdl.GetKeyboardFocus() == app.window
+	if initial_focus {
+		app.keyboard_focus = true
 	}
 	if cfg.min_size != {0, 0} {
 		_ = sdl.SetWindowMinimumSize(app.window, cfg.min_size.x, cfg.min_size.y)
@@ -472,13 +500,29 @@ handle_event :: proc(app: ^App, e: ^sdl.Event) {
 		update_metrics(app)
 	case .WINDOW_MOUSE_LEAVE:
 		app.mouse_inside = false
+		// Re-apply the cursor on the next enter: SDL may have replaced it while
+		// another window owned the pointer.
+		app.cursor_applied = false
 	case .WINDOW_MOUSE_ENTER:
 		app.mouse_inside = true
+		app.pointer_synthetic = false
+		app.buttons = {}
+	case .WINDOW_FOCUS_GAINED:
+		app.keyboard_focus = true
+	case .WINDOW_FOCUS_LOST:
+		app.keyboard_focus = false
+		app.cursor_applied = false
 	case .MOUSE_MOTION:
 		app.mouse = to_logical(app, e.motion.x, e.motion.y)
 		app.mouse_inside = true
+		app.pointer_synthetic = false
+		// The real pointer takes over immediately: abandon a synthetic drag so a
+		// stale down from a script cannot turn the user's motion into a drag.
+		app.buttons = {}
 	case .MOUSE_BUTTON_DOWN, .MOUSE_BUTTON_UP:
 		app.mouse = to_logical(app, e.button.x, e.button.y)
+		app.pointer_synthetic = false
+		app.buttons = {}
 		b: vui.Mouse_Button
 		switch e.button.button {
 		case 1:
@@ -491,11 +535,11 @@ handle_event :: proc(app: ^App, e: ^sdl.Event) {
 			return
 		}
 		if e.button.down {
-			app.buttons += {b}
+			app.real_buttons += {b}
 			in_.pressed += {b}
 			in_.click_count = int(e.button.clicks)
 		} else {
-			app.buttons -= {b}
+			app.real_buttons -= {b}
 			in_.released += {b}
 		}
 	case .MOUSE_WHEEL:
@@ -529,23 +573,31 @@ apply_synthetic :: proc(app: ^App) -> bool {
 	case .Move:
 		app.mouse = s.pos
 		app.mouse_inside = true
+		app.pointer_synthetic = true
 	case .Down:
 		app.mouse = s.pos
 		app.mouse_inside = true
+		app.pointer_synthetic = true
 		app.buttons += {s.button}
 		in_.pressed += {s.button}
 		in_.click_count = max(s.clicks, 1)
 	case .Up:
 		app.mouse = s.pos
+		app.pointer_synthetic = true
 		app.buttons -= {s.button}
 		in_.released += {s.button}
 	case .Wheel:
 		app.mouse = s.pos
 		app.mouse_inside = true
+		app.pointer_synthetic = true
 		in_.wheel += s.wheel
 	case .Text:
 		strings.write_string(&app.text_buf, s.text)
 		delete(s.text)
+		// A typed run from vui-ctl is explicit: do not let a physically held
+		// Shift/Ctrl leak into the app's interpretation of it.
+		in_.mods = {}
+		app.synthetic_mods = true
 	case .Key:
 		in_.keys_pressed += {s.key}
 	}
@@ -611,9 +663,9 @@ next_frame :: proc(app: ^App) -> bool {
 
 	app.input.mouse = app.mouse
 	app.input.mouse_inside = app.mouse_inside
-	app.input.buttons = app.buttons
+	app.input.buttons = app.real_buttons + app.buttons
 	app.input.text = strings.to_string(app.text_buf)
-	if app.input.mods == {} {
+	if app.input.mods == {} && !app.synthetic_mods {
 		app.input.mods = map_mods(sdl.GetModState())
 	}
 	vui.begin_frame(ctx, app.input, app.logical, app.scale, now_seconds(app))
@@ -666,8 +718,20 @@ end_frame :: proc(app: ^App) {
 	app.frame_ms = f32(sdl.GetTicksNS() - t0) / 1e6
 
 	// cursor
-	if ctx.cursor != app.cur_cursor {
+	//
+	// Synthetic hover must never drive the OS cursor: on X11 ShowCursor applies
+	// to every window in this process, and on Wayland it applies to the seat's
+	// pointer focus. Gate on real pointer state and skip entirely while the last
+	// pointer event came from vui-ctl. This keeps a script from leaving the app's
+	// cursor hidden or stale for the user's next real entry.
+	app.keyboard_focus = sdl.GetKeyboardFocus() == app.window
+	if !app.mouse_inside {
+		// Another window owns the pointer; do not touch its cursor. Mark dirty so
+		// the normal cursor is restored when the pointer comes back.
+		app.cursor_applied = false
+	} else if !app.pointer_synthetic && (ctx.cursor != app.cur_cursor || !app.cursor_applied) {
 		app.cur_cursor = ctx.cursor
+		app.cursor_applied = true
 		if ctx.cursor == .None {
 			_ = sdl.HideCursor()
 		} else {
@@ -678,9 +742,12 @@ end_frame :: proc(app: ^App) {
 			_ = sdl.SetCursor(app.cursors[ctx.cursor])
 		}
 	}
-	// text input (IME)
-	if ctx.text_input_wanted != app.text_input_on {
-		app.text_input_on = ctx.text_input_wanted
+	// text input (IME): only a window with real keyboard focus may enable it.
+	// A synthetic click on a text field must not start IME; a user who focuses
+	// a background window with a real click can still type normally.
+	want_text_input := ctx.text_input_wanted && app.keyboard_focus && !app.cfg.hidden
+	if want_text_input != app.text_input_on {
+		app.text_input_on = want_text_input
 		if app.text_input_on {
 			_ = sdl.StartTextInput(app.window)
 		} else {
@@ -725,6 +792,9 @@ wake :: proc(app: ^App) {
 
 request_redraw :: proc(app: ^App) {
 	app.dirty_frames = max(app.dirty_frames, 2)
+	// Cross-thread callers (audio meters, jobs) must wake the idle wait, which
+	// otherwise blocks for up to 500 ms.
+	wake(app)
 }
 
 // Reads the last rendered frame as RGBA8 (top-down, straight alpha).

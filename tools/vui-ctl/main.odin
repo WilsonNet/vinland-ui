@@ -2,6 +2,11 @@
 //
 //   vui-ctl [--port N] <command> [args...]
 //
+// Pointer and key commands are injected inside the app (see vui/app/control.odin):
+// they never warp or click the real OS pointer, never raise the window, and never
+// ask for keyboard focus. For unattended/game-time sessions start the app with
+// VUI_BACKGROUND=1 (visible but never focusable) or VUI_HIDDEN=1 (offscreen only).
+//
 //   ping | info | tree [depth]
 //   screenshot <path.png> [x y w h]       (crop in logical px)
 //   click <x> <y> [right|double|triple]   (logical px)
@@ -10,6 +15,9 @@
 //   scroll <dy> [x y] [dx]
 //   type <text> | key <name> [shift,ctrl,alt]
 //   resize <w> <h> | dark [on|off] | gamma <value>
+//   foreground                            opt in to OS focus (escape hatch)
+//   background [on|off]                   return to the non-focusable mode
+//   release                               drop a stuck synthetic button/drag
 //   wait [frames] | settle | quit
 //   raw '<json>'                          (send any JSON command)
 //   <app-command> [key=value ...]         (forwarded to the app, e.g. nav page=padding)
@@ -29,8 +37,13 @@ commands:
   click <x> <y> [right|double|triple] | click-text <text> [nth] | move <x> <y>
   scroll <dy> [x y] [dx] | type <text> | key <name> [mods]
   resize <w> <h> | dark [on|off] | gamma <value>
-  wait [frames] | settle | quit | raw '<json>'
-  <app-command> [key=value ...]`)
+  foreground | background [on|off] | release | wait [frames] | settle | quit | raw '<json>'
+  <app-command> [key=value ...]
+
+input is in-process: it never moves the real pointer or focuses the window.
+start the app with VUI_BACKGROUND=1 (visible, never focusable) or VUI_HIDDEN=1.
+foreground is the opt-in escape hatch when a native dialog or IME needs focus;
+background returns to the non-focusable mode.`)
 }
 
 q :: proc(sb: ^strings.Builder, s: string) {
@@ -128,6 +141,14 @@ main :: proc() {
 		strings.write_string(&sb, "}")
 	case "resize":
 		fmt.sbprintf(&sb, `{{"cmd":"resize","w":%s,"h":%s}}`, arg(rest, 0, "1280"), arg(rest, 1, "800"))
+	case "foreground":
+		strings.write_string(&sb, `{"cmd":"foreground"}`)
+	case "background":
+		v := strings.to_lower(arg(rest, 0, "on"), context.temp_allocator)
+		on := v != "off" && v != "false" && v != "0" && v != "no"
+		fmt.sbprintf(&sb, `{{"cmd":"background","on":%v}}`, on)
+	case "release":
+		strings.write_string(&sb, `{"cmd":"release"}`)
 	case "dark":
 		v := arg(rest, 0, "toggle")
 		if v == "toggle" {

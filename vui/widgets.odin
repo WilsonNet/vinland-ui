@@ -525,7 +525,7 @@ find_text :: proc(ctx: ^Context, needle: string, nth := 0, exact := false) -> (c
 	lower := strings.to_lower(needle, context.temp_allocator)
 	count := 0
 	for &n, i in ctx.nodes {
-		if n.para < 0 || n.style.display == .None || n.rect.w <= 0 {
+		if n.para < 0 || n.style.display == .None || n.style.visibility != .Visible || n.rect.w <= 0 || n.opacity <= 0.01 {
 			continue
 		}
 		_ = i

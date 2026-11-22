@@ -346,16 +346,38 @@ launch :: proc(s: ^Suite, test_dir: string) -> (os.Process, bool) {
 		if strings.has_prefix(e, "VUI_") {
 			continue // the runner owns the VUI_* environment
 		}
+		if !g_gpu && (strings.has_prefix(e, "SDL_VIDEO_DRIVER=") || strings.has_prefix(e, "WAYLAND_DISPLAY=") || strings.has_prefix(e, "DISPLAY=")) {
+			continue // never let a parent shell route a headless test to the live compositor
+		}
 		append(&envs, e)
 	}
 	append(&envs, "VUI_HIDDEN=1", "VUI_QUIET=1", fmt.aprintf("VUI_PORT=%d", g_port), fmt.aprintf("VUI_SIZE=%s", s.size), fmt.aprintf("VUI_SCALE=%s", s.scale))
+	if !g_gpu {
+		// VUI_HIDDEN already selects SDL's offscreen driver inside the app; state
+		// it in the environment too so an older app cannot pick Wayland/X11 and
+		// map a window on the user's desktop.
+		append(&envs, "SDL_VIDEO_DRIVER=offscreen")
+	}
 	if g_gpu {
 		append(&envs, "VUI_HIDDEN_GPU=1")
 	}
 	for e in s.env {
 		x, _ := strings.replace_all(e, "{out}", g_out)
 		x, _ = strings.replace_all(x, "{test}", test_dir)
-		append(&envs, x)
+		// The runner owns sandboxing. A suite must not be able to undo it and
+		// map a real window before the post-launch check can kill the app.
+		denied := []string{"VUI_HIDDEN", "VUI_HIDDEN_GPU", "SDL_VIDEO_DRIVER", "WAYLAND_DISPLAY", "DISPLAY"}
+		skip := false
+		for d in denied {
+			if strings.has_prefix(x, d) && len(x) > len(d) && x[len(d)] == '=' {
+				fmt.eprintfln("vui-test: ignoring sandbox-breaking env %q (runner owns it)", x)
+				skip = true
+				break
+			}
+		}
+		if !skip {
+			append(&envs, x)
+		}
 	}
 	log_path := pj(g_out, "app.log")
 	logf, _ := os.open(log_path, {.Write, .Create, .Append})

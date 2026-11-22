@@ -18,6 +18,9 @@ import vui ".."
 //   {"cmd":"click","x":120,"y":40}            logical px
 //   {"cmd":"click_text","text":"Padding"}     clicks the first element whose text matches
 //   {"cmd":"move","x":..,"y":..}  {"cmd":"scroll","x":..,"y":..,"dy":300}
+//   {"cmd":"foreground"}                      opt in to OS focus (escape hatch)
+//   {"cmd":"background","on":true}            back to non-focusable driving
+//   {"cmd":"release"}                         drop a stuck synthetic button
 //   {"cmd":"type","text":"hello"} {"cmd":"key","key":"tab","mods":"shift"}
 //   {"cmd":"resize","w":1280,"h":800}  {"cmd":"dark","on":true}
 //   {"cmd":"tree","depth":8}  {"cmd":"info"}  {"cmd":"wait","frames":10}  {"cmd":"settle"}
@@ -307,8 +310,14 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		respond(req, `{"ok":true,"pong":true}`)
 	case "info":
 		unknown := vui.unknown_classes(ctx)
+		flags := sdl.GetWindowFlags(app.window)
+		driver_raw := sdl.GetCurrentVideoDriver()
+		driver := driver_raw != nil ? string(driver_raw) : ""
+		has_input_focus := sdl.GetKeyboardFocus() == app.window
+		has_mouse_focus := sdl.GetMouseFocus() == app.window
+		is_focusable := .NOT_FOCUSABLE not_in flags
 		sb := strings.builder_make(context.temp_allocator)
-		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","sandboxed":%v,"gl_renderer":"%s","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend, app.sandboxed, app.gl_renderer)
+		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","video_driver":"%s","sandboxed":%v,"background":%v,"focusable":%v,"keyboard_focus":%v,"mouse_inside":%v,"pointer_synthetic":%v,"gl_renderer":"%s","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend, driver, app.sandboxed, app.cfg.background, is_focusable, has_input_focus, has_mouse_focus, app.pointer_synthetic, app.gl_renderer)
 		for u, i in unknown {
 			if i > 0 {
 				strings.write_string(&sb, ",")
@@ -330,6 +339,48 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 	case "move":
 		append(&app.synthetic, Synthetic{kind = .Move, pos = {arg_f(obj, "x"), arg_f(obj, "y")}, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 2)
+	case "foreground":
+		// Escape hatch for the rare flow that really needs the OS window: native
+		// file dialogs, IME, or a human taking over. Background mode is otherwise
+		// the safe default for control-driven sessions. Wayland cannot make an
+		// existing surface focusable, so report what actually worked and let the
+		// caller restart without VUI_BACKGROUND=1 when the compositor refuses.
+		_ = sdl.SetWindowFocusable(app.window, true)
+		raised := sdl.RaiseWindow(app.window)
+		flashed := sdl.FlashWindow(app.window, .UNTIL_FOCUSED)
+		driver_raw := sdl.GetCurrentVideoDriver()
+		driver := driver_raw != nil ? string(driver_raw) : ""
+		focusable := .NOT_FOCUSABLE not_in sdl.GetWindowFlags(app.window)
+		app.cfg.background = false
+		app.pointer_synthetic = false
+		app.cursor_applied = false
+		app.dirty_frames = max(app.dirty_frames, 2)
+		sb := strings.builder_make(context.temp_allocator)
+		fmt.sbprintf(&sb, `{{"ok":true,"focusable":%v,"raised":%v,"flashed":%v,"video_driver":`, focusable, raised, flashed)
+		vui.json_str(&sb, driver)
+		strings.write_string(&sb, `,"hint":`)
+		hint := ""
+		if strings.contains(driver, "wayland") {
+			hint = "Wayland cannot guarantee focus for an existing surface; restart without VUI_BACKGROUND=1 if it stays unfocused"
+		} else if !focusable {
+			hint = "the window manager still reports this window as non-focusable"
+		}
+		vui.json_str(&sb, hint)
+		strings.write_string(&sb, "}")
+		wait_then_respond(app, req, 2)
+		req.response = strings.clone(strings.to_string(sb))
+	case "background":
+		// Return to the non-focusable mode after a foreground escape hatch.
+		on := arg_b(obj, "on", true)
+		if on && !app.cfg.background {
+			_ = sdl.SetWindowFocusable(app.window, false)
+		}
+		app.cfg.background = on
+		app.dirty_frames = max(app.dirty_frames, 2)
+		sb := strings.builder_make(context.temp_allocator)
+		fmt.sbprintf(&sb, `{{"ok":true,"background":%v,"focusable":%v}}`, app.cfg.background, .NOT_FOCUSABLE not_in sdl.GetWindowFlags(app.window))
+		wait_then_respond(app, req, 2)
+		req.response = strings.clone(strings.to_string(sb))
 	case "click":
 		b := vui.Mouse_Button.Left
 		switch arg_s(obj, "button") {
@@ -352,6 +403,12 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		append(&app.synthetic, Synthetic{kind = .Move, pos = pos})
 		append(&app.synthetic, Synthetic{kind = .Down if cmd == "down" else .Up, pos = pos, button = b, clicks = 1, mods = mods_arg(obj)})
 		wait_then_respond(app, req, 2)
+	case "release":
+		// Drop any synthetic button held by an interrupted down/drag. Real
+		// buttons are untouched.
+		app.buttons = {}
+		app.pointer_synthetic = false
+		wait_then_respond(app, req, 2)
 	case "find":
 		// {"cmd":"find","text":"Save","nth":0} -> rect of the nth visible text match and the match count
 		needle := strings.to_lower(arg_s(obj, "text"), context.temp_allocator)
@@ -361,7 +418,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		hit: vui.Rect
 		hit_text := ""
 		for &n in ctx.nodes {
-			if n.para < 0 || n.style.display == .None || n.rect.w <= 0 {
+			if n.para < 0 || n.style.display == .None || n.style.visibility != .Visible || n.rect.w <= 0 || n.opacity <= 0.01 {
 				continue
 			}
 			b := strings.builder_make(context.temp_allocator)
@@ -371,8 +428,9 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 			t := strings.to_string(b)
 			lt := strings.to_lower(t, context.temp_allocator)
 			if (bool(exact) && strings.trim_space(lt) == needle) || (!bool(exact) && strings.contains(lt, needle)) {
+				c := vui.xform_apply(n.xform, {n.rect.x + n.rect.w / 2, n.rect.y + n.rect.h / 2})
 				if count == nth {
-					hit = n.rect
+					hit = {c.x - n.rect.w / 2, c.y - n.rect.h / 2, n.rect.w, n.rect.h}
 					hit_text = t
 				}
 				count += 1
@@ -391,12 +449,10 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 			return
 		}
 		push_click(app, p, .Left, 1)
-		app.synthetic[0].pos = p
 		sb := strings.builder_make(context.temp_allocator)
 		fmt.sbprintf(&sb, `{{"ok":true,"x":%.1f,"y":%.1f}}`, p.x, p.y)
-		req_resp := strings.to_string(sb)
-		_ = req_resp
 		wait_then_respond(app, req, 3)
+		req.response = strings.clone(strings.to_string(sb))
 	case "scroll":
 		p := [2]f32{arg_f(obj, "x", app.logical.x / 2), arg_f(obj, "y", app.logical.y / 2)}
 		append(&app.synthetic, Synthetic{kind = .Move, pos = p})
