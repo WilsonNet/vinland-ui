@@ -4,7 +4,7 @@
 //
 //   ping | info | tree [depth]
 //   screenshot <path.png> [x y w h]       (crop in logical px)
-//   click <x> <y> [right|double]          (logical px)
+//   click <x> <y> [right|double|triple]   (logical px)
 //   click-text <text> [nth]
 //   move <x> <y>
 //   scroll <dy> [x y] [dx]
@@ -26,7 +26,7 @@ usage :: proc() {
 commands:
   ping | info | tree [depth]
   screenshot <path.png> [x y w h]
-  click <x> <y> [right|double] | click-text <text> [nth] | move <x> <y>
+  click <x> <y> [right|double|triple] | click-text <text> [nth] | move <x> <y>
   scroll <dy> [x y] [dx] | type <text> | key <name> [mods]
   resize <w> <h> | dark [on|off] | gamma <value>
   wait [frames] | settle | quit | raw '<json>'
@@ -97,6 +97,8 @@ main :: proc() {
 			strings.write_string(&sb, `,"button":"right"`)
 		case "double":
 			strings.write_string(&sb, `,"clicks":2`)
+		case "triple":
+			strings.write_string(&sb, `,"clicks":3`)
 		}
 		strings.write_string(&sb, "}")
 	case "click-text":

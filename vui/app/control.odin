@@ -219,6 +219,8 @@ key_from_name :: proc(s: string) -> (vui.Key, bool) {
 		return .Space, true
 	case "a":
 		return .A, true
+	case "y":
+		return .Y, true
 	case "c":
 		return .C, true
 	case "v":
@@ -244,6 +246,10 @@ push_click :: proc(app: ^App, p: [2]f32, button: vui.Mouse_Button, clicks: int) 
 	append(&app.synthetic, Synthetic{kind = .Up, pos = p, button = button})
 	if clicks >= 2 {
 		append(&app.synthetic, Synthetic{kind = .Down, pos = p, button = button, clicks = 2})
+		append(&app.synthetic, Synthetic{kind = .Up, pos = p, button = button})
+	}
+	if clicks >= 3 {
+		append(&app.synthetic, Synthetic{kind = .Down, pos = p, button = button, clicks = 3})
 		append(&app.synthetic, Synthetic{kind = .Up, pos = p, button = button})
 	}
 }
