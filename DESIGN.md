@@ -6,7 +6,7 @@ description: "Documentation app for vinland-ui: Tailwind-docs calm, native Odin 
 # Design System: vinland-ui showroom
 
 Derived from the shipped showroom (`showroom/main.odin` `theme_setup`, `shell.odin`, `kit.odin`)
-and the published site (`website/src/styles/custom.css`). The framework itself is unstyled; this
+and the published site (`tools/site/site.css`, plus `website/src/styles/custom.css` in the Starlight draft). The framework itself is unstyled; this
 file describes the showroom's own look, which is also the reference for the website.
 
 ## 1. Overview

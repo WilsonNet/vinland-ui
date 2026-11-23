@@ -1,6 +1,6 @@
 ---
 title: vinland-ui
-description: A utility-first UI framework for Odin. Tailwind-style classes, design tokens, crisp GPU text at real pixel density, Vulkan with OpenGL fallback, and a CLI so agents can drive your app.
+description: A utility-first UI framework for Odin. Tailwind-style classes, design tokens, crisp GPU text at real pixel density, Metal and Vulkan with OpenGL fallback, and a CLI so agents can drive your app.
 template: splash
 hero:
   tagline: Write native UI in Odin, style it with Tailwind CSS class names that resolve through design tokens, and let a small GPU renderer draw it at your display's real pixel density.
@@ -31,8 +31,8 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="Design tokens" icon="setting">
     Colors, spacing, radii, shadows, type and breakpoints live in a Theme. Tokens carry light and dark values and load from JSON.
   </Card>
-  <Card title="Vulkan first" icon="rocket">
-    SDL3's GPU API renders on Vulkan, with OpenGL 3.3 as an automatic fallback, and WebGL2 for the live demos on this site.
+  <Card title="Metal & Vulkan first" icon="rocket">
+    SDL3's GPU API renders natively on Metal (macOS) and Vulkan (Linux), with OpenGL 3.3 as an automatic fallback, and WebGL2 for the live demos on this site.
   </Card>
   <Card title="Real layout" icon="list-format">
     Block flow, flexbox, grid, absolute and fixed positioning, and smooth scroll containers.

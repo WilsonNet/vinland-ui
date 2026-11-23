@@ -31,7 +31,7 @@ if ui.div("w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-9
 
 ## What it is
 
-A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 and OpenGL 3.3 that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.
+A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.
 
 The core never draws anything on its own. A `ui.div` is an empty box until you give it classes, so the look of an app lives entirely in your code and in your theme.
 

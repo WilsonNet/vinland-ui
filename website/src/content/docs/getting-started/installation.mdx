@@ -11,9 +11,11 @@ Add vinland-ui to an Odin project and open your first window.
 
 ## Requirements
 
-Odin (dev-2026-11 or newer), SDL3 development files and an OpenGL 3.3 driver. Fonts and icons are embedded, so there is nothing else to install.
+Odin (dev-2026-11 or newer), SDL3 development files, and Metal (macOS) or Vulkan (Linux) with automatic OpenGL 3.3 fallback. Fonts and icons are embedded, so there is nothing else to install.
 
-```odin
+```sh
+# macOS
+brew install odin sdl3
 # Arch
 sudo pacman -S sdl3
 # Debian / Ubuntu
@@ -24,7 +26,7 @@ sudo apt install libsdl3-dev
 
 Clone the repository next to your project (or as a git submodule) and import the packages by path, or register a collection with `-collection:vinland=path/to/vinland-ui`.
 
-```odin
+```sh
 git clone https://github.com/WilsonNet/vinland-ui
 odin build my_app -collection:vinland=vinland-ui
 ```
@@ -59,4 +61,4 @@ main :: proc() {
 
 ## Bring your own renderer
 
-Games that already own a render loop (raylib, Vulkan, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; the GLSL in `vui/app/gl.odin` is the reference implementation of the uber-shader.
+Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; `vui/app/shaders/` (GLSL and MSL) and `vui/app/gl.odin` are the reference implementations of the uber-shader.

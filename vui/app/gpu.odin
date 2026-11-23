@@ -4,12 +4,9 @@ import "core:fmt"
 import sdl "vendor:sdl3"
 import vui ".."
 
-// SDL3 GPU renderer: Vulkan on Linux (Metal on macOS, D3D12 on Windows once their shader
-// formats are added). Same draw list and the same shader source as the GL renderer;
-// SPIR-V is precompiled from shaders/ui.{vert,frag} (see build.sh).
-
-VERT_SPV :: #load("shaders/ui.vert.spv")
-FRAG_SPV :: #load("shaders/ui.frag.spv")
+// SDL3 GPU renderer: Metal on macOS and Vulkan on Linux. Same draw list and shader
+// logic as the GL renderer; backend shader loading lives in gpu_metal.odin and
+// gpu_vulkan.odin.
 
 Gpu_Renderer :: struct {
 	dev:         ^sdl.GPUDevice,
@@ -49,12 +46,12 @@ Frag_Uniforms :: struct {
 TARGET_FORMAT :: sdl.GPUTextureFormat.R8G8B8A8_UNORM
 
 @(private)
-make_shader :: proc(dev: ^sdl.GPUDevice, code: []u8, stage: sdl.GPUShaderStage, samplers, uniforms: u32) -> ^sdl.GPUShader {
+make_shader :: proc(dev: ^sdl.GPUDevice, code: []u8, entrypoint: cstring, format: sdl.GPUShaderFormat, stage: sdl.GPUShaderStage, samplers, uniforms: u32) -> ^sdl.GPUShader {
 	info := sdl.GPUShaderCreateInfo{
 		code_size           = uint(len(code)),
 		code                = raw_data(code),
-		entrypoint          = "main",
-		format              = {.SPIRV},
+		entrypoint          = entrypoint,
+		format              = format,
 		stage               = stage,
 		num_samplers        = samplers,
 		num_uniform_buffers = uniforms,
@@ -81,9 +78,18 @@ gpu_init :: proc(r: ^Gpu_Renderer, dev: ^sdl.GPUDevice, window: ^sdl.Window, vsy
 	r.driver = string(sdl.GetGPUDeviceDriver(dev))
 	_ = sdl.SetGPUSwapchainParameters(dev, window, .SDR, vsync ? .VSYNC : .IMMEDIATE)
 
-	vs := make_shader(dev, VERT_SPV, .VERTEX, 0, 1)
-	fs := make_shader(dev, FRAG_SPV, .FRAGMENT, 2, 1)
-	if vs == nil || fs == nil {
+	formats := sdl.GetGPUShaderFormats(dev)
+	vs, fs: ^sdl.GPUShader
+	ok: bool
+	if .MSL in formats {
+		vs, fs, ok = gpu_create_metal_shaders(dev)
+	} else if .SPIRV in formats {
+		vs, fs, ok = gpu_create_vulkan_shaders(dev)
+	} else {
+		fmt.eprintln("vui: GPU device supports no usable shader format")
+		return false
+	}
+	if !ok {
 		fmt.eprintln("vui: GPU shader creation failed:", sdl.GetError())
 		return false
 	}

@@ -115,11 +115,11 @@ The runner owns the `VUI_*` environment. It drops any `VUI_*` variables it inher
 
 ## The sandbox
 
-Tests are safe to run while you work. A headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. Headless browsers get the same isolation from SwiftShader. A runaway test can use CPU time, but it cannot freeze or crash the desktop.
+Tests are safe to run while you work. On Linux, a headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. On macOS, where Mesa offscreen GL is unavailable, `VUI_HIDDEN=1` sets `SDL_MAC_BACKGROUND_APP=1` with a hidden Cocoa window rendering offscreen via Metal (or OpenGL fallback) without mapping a window or Dock icon.
 
-The guarantee is checked at two points. A headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` from `info` and refuses to drive an app that reports false.
+The guarantee is checked at two points. On Linux, a headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` (or `hidden` on macOS) from `info` and refuses to drive an app that reports false.
 
-`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU for headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above.
+`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU on Linux headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above.
 
 ## Continuous integration
 

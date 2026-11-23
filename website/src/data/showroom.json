@@ -998,7 +998,7 @@
    "title": "Introduction",
    "group": "Getting started",
    "desc": "vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density.",
-   "content_bottom": 2181.0,
+   "content_bottom": 2209.0,
    "blocks": [
     {
      "kind": "Para",
@@ -1024,7 +1024,7 @@
     },
     {
      "kind": "Para",
-     "text": "A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 and OpenGL 3.3 that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons."
+     "text": "A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons."
     },
     {
      "kind": "Para",
@@ -1058,7 +1058,7 @@
    "title": "Installation",
    "group": "Getting started",
    "desc": "Add vinland-ui to an Odin project and open your first window.",
-   "content_bottom": 1977.0,
+   "content_bottom": 2081.0,
    "blocks": [
     {
      "kind": "Para",
@@ -1070,11 +1070,12 @@
     },
     {
      "kind": "Para",
-     "text": "Odin (dev-2026-11 or newer), SDL3 development files and an OpenGL 3.3 driver. Fonts and icons are embedded, so there is nothing else to install."
+     "text": "Odin (dev-2026-11 or newer), SDL3 development files, and Metal (macOS) or Vulkan (Linux) with automatic OpenGL 3.3 fallback. Fonts and icons are embedded, so there is nothing else to install."
     },
     {
      "kind": "Code",
-     "code": "# Arch\nsudo pacman -S sdl3\n# Debian / Ubuntu\nsudo apt install libsdl3-dev"
+     "code": "# macOS\nbrew install odin sdl3\n# Arch\nsudo pacman -S sdl3\n# Debian / Ubuntu\nsudo apt install libsdl3-dev",
+     "lang": "sh"
     },
     {
      "kind": "H2",
@@ -1086,7 +1087,8 @@
     },
     {
      "kind": "Code",
-     "code": "git clone https://github.com/WilsonNet/vinland-ui\nodin build my_app -collection:vinland=vinland-ui"
+     "code": "git clone https://github.com/WilsonNet/vinland-ui\nodin build my_app -collection:vinland=vinland-ui",
+     "lang": "sh"
     },
     {
      "kind": "H2",
@@ -1102,7 +1104,7 @@
     },
     {
      "kind": "Para",
-     "text": "Games that already own a render loop (raylib, Vulkan, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; the GLSL in `vui/app/gl.odin` is the reference implementation of the uber-shader."
+     "text": "Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; `vui/app/shaders/` (GLSL and MSL) and `vui/app/gl.odin` are the reference implementations of the uber-shader."
     }
    ]
   },
@@ -1112,7 +1114,7 @@
    "title": "Agent skill & CLI",
    "group": "Getting started",
    "desc": "Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests.",
-   "content_bottom": 1791.0,
+   "content_bottom": 2545.0,
    "blocks": [
     {
      "kind": "Para",
@@ -1133,6 +1135,23 @@
     },
     {
      "kind": "H2",
+     "text": "Drive a visible app without stealing input"
+    },
+    {
+     "kind": "Para",
+     "text": "Pointer and key commands are injected inside the app: they never warp or click the real OS pointer, raise the window or request focus. When the window should stay visible while someone else uses the machine, start it with `VUI_BACKGROUND=1`. It is mapped without activation and with the non-focusable hint (plus `SDL_MAC_BACKGROUND_APP=1` on macOS so no Dock icon or focus steal occurs), so a game or editor normally keeps keyboard and pointer focus. X11 window managers and macOS honor the hints; Wayland leaves focus policy to the compositor, where a no-focus rule is the reliable option."
+    },
+    {
+     "kind": "Code",
+     "code": "VUI_BACKGROUND=1 VUI_PORT=7420 ./build/my_app &\n./build/vui-ctl info          # background:true, focusable:false, keyboard_focus:false\n./build/vui-ctl click-text \"Save\"\n./build/vui-ctl foreground    # escape hatch: native dialog, IME, human takeover\n./build/vui-ctl background    # back to non-focusable driving",
+     "lang": "sh"
+    },
+    {
+     "kind": "Para",
+     "text": "A compositor may refuse to make an existing Wayland surface focusable; the foreground response reports that, and restarting without `VUI_BACKGROUND=1` is the fallback for flows that need native focus."
+    },
+    {
+     "kind": "H2",
      "text": "Commands"
     },
     {
@@ -1140,14 +1159,14 @@
      "rows": [
       [
        "info",
-       "viewport, scale, frame time, node count, unknown classes"
+       "viewport, scale, frame time, backend/driver, focus state, node count, unknown classes"
       ],
       [
        "screenshot <png> [x y w h]",
        "writes the last frame (optionally cropped)"
       ],
       [
-       "click <x> <y> [right|double]",
+       "click <x> <y> [right|double|triple]",
        "synthetic click in logical px"
       ],
       [
@@ -1157,6 +1176,14 @@
       [
        "move / scroll / type / key",
        "pointer, wheel and keyboard input"
+      ],
+      [
+       "foreground / background",
+       "opt into OS focus / return to non-focusable driving"
+      ],
+      [
+       "release",
+       "drop a stuck synthetic button or drag"
       ],
       [
        "resize <w> <h> / dark [on|off]",
@@ -1182,7 +1209,7 @@
     },
     {
      "kind": "Para",
-     "text": "The repository ships `skills/vinland-ui/SKILL.md`, a skill for coding agents. It teaches the element API, the utility vocabulary, the token system and this CLI loop, so an agent can build a screen, screenshot it and iterate without a human in the loop."
+     "text": "The repository ships `skills/vinland-ui/SKILL.md` (symlinked at `.agents/skills/vinland-ui` for automatic agent discovery). It teaches the element API, the utility vocabulary, the token system and this CLI loop, so an agent can build a screen, screenshot it and iterate without a human in the loop."
     }
    ]
   },
@@ -1192,7 +1219,7 @@
    "title": "Testing",
    "group": "Getting started",
    "desc": "Playwright-style end-to-end tests for native apps: click by text, assert on the element tree, diff screenshots against baselines. Headless runs are sandboxed.",
-   "content_bottom": 5281.0,
+   "content_bottom": 5337.0,
    "blocks": [
     {
      "kind": "Para",
@@ -1418,15 +1445,15 @@
     },
     {
      "kind": "Para",
-     "text": "Tests are safe to run while you work. A headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. Headless browsers get the same isolation from SwiftShader. A runaway test can use CPU time, but it cannot freeze or crash the desktop."
+     "text": "Tests are safe to run while you work. On Linux, a headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. On macOS, where Mesa offscreen GL is unavailable, `VUI_HIDDEN=1` sets `SDL_MAC_BACKGROUND_APP=1` with a hidden Cocoa window rendering offscreen via Metal (or OpenGL fallback) without mapping a window or Dock icon."
     },
     {
      "kind": "Para",
-     "text": "The guarantee is checked at two points. A headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` from `info` and refuses to drive an app that reports false."
+     "text": "The guarantee is checked at two points. On Linux, a headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` (or `hidden` on macOS) from `info` and refuses to drive an app that reports false."
     },
     {
      "kind": "Para",
-     "text": "`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU for headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above."
+     "text": "`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU on Linux headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above."
     },
     {
      "kind": "H2",

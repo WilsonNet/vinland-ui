@@ -86,7 +86,7 @@ page_introduction :: proc() {
 		}
 	}
 	h2("What it is")
-	para("A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 and OpenGL 3.3 that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.")
+	para("A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.")
 	para("The core never draws anything on its own. A `ui.div` is an empty box until you give it classes, so the look of an app lives entirely in your code and in your theme.")
 	h2("How it reads")
 	para("Containers open with `if ui.div(\"...\") { }` and close automatically at the end of the block. Leaves such as `ui.text`, `ui.icon` and `ui.el` take a class string. Interaction is queried where you build: `ui.clicked()`, `ui.hovered()` and friends refer to the element you are inside.")
@@ -105,15 +105,17 @@ for app.next_frame(&a) {
 
 page_installation :: proc() {
 	h2("Requirements")
-	para("Odin (dev-2026-11 or newer), SDL3 development files and an OpenGL 3.3 driver. Fonts and icons are embedded, so there is nothing else to install.")
-	code(`# Arch
+	para("Odin (dev-2026-11 or newer), SDL3 development files, and Metal (macOS) or Vulkan (Linux) with automatic OpenGL 3.3 fallback. Fonts and icons are embedded, so there is nothing else to install.")
+	code(`# macOS
+brew install odin sdl3
+# Arch
 sudo pacman -S sdl3
 # Debian / Ubuntu
-sudo apt install libsdl3-dev`)
+sudo apt install libsdl3-dev`, "sh")
 	h2("Add the packages")
 	para("Clone the repository next to your project (or as a git submodule) and import the packages by path, or register a collection with `-collection:vinland=path/to/vinland-ui`.")
 	code(`git clone https://github.com/WilsonNet/vinland-ui
-odin build my_app -collection:vinland=vinland-ui`)
+odin build my_app -collection:vinland=vinland-ui`, "sh")
 	h2("A first window")
 	code(`package my_app
 
@@ -139,7 +141,7 @@ main :: proc() {
     }
 }`)
 	h2("Bring your own renderer")
-	para("Games that already own a render loop (raylib, Vulkan, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; the GLSL in `vui/app/gl.odin` is the reference implementation of the uber-shader.")
+	para("Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; `vui/app/shaders/` (GLSL and MSL) and `vui/app/gl.odin` are the reference implementations of the uber-shader.")
 }
 
 page_agents :: proc() {
@@ -156,7 +158,7 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 ./build/vui-ctl scroll 600
 ./build/vui-ctl tree 6 | jq '.nodes[] | select(.t)'`, "sh")
 	h2("Drive a visible app without stealing input")
-	para("Pointer and key commands are injected inside the app: they never warp or click the real OS pointer, raise the window or request focus. When the window should stay visible while someone else uses the machine, start it with `VUI_BACKGROUND=1`. It is mapped without activation and with the non-focusable hint, so a game or editor normally keeps keyboard and pointer focus. X11 window managers honor the hint; Wayland leaves focus policy to the compositor, where a no-focus rule is the reliable option.")
+	para("Pointer and key commands are injected inside the app: they never warp or click the real OS pointer, raise the window or request focus. When the window should stay visible while someone else uses the machine, start it with `VUI_BACKGROUND=1`. It is mapped without activation and with the non-focusable hint (plus `SDL_MAC_BACKGROUND_APP=1` on macOS so no Dock icon or focus steal occurs), so a game or editor normally keeps keyboard and pointer focus. X11 window managers and macOS honor the hints; Wayland leaves focus policy to the compositor, where a no-focus rule is the reliable option.")
 	code(`VUI_BACKGROUND=1 VUI_PORT=7420 ./build/my_app &
 ./build/vui-ctl info          # background:true, focusable:false, keyboard_focus:false
 ./build/vui-ctl click-text "Save"
@@ -165,7 +167,7 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 	para("A compositor may refuse to make an existing Wayland surface focusable; the foreground response reports that, and restarting without `VUI_BACKGROUND=1` is the fallback for flows that need native focus.")
 	h2("Commands")
 	ref_table({
-		{"info", "viewport, scale, frame time, focus state, node count, unknown classes"},
+		{"info", "viewport, scale, frame time, backend/driver, focus state, node count, unknown classes"},
 		{"screenshot <png> [x y w h]", "writes the last frame (optionally cropped)"},
 		{"click <x> <y> [right|double|triple]", "synthetic click in logical px"},
 		{"click-text <text> [nth]", "clicks the element whose text matches"},
@@ -178,7 +180,7 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 		{"<app command> key=value", "forwarded to App.on_command (nav, pages, search...)"},
 	})
 	h2("Agent skill")
-	para("The repository ships `skills/vinland-ui/SKILL.md`, a skill for coding agents. It teaches the element API, the utility vocabulary, the token system and this CLI loop, so an agent can build a screen, screenshot it and iterate without a human in the loop.")
+	para("The repository ships `skills/vinland-ui/SKILL.md` (symlinked at `.agents/skills/vinland-ui` for automatic agent discovery). It teaches the element API, the utility vocabulary, the token system and this CLI loop, so an agent can build a screen, screenshot it and iterate without a human in the loop.")
 }
 
 // ---------------------------------------------------------------------------

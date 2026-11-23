@@ -352,12 +352,7 @@ launch :: proc(s: ^Suite, test_dir: string) -> (os.Process, bool) {
 		append(&envs, e)
 	}
 	append(&envs, "VUI_HIDDEN=1", "VUI_QUIET=1", fmt.aprintf("VUI_PORT=%d", g_port), fmt.aprintf("VUI_SIZE=%s", s.size), fmt.aprintf("VUI_SCALE=%s", s.scale))
-	if !g_gpu {
-		// VUI_HIDDEN already selects SDL's offscreen driver inside the app; state
-		// it in the environment too so an older app cannot pick Wayland/X11 and
-		// map a window on the user's desktop.
-		append(&envs, "SDL_VIDEO_DRIVER=offscreen")
-	}
+	platform_headless_env(&envs, g_gpu)
 	if g_gpu {
 		append(&envs, "VUI_HIDDEN_GPU=1")
 	}
@@ -389,11 +384,10 @@ launch :: proc(s: ^Suite, test_dir: string) -> (os.Process, bool) {
 	deadline := time.now()
 	for time.since(deadline) < 15 * time.Second {
 		if _, _, ok := ctl(`{"cmd":"ping"}`); ok {
-			// safety: never drive a headless app that is not sandboxed unless asked
+			// safety: never drive a headless app that is not sandboxed/hidden unless asked
 			info, _, _ := ctl(`{"cmd":"info"}`)
-			sb, _ := info["sandboxed"].(json.Boolean)
-			if !bool(sb) && !g_gpu {
-				fmt.eprintln("vui-test: app is not sandboxed (old vinland-ui?) — refusing to run on the real GPU")
+			if ok_hl, msg := platform_verify_headless(info, g_gpu); !ok_hl {
+				fmt.eprintln(msg)
 				_ = os.process_kill(p)
 				return {}, false
 			}

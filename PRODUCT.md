@@ -4,11 +4,11 @@
 
 ## Platform
 
-desktop (native, Linux first; SDL3 + OpenGL 3.3, code kept portable to macOS/Windows but untested there)
+desktop (native Linux and macOS; SDL3 GPU Metal on macOS and Vulkan on Linux, with OpenGL 3.3 automatic fallback; plus WebAssembly/WebGL2 for live showroom demos; Windows untested)
 
 ## Stack
 
-Odin. Framework packages in pure Odin on vendored libraries only (SDL3, OpenGL, stb_truetype, kb_text_shape, stb_image). No web runtime, no separate UI language.
+Odin. Framework packages in pure Odin on vendored libraries only (SDL3, OpenGL, stb_truetype, stb_image). No web runtime, no separate UI language.
 
 ## Users
 
@@ -28,16 +28,16 @@ Tailwind's vocabulary and design-token model, inside a native Odin immediate-mod
 
 ## Operating Context
 
-- Built and run from the terminal (`odin build`, shell scripts). Linux/Hyprland with 1.333 fractional scaling on a 3440x1440 monitor: the framework must render at native physical pixels.
-- Agent-driven feedback loop: `vui-ctl` CLI talks to the running app (navigate, click, scroll, type, theme, resize, dump tree, screenshot).
+- Built and run from the terminal (`odin build`, shell scripts). Linux/Hyprland (1.333 fractional scaling on 3440x1440, Vulkan) and macOS (Apple Silicon Retina 2x, Metal): the framework renders at native physical pixels.
+- Agent-driven feedback loop: `vui-ctl` CLI talks to the running app (navigate, click, scroll, type, theme, resize, dump tree, screenshot) with headless (`VUI_HIDDEN=1`) and non-focusable background (`VUI_BACKGROUND=1`) modes; `vui-test` runs Playwright-style e2e suites.
 - References the user named: Quickshell (widgets/animation on Linux), Jetpack Compose (UI in the host language), Flutter (owns its renderer, game-engine-like), Tailwind CSS (utility vocabulary, docs quality bar).
 
 ## Capabilities and Constraints
 
 - Unstyled core: no default look baked into primitives; everything is utilities + tokens.
 - Design tokens (palette, spacing, radius, shadows, typography, semantic colors) with light and dark variants, swappable at runtime.
-- Must later replace the UIs of dreamcraft (raylib renderer) and tracker (SDL); core stays renderer-agnostic so a raylib backend can be added.
-- Undecided: web/WASM backend, accessibility tree integration, IME composition beyond basic text input.
+- Must support sibling UIs such as `dreamcraft` (raylib renderer) and `tracker` (SDL); core stays renderer-agnostic so custom renderers can consume `Draw_List`.
+- Web/WASM + WebGL2 backend (`vui/web/`) powers live interactive demos on the website; remaining undecided areas: accessibility tree integration, IME composition beyond basic text input.
 
 ## Brand Commitments
 
@@ -46,7 +46,7 @@ Tailwind's vocabulary and design-token model, inside a native Odin immediate-mod
 
 ## Evidence on Hand
 
-No users, benchmarks, or adopters yet. Do not invent any. The sibling repos are the only real consumers planned.
+Used by sibling app `tracker` (multitrack recorder); frame-time and GPU-memory measurements are recorded in `README.md`. External adoption is still early.
 
 ## Product Principles
 

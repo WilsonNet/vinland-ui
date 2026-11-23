@@ -314,10 +314,30 @@ def page_html(doc, pages, groups, prev_p, next_p):
 """
 
 
-def capture_only(img_parent: str, data_path: str, only: set):
+def preserve_example_sizes(data: list, ref_path: str):
+    """When --no-shots is used, carries over example image dimensions/skip flags from ref_path."""
+    if not os.path.exists(ref_path):
+        return
+    old = {d["slug"]: d for d in json.load(open(ref_path)).get("docs", [])}
+    for doc in data:
+        prev = old.get(doc["slug"])
+        if not prev:
+            continue
+        prev_ex = [b for b in prev.get("blocks", []) if b.get("kind") == "Example"]
+        cur_ex = [b for b in doc.get("blocks", []) if b.get("kind") == "Example"]
+        for cur, p in zip(cur_ex, prev_ex):
+            if "size" in p:
+                cur["size"] = p["size"]
+            if "skip" in p:
+                cur["skip"] = p["skip"]
+
+
+def capture_only(img_parent: str, data_path: str, only: set, shots: bool = True):
     """Captures example images into <img_parent>/img and writes page data as JSON."""
     print("capturing pages from the showroom…", flush=True)
-    pages, data = capture(img_parent, only, True)
+    pages, data = capture(img_parent, only, shots)
+    if not shots:
+        preserve_example_sizes(data, data_path)
     if only and os.path.exists(data_path):
         # partial capture: merge into the existing export, keeping showroom order
         old = {d["slug"]: d for d in json.load(open(data_path))["docs"]}
@@ -332,6 +352,8 @@ def capture_only(img_parent: str, data_path: str, only: set):
 def build(out_dir: str, only: set, shots: bool):
     print("capturing pages from the showroom…", flush=True)
     pages, data = capture(out_dir, only, shots)
+    if not shots:
+        preserve_example_sizes(data, os.path.join(ROOT, "website/src/data/showroom.json"))
     groups = []
     for p in pages:
         if p["group"] not in groups:
@@ -357,7 +379,7 @@ def build(out_dir: str, only: set, shots: bool):
     for f in ("Inter-Regular.ttf", "Inter-Medium.ttf", "Inter-SemiBold.ttf", "IBMPlexMono-Regular.ttf", "IBMPlexMono-Medium.ttf", "Inter-OFL.txt", "IBMPlexMono-OFL.txt"):
         shutil.copy(os.path.join(ROOT, "assets/fonts", f), os.path.join(fdir, f))
     og = os.path.join(ROOT, "docs/showroom-light.png")
-    if os.path.exists(og):
+    if shots and os.path.exists(og):
         subprocess.run(["magick", og, "-resize", "1200x", os.path.join(out_dir, "img/og.png")], check=True)
     with open(os.path.join(out_dir, "search.json"), "w") as f:
         json.dump([{"slug": p["slug"], "title": p["title"], "group": p["group"]} for p in pages], f)
@@ -395,6 +417,6 @@ if __name__ == "__main__":
             only = set(a.split("=", 1)[1].split(","))
     os.makedirs(out, exist_ok=True)
     if "--capture-only" in sys.argv:
-        capture_only(out, os.path.join(ROOT, "website/src/data/showroom.json"), only)
+        capture_only(out, os.path.join(ROOT, "website/src/data/showroom.json"), only, "--no-shots" not in sys.argv)
     else:
         build(out, only, "--no-shots" not in sys.argv)

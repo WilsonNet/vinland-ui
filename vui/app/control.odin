@@ -270,6 +270,9 @@ mods_arg :: proc(obj: json.Object) -> (mods: vui.Mods) {
 	if strings.contains(ms, "alt") {
 		mods += {.Alt}
 	}
+	if strings.contains(ms, "super") || strings.contains(ms, "cmd") || strings.contains(ms, "meta") {
+		mods += {.Super}
+	}
 	return
 }
 
@@ -316,8 +319,9 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		has_input_focus := sdl.GetKeyboardFocus() == app.window
 		has_mouse_focus := sdl.GetMouseFocus() == app.window
 		is_focusable := .NOT_FOCUSABLE not_in flags
+		gpu_driver := app.backend == .GPU ? app.gpu.driver : ""
 		sb := strings.builder_make(context.temp_allocator)
-		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","video_driver":"%s","sandboxed":%v,"background":%v,"focusable":%v,"keyboard_focus":%v,"mouse_inside":%v,"pointer_synthetic":%v,"gl_renderer":"%s","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend, driver, app.sandboxed, app.cfg.background, is_focusable, has_input_focus, has_mouse_focus, app.pointer_synthetic, app.gl_renderer)
+		fmt.sbprintf(&sb, `{{"ok":true,"logical":[%.1f,%.1f],"pixels":[%d,%d],"scale":%.4f,"dark":%v,"frame":%d,"frame_ms":%.2f,"nodes":%d,"draw_cmds":%d,"atlas":[%d,%d],"text_gamma":%.3f,"backend":"%v","gpu_driver":"%s","video_driver":"%s","hidden":%v,"sandboxed":%v,"background":%v,"focusable":%v,"keyboard_focus":%v,"mouse_inside":%v,"pointer_synthetic":%v,"gl_renderer":"%s","unknown_classes":[`, app.logical.x, app.logical.y, app.pixels.x, app.pixels.y, app.scale, ctx.dark, ctx.frame, app.frame_ms, len(ctx.nodes), len(ctx.draw.cmds), ctx.atlas.w, ctx.atlas.h, ctx.text_gamma, app.backend, gpu_driver, driver, app.cfg.hidden, app.sandboxed, app.cfg.background, is_focusable, has_input_focus, has_mouse_focus, app.pointer_synthetic, app.gl_renderer)
 		for u, i in unknown {
 			if i > 0 {
 				strings.write_string(&sb, ",")
@@ -359,12 +363,7 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 		fmt.sbprintf(&sb, `{{"ok":true,"focusable":%v,"raised":%v,"flashed":%v,"video_driver":`, focusable, raised, flashed)
 		vui.json_str(&sb, driver)
 		strings.write_string(&sb, `,"hint":`)
-		hint := ""
-		if strings.contains(driver, "wayland") {
-			hint = "Wayland cannot guarantee focus for an existing surface; restart without VUI_BACKGROUND=1 if it stays unfocused"
-		} else if !focusable {
-			hint = "the window manager still reports this window as non-focusable"
-		}
+		hint := platform_foreground_hint(driver, focusable)
 		vui.json_str(&sb, hint)
 		strings.write_string(&sb, "}")
 		wait_then_respond(app, req, 2)

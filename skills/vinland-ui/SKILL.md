@@ -1,6 +1,12 @@
 ---
 name: vinland-ui
-description: Build, style and verify native desktop UI in Odin with vinland-ui (Tailwind-style utility classes, design tokens, flex/grid layout, SDL3+OpenGL renderer) and drive the running app from the terminal with vui-ctl for screenshots and interaction. Use when writing or editing Odin code that imports vinland-ui (`vui`, `vui/app`, `vui/fonts`, `vui/icons`), when porting a Tailwind/HTML design to Odin, or when asked to screenshot, click through or visually verify a vinland-ui app.
+description: >-
+  Build, style, test, and visually verify native desktop UI in Odin with vinland-ui
+  (Tailwind-style utility classes, design tokens, flex/grid layout, SDL3 GPU Metal/Vulkan
+  renderer with OpenGL 3.3 fallback), drive running apps with vui-ctl (including headless
+  VUI_HIDDEN=1 and non-focusable VUI_BACKGROUND=1 modes), and run e2e suites with vui-test.
+  Use when writing or editing Odin code that imports vinland-ui (vui, vui/app, vui/fonts,
+  vui/icons), porting a Tailwind/HTML design to Odin, or screenshotting/testing a vinland-ui app.
 ---
 
 # vinland-ui
@@ -14,13 +20,14 @@ Repository layout:
 | Path | What |
 |---|---|
 | `vui/` | core: element tree, utility parser (`tw.odin`), tokens, layout, text, paint |
-| `vui/app/` | SDL3 + OpenGL 3.3 host, renderer, control server |
+| `vui/app/` | SDL3 host (Metal on macOS, Vulkan on Linux, OpenGL 3.3 fallback) and control server |
 | `vui/fonts/` | embedded Inter, IBM Plex Mono, Source Serif 4 (`fonts.register(&ctx)`) |
 | `vui/icons/` | Heroicons 20 solid (`icons.register(&ctx)` returns handles) |
 | `tools/vui-ctl/` | CLI that drives a running app |
+| `tools/vui-test/` | Playwright-style e2e test runner (suites in `tests/e2e/`) |
 | `showroom/` | documentation app: every utility with live examples (best reference) |
 
-Build: `./build.sh` (outputs `build/showroom`, `build/vui-ctl`, `build/hello`).
+Build: `./build.sh` (outputs `build/showroom`, `build/vui-ctl`, `build/vui-test`, `build/hello`).
 
 ## The feedback loop (always use it)
 
@@ -30,11 +37,11 @@ the user's desktop, then drive it with `vui-ctl`.
 ```bash
 ./build.sh
 VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1280x800 ./build/my_app &   # needs control_port in app.Config
-./build/vui-ctl info                     # scale, frame time, node count, unknown_classes
+./build/vui-ctl info                     # scale, frame time, backend/driver, node count, unknown_classes
 ./build/vui-ctl screenshot /abs/path/shot.png      # then open it with your image viewer/Read tool
 ./build/vui-ctl screenshot crop.png 0 0 400 300    # crop in logical px
 ./build/vui-ctl click-text "Save"         # click by visible text
-./build/vui-ctl click 120 48              # logical px
+./build/vui-ctl click 120 48 [right|double|triple] # logical px
 ./build/vui-ctl foreground                # escape hatch: opt into OS focus
 ./build/vui-ctl background                # back to non-focusable driving
 ./build/vui-ctl type "hello" ; ./build/vui-ctl key tab ; ./build/vui-ctl key a ctrl
@@ -50,7 +57,8 @@ Input is in-process: `click`, `type` and `scroll` never move the real OS
 pointer, never raise the window and never ask for focus. To keep a *visible*
 window while the user keeps working or gaming, start it with
 `VUI_BACKGROUND=1` (mapped without activation; X11 honors the non-focusable
-hint, Wayland leaves focus to the compositor — use a no-focus rule there).
+hint, macOS also sets `SDL_MAC_BACKGROUND_APP=1` so no Dock icon or focus steal
+occurs, and Wayland leaves focus to the compositor — use a no-focus rule there).
 `vui-ctl info` reports `background`, `focusable`, `keyboard_focus`,
 `mouse_inside`, `pointer_synthetic` and `video_driver`. If a flow genuinely
 needs the OS window (native file dialog, IME, a human taking over), the explicit
@@ -61,10 +69,10 @@ existing surface focusable, in which case restart without `VUI_BACKGROUND=1`.
 the only hard no-focus guarantee.
 
 Environment overrides: `VUI_HIDDEN=1` (offscreen, the hard no-desktop-contact mode),
-`VUI_BACKGROUND=1` (visible but not activated on show; X11 honors the non-focusable
-hint, Wayland leaves focus to the compositor), `VUI_SCALE=<f>` (UI scale; use the user's
+`VUI_BACKGROUND=1` (visible but not activated on show; X11 and macOS honor the
+non-focusable hints, Wayland leaves focus to the compositor), `VUI_SCALE=<f>` (UI scale; use the user's
 real scale when judging text crispness, e.g. 1.3333 on a 4/3 fractional display), `VUI_SIZE=WxH`,
-`VUI_PORT=<n>`. App-specific commands are forwarded to `App.on_command` (the showroom adds
+`VUI_PORT=<n>`, `VUI_BACKEND=metal|vulkan|gl`. App-specific commands are forwarded to `App.on_command` (the showroom adds
 `nav page=<slug>`, `pages`, `search q=...`). Full-page captures: resize to a very tall window
 (`VUI_SIZE=1280x7000`) so scroll containers show everything.
 
@@ -73,7 +81,8 @@ Check `info.unknown_classes` after every change: it lists class tokens that fail
 ## Validate every UI change with an e2e suite (always)
 
 Write a `.vt` suite next to the app and run it with `vinland-ui/build/vui-test`; it launches the
-app headless and sandboxed per test, so it is safe to run any number of times:
+app headless per test (`SDL_VIDEO_DRIVER=offscreen` + Mesa llvmpipe on Linux; hidden Cocoa window
+with `SDL_MAC_BACKGROUND_APP=1` on macOS), so it is safe to run any number of times:
 
 ```
 app ../bin/my-app --data {test}/data     # {test}: fresh scratch dir per test
@@ -284,8 +293,8 @@ Themes also load from JSON: `ui.theme_load_json(&ctx.theme, "theme.json")` with 
 - In Odin's `fmt`, `{` and `}` are format characters: write `{{` and `}}` for literal braces.
 - Text is drawn at physical pixels; never scale a text element with a transform to "zoom" text,
   change `text-*` instead (transforms are fine for animation).
-- The renderer is SDL3 GPU (Vulkan) with an OpenGL 3.3 fallback (`VUI_BACKEND=gl`); games with their own renderer can call `ui.begin_frame`,
-  build, `ui.end_frame` and draw the returned `Draw_List` (see `vui/app/gl.odin` for the shader).
+- The renderer is SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback (`VUI_BACKEND=gl`); games with their own renderer can call `ui.begin_frame`,
+  build, `ui.end_frame` and draw the returned `Draw_List` (see `vui/app/shaders/` and `vui/app/gl.odin` for the shader).
 
 ## Workflow for a new screen
 

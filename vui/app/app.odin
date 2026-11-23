@@ -112,12 +112,6 @@ Wait_Request :: struct {
 @(private)
 g_app: ^App
 
-@(private)
-is_software_renderer :: proc(r: string) -> bool {
-	l := strings.to_lower(r, context.temp_allocator)
-	return strings.contains(l, "llvmpipe") || strings.contains(l, "softpipe") || strings.contains(l, "swrast") || strings.contains(l, "swiftshader")
-}
-
 // Runs a clipboard helper and returns its stdout. Public so apps and tests can
 // use the same fallback path; no shell is involved.
 clipboard_from_argv :: proc(argv: []string, allocator: mem.Allocator) -> (string, bool) {
@@ -132,9 +126,8 @@ clipboard_from_argv :: proc(argv: []string, allocator: mem.Allocator) -> (string
 	return text, true
 }
 
-// SDL's clipboard can be empty on some Wayland/X11 combinations even while the
-// desktop clipboard has data. Fall back to the standard utilities so text
-// inputs stay usable in every session.
+// SDL's clipboard can be empty on some sessions even while the desktop clipboard
+// has data. Fall back to OS-specific helpers in platform_*.odin.
 clipboard_read :: proc(allocator: mem.Allocator) -> string {
 	t := sdl.GetClipboardText()
 	if t != nil {
@@ -147,26 +140,8 @@ clipboard_read :: proc(allocator: mem.Allocator) -> string {
 		}
 		sdl.free(rawptr(t))
 	}
-	wayland := os.get_env("WAYLAND_DISPLAY", context.temp_allocator)
-	if wayland != "" {
-		if text, ok := clipboard_from_argv([]string{"wl-paste"}, allocator); ok && text != "" {
-			return text
-		} else if ok {
-			delete(text)
-		}
-	}
-	display := os.get_env("DISPLAY", context.temp_allocator)
-	if display != "" {
-		if text, ok := clipboard_from_argv([]string{"xclip", "-selection", "clipboard", "-o"}, allocator); ok && text != "" {
-			return text
-		} else if ok {
-			delete(text)
-		}
-		if text, ok := clipboard_from_argv([]string{"xsel", "--clipboard", "--output"}, allocator); ok && text != "" {
-			return text
-		} else if ok {
-			delete(text)
-		}
+	if text, ok := platform_clipboard_fallback(allocator); ok {
+		return text
 	}
 	return ""
 }
@@ -233,30 +208,21 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	if app.cfg.size == {0, 0} {
 		app.cfg.size = {1280, 800}
 	}
-	_ = sdl.SetHint(sdl.HINT_VIDEO_WAYLAND_SCALE_TO_DISPLAY, "0")
 	if cfg.app_id != "" {
 		_ = sdl.SetHint(sdl.HINT_APP_ID, strings.clone_to_cstring(cfg.app_id, context.temp_allocator))
 	}
-	// Headless runs (tests, agents, site capture) are sandboxed by default, the way headless
-	// browsers use SwiftShader: SDL's offscreen video driver (no compositor connection at all)
-	// and Mesa's llvmpipe software rasterizer (no GPU memory). A headless run can never
-	// starve or crash the user's desktop. VUI_HIDDEN_GPU=1 opts back into the real GPU.
-	app.sandboxed = cfg.hidden && os.get_env("VUI_HIDDEN_GPU", context.temp_allocator) != "1"
-	if app.sandboxed {
-		_ = sdl.SetHint(sdl.HINT_VIDEO_DRIVER, "offscreen")
-		_ = os.set_env("LIBGL_ALWAYS_SOFTWARE", "1")
-		_ = os.set_env("GALLIUM_DRIVER", "llvmpipe")
-		_ = os.set_env("MESA_LOADER_DRIVER_OVERRIDE", "swrast")
-	}
+	platform_prepare_init(app)
 	if !sdl.Init({.VIDEO, .EVENTS}) {
 		fmt.eprintln("vui: SDL_Init failed:", sdl.GetError())
 		return false
 	}
-	// Prefer the SDL GPU API (Vulkan); fall back to OpenGL 3.3. VUI_BACKEND=gl forces GL.
-	want_gl := os.get_env("VUI_BACKEND", context.temp_allocator) == "gl" || app.sandboxed
+	// Prefer the SDL GPU API (Metal on macOS, Vulkan on Linux); fall back to OpenGL 3.3.
+	// VUI_BACKEND=gl forces GL; VUI_BACKEND=metal or vulkan forces that GPU driver.
+	backend_env := strings.to_lower(os.get_env("VUI_BACKEND", context.temp_allocator), context.temp_allocator)
+	want_gl := backend_env == "gl" || app.sandboxed
 	dev: ^sdl.GPUDevice
 	if !want_gl {
-		dev = sdl.CreateGPUDevice({.SPIRV}, false, nil)
+		dev = platform_create_gpu_device(backend_env)
 	}
 	app.backend = dev != nil ? .GPU : .GL
 	title := strings.clone_to_cstring(cfg.title != "" ? cfg.title : "vinland-ui", context.temp_allocator)
@@ -272,6 +238,7 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 			_ = sdl.GL_SetAttribute(.CONTEXT_MAJOR_VERSION, 3)
 			_ = sdl.GL_SetAttribute(.CONTEXT_MINOR_VERSION, 3)
 			_ = sdl.GL_SetAttribute(.CONTEXT_PROFILE_MASK, i32(transmute(u32)sdl.GL_CONTEXT_PROFILE_CORE))
+			platform_gl_set_attributes()
 			_ = sdl.GL_SetAttribute(.DOUBLEBUFFER, 1)
 			_ = sdl.GL_SetAttribute(.DEPTH_SIZE, 0)
 			flags += {.OPENGL}
@@ -282,8 +249,12 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 			return false
 		}
 		if app.backend == .GPU {
-			if sdl.ClaimWindowForGPUDevice(dev, app.window) && gpu_init(&app.gpu, dev, app.window, !cfg.hidden) {
+			claimed := sdl.ClaimWindowForGPUDevice(dev, app.window)
+			if claimed && gpu_init(&app.gpu, dev, app.window, !cfg.hidden) {
 				break
+			}
+			if claimed {
+				sdl.ReleaseWindowFromGPUDevice(dev, app.window)
 			}
 			fmt.eprintln("vui: GPU backend unavailable, falling back to OpenGL:", sdl.GetError())
 			sdl.DestroyWindow(app.window)
@@ -299,14 +270,10 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 		}
 		_ = sdl.GL_MakeCurrent(app.window, app.gl_ctx)
 		gl.load_up_to(3, 3, sdl.gl_set_proc_address)
-		if app.sandboxed {
-			// refuse to run headless on hardware: that is how compositors get starved
-			r := string(gl.GetString(gl.RENDERER))
-			app.gl_renderer = strings.clone(r)
-			if !is_software_renderer(r) {
-				fmt.eprintfln("vui: headless run refused: GL renderer %q is hardware, expected llvmpipe/softpipe. Install mesa, or set VUI_HIDDEN_GPU=1 to use the GPU deliberately.", r)
-				return false
-			}
+		r := string(gl.GetString(gl.RENDERER))
+		app.gl_renderer = strings.clone(r)
+		if !platform_validate_gl_renderer(app, r) {
+			return false
 		}
 		_ = sdl.GL_SetSwapInterval(app.cfg.hidden ? 0 : 1)
 		if !renderer_init(&app.renderer) {
@@ -356,6 +323,7 @@ shutdown :: proc(app: ^App) {
 	delete(app.synthetic)
 	delete(app.screenshot_requests)
 	delete(app.wait_requests)
+	delete(app.gl_renderer)
 	if app.backend == .GL {
 		_ = sdl.GL_DestroyContext(app.gl_ctx)
 	}

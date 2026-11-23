@@ -46,19 +46,19 @@ first in the renderer and hands the second to a vocabulary people already know.
   about 2 ms.
 - **Agent-drivable.** Apps expose a local control port; `vui-ctl` clicks, types, scrolls, resizes,
   toggles dark mode, dumps the element tree and takes screenshots. An agent skill ships in
-  [`skills/vinland-ui`](skills/vinland-ui/SKILL.md).
+  [`skills/vinland-ui`](skills/vinland-ui/SKILL.md) (symlinked at `.agents/skills/vinland-ui`).
 
 Inspired by Jetpack Compose (UI in the host language), Flutter (own the renderer), Quickshell
 (small, animated desktop UI) and Tailwind CSS (the vocabulary).
 
 ## Quick start
 
-Requirements: Odin `dev-2026-11` or newer, SDL3 development files, a Vulkan driver (or OpenGL 3.3).
+Requirements: Odin `dev-2026-11` or newer, SDL3 development files, Metal (macOS) or Vulkan (Linux), or OpenGL 3.3 (automatic fallback).
 
 ```bash
 git clone https://github.com/WilsonNet/vinland-ui
 cd vinland-ui
-./build.sh            # build/showroom, build/vui-ctl, build/hello
+./build.sh            # build/showroom, build/vui-ctl, build/vui-test, build/hello
 ./build/showroom      # the documentation app
 ```
 
@@ -133,8 +133,9 @@ Input from `vui-ctl` is injected inside the app: pointer commands never warp or
 click the real OS pointer, never raise the window and never request focus. For a
 visible window that must not disturb the user (gaming, calls, another editor),
 start the app with `VUI_BACKGROUND=1`: the window is mapped without activation
-and with SDL's non-focusable hint. X11 window managers honor that hint; Wayland
-has no togglable focus flag, so the compositor still decides — use a no-focus
+and with SDL's non-focusable hint (and `SDL_MAC_BACKGROUND_APP=1` on macOS so no
+Dock icon or focus steal occurs). X11 window managers and macOS honor those hints;
+Wayland has no togglable focus flag, so the compositor still decides — use a no-focus
 window rule there, or `VUI_HIDDEN=1`, which is the only hard
 no-desktop-contact guarantee. `vui-ctl info` reports `background`, `focusable`,
 `keyboard_focus`, `mouse_inside`, `pointer_synthetic` and `video_driver` so a
@@ -172,14 +173,16 @@ leaves the OS pointer untouched, and `foreground`/`background` round-trip. The
 script unsets `WAYLAND_DISPLAY` and forces `SDL_VIDEO_DRIVER=x11`; without that,
 SDL would prefer the user's live Wayland compositor even inside Xvfb.
 
-**Headless runs cannot touch your desktop.** `VUI_HIDDEN=1` (used by `vui-test`, agents and the
+**Headless runs cannot touch your desktop.** On Linux, `VUI_HIDDEN=1` (used by `vui-test`, agents and the
 site generator) runs on SDL's offscreen video driver with Mesa's llvmpipe software rasterizer: no
 compositor connection, no GPU memory, no `/dev/dri` handles, the same isolation headless browsers
 get from SwiftShader. The app refuses to start headless on a hardware renderer, and `vui-test`
-refuses to drive an app that is not sandboxed. The runner also owns `VUI_HIDDEN`,
+refuses to drive an app that is not sandboxed. On macOS, where Mesa offscreen GL is unavailable,
+`VUI_HIDDEN=1` sets `SDL_MAC_BACKGROUND_APP=1` with a hidden Cocoa window rendering offscreen via
+Metal (or OpenGL fallback) without mapping a window or Dock icon. The runner also owns `VUI_HIDDEN`,
 `SDL_VIDEO_DRIVER` and the display variables: a suite's `env` cannot override them, so a test
 cannot accidentally map a window on the live desktop. `VUI_HIDDEN_GPU=1` opts into the GPU
-deliberately.
+deliberately on Linux.
 Visible windows keep at most one frame in flight on the GPU, and occluded windows are paced.
 
 Why this matters: on APUs with a small VRAM carveout (e.g. Radeon 680M, 2 GB), an app that queues
@@ -200,7 +203,7 @@ Measured (tracker, continuous rendering, 1770×1140): GPU 1.1 ms/frame with flat
 | Path | |
 |---|---|
 | `vui/` | core: tree builder, utility parser, tokens, layout, text, paint |
-| `vui/app/` | SDL3 host (Vulkan via SDL GPU, OpenGL 3.3 fallback) and control server |
+| `vui/app/` | SDL3 host (Metal on macOS and Vulkan on Linux via SDL GPU, OpenGL 3.3 fallback) and control server |
 | `vui/fonts/` | embedded Inter, IBM Plex Mono, Source Serif 4 (OFL) |
 | `vui/icons/` | Heroicons (MIT) |
 | `tools/vui-ctl/` | control CLI |
@@ -216,11 +219,10 @@ Measured (tracker, continuous rendering, 1770×1140): GPU 1.1 ms/frame with flat
 
 ## Status
 
-Early (v0.1). Linux is the tested platform; the code avoids platform specifics (SDL3, GL 3.3) but
-macOS and Windows are untested. Not yet rendered: blur and backdrop filters, blend modes, masks,
-3D transforms, multi-font fallback for missing glyphs, complex-script shaping (Latin text with
-kerning is supported). Unsupported utilities parse without errors and are listed by
-`vui-ctl info` when unknown.
+Early (v0.1). Linux (Vulkan / OpenGL 3.3) and macOS (Metal / OpenGL 3.3) are tested and supported;
+Windows is untested. Not yet rendered: blur and backdrop filters, blend modes, masks, 3D transforms,
+multi-font fallback for missing glyphs, complex-script shaping (Latin text with kerning is supported).
+Unsupported utilities parse without errors and are listed by `vui-ctl info` when unknown.
 
 ## License
 

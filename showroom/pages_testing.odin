@@ -77,9 +77,9 @@ env NOTES_CONFIG={test}/config.toml`, "sh")
 	para("The runner owns the `VUI_*` environment. It drops any `VUI_*` variables it inherits and sets `VUI_HIDDEN=1`, the port, size and scale itself, so a stray setting in your shell cannot change how tests run.")
 
 	h2("The sandbox")
-	para("Tests are safe to run while you work. A headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. Headless browsers get the same isolation from SwiftShader. A runaway test can use CPU time, but it cannot freeze or crash the desktop.")
-	para("The guarantee is checked at two points. A headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` from `info` and refuses to drive an app that reports false.")
-	para("`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU for headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above.")
+	para("Tests are safe to run while you work. On Linux, a headless app (`VUI_HIDDEN=1`) uses SDL's offscreen video driver and Mesa's llvmpipe software rasterizer: it never connects to the compositor, allocates no GPU memory and opens no `/dev/dri` handles. On macOS, where Mesa offscreen GL is unavailable, `VUI_HIDDEN=1` sets `SDL_MAC_BACKGROUND_APP=1` with a hidden Cocoa window rendering offscreen via Metal (or OpenGL fallback) without mapping a window or Dock icon.")
+	para("The guarantee is checked at two points. On Linux, a headless app refuses to start when the GL renderer it gets is a hardware one, and `vui-test` reads `sandboxed` (or `hidden` on macOS) from `info` and refuses to drive an app that reports false.")
+	para("`VUI_HIDDEN_GPU=1`, or `vui-test --headed-gpu`, opts into the real GPU on Linux headless runs. Use it only to measure GPU frame times deliberately; it gives up the isolation above.")
 
 	h2("Continuous integration")
 	para("CI machines need SDL3 and Mesa's llvmpipe driver, and nothing else: no display server, no GPU, no virtual framebuffer. Build, run the suites, and keep the output directory as an artifact so failures can be inspected from the report.")
