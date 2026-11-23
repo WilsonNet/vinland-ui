@@ -9,6 +9,7 @@ import "core:strings"
 import "core:time"
 import gl "vendor:OpenGL"
 import sdl "vendor:sdl3"
+import stbi "vendor:stb/image"
 import vui ".."
 
 // SDL3 + OpenGL host for vui. Owns the window, translates input, renders and runs the
@@ -32,6 +33,7 @@ Config :: struct {
 	control_port: int, // 0 = disabled
 	vsync:        bool,
 	app_id:       string, // Wayland app id / X11 class (window rules); "" = SDL default
+	icon_png:     []u8, // optional encoded PNG bytes for the window / macOS Dock & Cmd+Tab icon
 }
 
 Backend :: enum u8 {
@@ -144,6 +146,28 @@ clipboard_read :: proc(allocator: mem.Allocator) -> string {
 		return text
 	}
 	return ""
+}
+
+@(private)
+set_window_icon_png :: proc(window: ^sdl.Window, png_bytes: []u8) {
+	if window == nil || len(png_bytes) == 0 {
+		return
+	}
+	w, h, comp: i32
+	pixels := stbi.load_from_memory(raw_data(png_bytes), i32(len(png_bytes)), &w, &h, &comp, 4)
+	if pixels == nil || w <= 0 || h <= 0 {
+		if pixels != nil {
+			stbi.image_free(pixels)
+		}
+		return
+	}
+	defer stbi.image_free(pixels)
+	surf := sdl.CreateSurfaceFrom(w, h, .RGBA32, pixels, w * 4)
+	if surf == nil {
+		return
+	}
+	defer sdl.DestroySurface(surf)
+	_ = sdl.SetWindowIcon(window, surf)
 }
 
 @(private)
@@ -287,6 +311,9 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	}
 	if cfg.min_size != {0, 0} {
 		_ = sdl.SetWindowMinimumSize(app.window, cfg.min_size.x, cfg.min_size.y)
+	}
+	if len(cfg.icon_png) > 0 && !app.cfg.hidden {
+		set_window_icon_png(app.window, cfg.icon_png)
 	}
 	if os.get_env("VUI_QUIET", context.temp_allocator) == "" {
 		fmt.eprintfln("vui: renderer %v%s%s", app.backend, app.backend == .GPU ? fmt.tprintf(" (%s)", app.gpu.driver) : "", app.sandboxed ? fmt.tprintf(" sandboxed: %s", app.gl_renderer) : "")
