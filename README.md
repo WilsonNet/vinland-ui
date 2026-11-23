@@ -220,9 +220,11 @@ Measured (tracker, continuous rendering, 1770×1140): GPU 1.1 ms/frame with flat
 ## Status
 
 Early (v0.1). Linux (Vulkan / OpenGL 3.3) and macOS (Metal / OpenGL 3.3) are tested and supported;
-Windows is untested. Not yet rendered: blur and backdrop filters, blend modes, masks, 3D transforms,
-multi-font fallback for missing glyphs, complex-script shaping (Latin text with kerning is supported).
-Unsupported utilities parse without errors and are listed by `vui-ctl info` when unknown.
+Windows is untested — see [PLATFORMS.md](PLATFORMS.md) for the backend matrix and cross-OS
+verification checklist. Not yet rendered: blur and backdrop filters, blend modes, masks, 3D
+transforms, multi-font fallback for missing glyphs, complex-script shaping (Latin text with kerning
+is supported). Unsupported utilities parse without errors and are listed by `vui-ctl info` when
+unknown.
 
 ## License
 

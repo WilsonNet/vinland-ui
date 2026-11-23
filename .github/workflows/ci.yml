@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "website/**"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Odin and SDL3
+        run: brew install odin sdl3
+      - name: Build and run unit tests
+        run: |
+          ./build.sh
+          odin build examples/textcompare -out:build/textcompare -debug
+      - name: Run e2e suite (Metal)
+        run: ./build/vui-test --out e2e-results tests/e2e/showroom.vt
+      - name: Upload e2e report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results-macos
+          path: e2e-results
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dri libegl1 libglx-mesa0 libx11-dev libxext-dev cmake ninja-build curl jq
+          if apt-cache show libsdl3-dev >/dev/null 2>&1; then
+            sudo apt-get install -y libsdl3-dev
+          else
+            git clone --depth 1 --branch release-3.4.20 https://github.com/libsdl-org/SDL.git /tmp/sdl3
+            cmake -S /tmp/sdl3 -B /tmp/sdl3/build -G Ninja -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
+            cmake --build /tmp/sdl3/build
+            sudo cmake --install /tmp/sdl3/build
+            sudo ldconfig
+            rm -rf /tmp/sdl3
+          fi
+      - name: Install Odin
+        run: |
+          url=$(curl -fsSL https://api.github.com/repos/odin-lang/Odin/releases/latest \
+            | jq -r '.assets[] | select(.name | test("^odin-linux-amd64-.*\\.tar\\.gz$")) | .browser_download_url' | head -n1)
+          mkdir -p /tmp/odin-dl
+          curl -fsSL "$url" | tar -xz -C /tmp/odin-dl
+          odin_bin=$(find /tmp/odin-dl -name odin -type f -perm -111 | head -n1)
+          sudo mv "$(dirname "$odin_bin")" /opt/odin
+          echo "/opt/odin" >> "$GITHUB_PATH"
+          rm -rf /tmp/odin-dl
+      - name: Build and run unit tests
+        run: |
+          ./build.sh
+          odin build examples/textcompare -out:build/textcompare -debug
+      - name: Run e2e suite (headless llvmpipe)
+        run: ./build/vui-test --out e2e-results tests/e2e/showroom.vt
+      - name: Upload e2e report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results-linux
+          path: e2e-results
