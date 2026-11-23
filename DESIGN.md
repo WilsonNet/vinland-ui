@@ -24,7 +24,7 @@ Key traits:
 - Hatched gutters (diagonal stripes at 5–8% ink) frame the reading column, the one ornament.
 - Code is first-class: IBM Plex Mono, highlighted Odin, same panel in both themes.
 
-## 2. Color
+## 2. Colors
 
 Semantic tokens (light / dark), all built on the Tailwind v4 palette:
 
@@ -53,7 +53,7 @@ Rules:
 - **Inter** for all UI and prose (400 body, 500 nav, 600 headings).
 - **IBM Plex Mono** for code, class names, keyboard hints and reference tables.
 - Scale: page title `text-4xl font-semibold tracking-tight`, section `text-xl font-semibold`,
-  body `text-base/7`, sidebar `text-sm`, group labels `text-xs` mono uppercase with wide tracking.
+  body `text-base` (`leading-7`), sidebar `text-sm`, group labels `text-xs` mono uppercase with wide tracking.
 - Text is rasterized at exact physical size with subpixel positioning; never scale text with
   transforms.
 

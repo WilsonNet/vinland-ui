@@ -5,6 +5,7 @@ build/
 .impeccable/questions/
 .impeccable/mocks/
 .impeccable/review/
+.impeccable/config.local.json
 *.log
 !website/public/*.png
 website/node_modules/
