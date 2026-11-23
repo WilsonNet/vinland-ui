@@ -62,6 +62,7 @@ jobs:
           curl -fsSL "$url" | tar -xz -C /tmp/odin-dl
           odin_bin=$(find /tmp/odin-dl -name odin -type f -perm -111 | head -n1)
           sudo mv "$(dirname "$odin_bin")" /opt/odin
+          sudo bash -c 'cd /opt/odin/vendor/stb/src && ./build_stb.sh'
           echo "/opt/odin" >> "$GITHUB_PATH"
           rm -rf /tmp/odin-dl
       - name: Build and run unit tests
