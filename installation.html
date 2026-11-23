@@ -46,7 +46,9 @@
     <article>
       <h1>Installation</h1>
       <p class="lede">Add vinland-ui to an Odin project and open your first window.</p>
-      <h2 id="requirements">Requirements</h2><p>Odin (dev-2026-11 or newer), SDL3 development files and an OpenGL 3.3 driver. Fonts and icons are embedded, so there is nothing else to install.</p><figure class="fig"><pre class="code"><code><span class="t-o"># </span><span class="t-t">Arch</span>
+      <h2 id="requirements">Requirements</h2><p>Odin (dev-2026-11 or newer), SDL3 development files, and Metal (macOS) or Vulkan (Linux) with automatic OpenGL 3.3 fallback. Fonts and icons are embedded, so there is nothing else to install.</p><figure class="fig"><pre class="code"><code><span class="t-o"># </span><span class="t-i">macOS</span>
+<span class="t-i">brew</span><span class="t-o"> </span><span class="t-i">install</span><span class="t-o"> </span><span class="t-i">odin</span><span class="t-o"> </span><span class="t-i">sdl3</span>
+<span class="t-o"># </span><span class="t-t">Arch</span>
 <span class="t-i">sudo</span><span class="t-o"> </span><span class="t-i">pacman</span><span class="t-o"> -</span><span class="t-t">S</span><span class="t-o"> </span><span class="t-i">sdl3</span>
 <span class="t-o"># </span><span class="t-t">Debian</span><span class="t-o"> / </span><span class="t-t">Ubuntu</span>
 <span class="t-i">sudo</span><span class="t-o"> </span><span class="t-i">apt</span><span class="t-o"> </span><span class="t-i">install</span><span class="t-o"> </span><span class="t-i">libsdl3</span><span class="t-o">-</span><span class="t-i">dev</span></code></pre></figure><h2 id="add-the-packages">Add the packages</h2><p>Clone the repository next to your project (or as a git submodule) and import the packages by path, or register a collection with <code>-collection:vinland=path/to/vinland-ui</code>.</p><figure class="fig"><pre class="code"><code><span class="t-i">git</span><span class="t-o"> </span><span class="t-i">clone</span><span class="t-o"> </span><span class="t-i">https</span><span class="t-o">:</span><span class="t-c">//github.com/WilsonNet/vinland-ui</span>
@@ -72,7 +74,7 @@
 <span class="t-o">        }</span>
 <span class="t-o">        </span><span class="t-p">app</span><span class="t-o">.</span><span class="t-f">end_frame</span><span class="t-o">(&amp;</span><span class="t-i">a</span><span class="t-o">)</span>
 <span class="t-o">    }</span>
-<span class="t-o">}</span></code></pre></figure><h2 id="bring-your-own-renderer">Bring your own renderer</h2><p>Games that already own a render loop (raylib, Vulkan, a custom engine) can skip <code>vui/app</code>: call <code>ui.begin_frame</code> with your input, build, call <code>ui.end_frame</code> and draw the returned <code>Draw_List</code>. Each command is one instanced quad; the GLSL in <code>vui/app/gl.odin</code> is the reference implementation of the uber-shader.</p>
+<span class="t-o">}</span></code></pre></figure><h2 id="bring-your-own-renderer">Bring your own renderer</h2><p>Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip <code>vui/app</code>: call <code>ui.begin_frame</code> with your input, build, call <code>ui.end_frame</code> and draw the returned <code>Draw_List</code>. Each command is one instanced quad; <code>vui/app/shaders/</code> (GLSL and MSL) and <code>vui/app/gl.odin</code> are the reference implementations of the uber-shader.</p>
       <nav class="pager"><a href="introduction.html">← Introduction</a><a href="agents.html">Agent skill &amp; CLI →</a></nav>
     </article>
   </main>
