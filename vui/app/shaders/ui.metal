@@ -50,6 +50,8 @@ struct FragmentUniforms {
 	float2   u_atlas_size;
 	float    u_text_gamma;
 	float    u_text_contrast;
+	float4   u_grade;
+	float4   u_grade_tint;
 };
 
 vertex FragIn vs_main(
@@ -103,6 +105,60 @@ static inline float sd_rrect(float2 p, float2 hs, float4 r) {
 	rad = min(rad, min(hs.x, hs.y));
 	float2 q = abs(p) - hs + rad;
 	return min(max(q.x, q.y), 0.0f) + length(max(q, 0.0f)) - rad;
+}
+
+// Ornate corner shapes (keep in sync with ui_fs_body.glsl sd_shape).
+static inline float sd_shape(float2 p, float2 hs, float4 r, int code) {
+	if (code == 0) return sd_rrect(p, hs, r);
+	int ci = p.x < 0.0f ? (p.y < 0.0f ? 0 : 3) : (p.y < 0.0f ? 1 : 2);
+	int shape = (code >> (3 * ci)) & 7;
+	float rad = ci == 0 ? r.x : (ci == 1 ? r.y : (ci == 2 ? r.z : r.w));
+	if (shape == 0) return sd_rrect(p, hs, r);
+	float2 q = abs(p) - hs;
+	float box = min(max(q.x, q.y), 0.0f) + length(max(q, 0.0f));
+	if (shape == 4) {
+		float h = clamp(rad, 1e-3f, 2.0f * hs.y);
+		float R = (h * h + hs.x * hs.x) / (2.0f * hs.x);
+		float spring = hs.y - h;
+		float2 a = abs(p);
+		if (a.y <= spring) return box;
+		return max(box, length(a - float2(hs.x - R, spring)) - R);
+	}
+	rad = min(rad, min(hs.x, hs.y));
+	if (rad <= 0.0f) return box;
+	if (shape == 1) return max(box, (q.x + q.y + rad) * 0.70710678f);
+	if (shape == 2) return max(box, rad - length(q));
+	return max(box, min(q.x + rad, q.y + rad));
+}
+
+// Colour grade (keep in sync with ui_fs_body.glsl grade()).
+static inline float g_hash(float2 p) {
+	p = fract(p * float2(123.34f, 456.21f));
+	p += dot(p, p + 45.32f);
+	return fract(p.x * p.y);
+}
+static inline float g_noise(float2 p) {
+	float2 i = floor(p);
+	float2 f = fract(p);
+	f = f * f * (3.0f - 2.0f * f);
+	float a = g_hash(i), b = g_hash(i + float2(1.0f, 0.0f));
+	float c = g_hash(i + float2(0.0f, 1.0f)), d = g_hash(i + float2(1.0f, 1.0f));
+	return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+static inline float4 grade(float4 col, int kind, float2 world, constant FragmentUniforms& fu) {
+	if (fu.u_grade_tint.w <= 0.0f || col.a <= 0.0f) return col;
+	float3 rgb = col.rgb / col.a;
+	float l = dot(rgb, float3(0.2126f, 0.7152f, 0.0722f));
+	rgb = mix(float3(l), rgb, fu.u_grade.x);
+	rgb = (rgb - 0.5f) * fu.u_grade.y + 0.5f;
+	rgb *= fu.u_grade_tint.rgb;
+	if (kind != 3) {
+		float2 q = world / fu.u_grade_tint.w;
+		float m = g_noise(q) * 0.6f + g_noise(q * 2.7f + 17.0f) * 0.4f;
+		float n = g_hash(floor(world)) - 0.5f;
+		rgb *= 1.0f + fu.u_grade.w * (m - 0.5f) + fu.u_grade.z * n;
+	}
+	return float4(clamp(rgb, 0.0f, 1.0f) * col.a, col.a);
 }
 
 static inline float4 pm(float4 c) {
@@ -228,14 +284,21 @@ fragment float4 fs_main(
 	float k = max(length(float2(dfdx(in.v_local.x), dfdy(in.v_local.x))), 1e-4f);
 	float4 col = float4(0.0f);
 
+	int shape = int(in.f_extra.y);
 	if (kind == 0) {
-		float d = sd_rrect(p, hs, in.f_radii) / k;
+		float d = sd_shape(p, hs, in.f_radii, shape) / k;
 		float outer = clamp(0.5f - d, 0.0f, 1.0f);
 		if (outer <= 0.0f) {
 			discard_fragment();
 			return float4(0.0f);
 		}
 		float4 fill = fill_color(in, p, size);
+		if (in.f_extra.z != 0.0f) {
+			float2 t = in.f_extra.z > 0.0f ? (in.v_local + in.f_extra.ww) / in.f_extra.z : in.v_local / max(size, float2(1e-4f));
+			float2 tc = in.f_uv.xy + fract(t) * in.f_uv.zw;
+			float4 sm = u_image.sample(s_image, tc, gradient2d(dfdx(t) * in.f_uv.zw, dfdy(t) * in.f_uv.zw));
+			fill = fill * float4(sm.rgb * sm.a, sm.a);
+		}
 		col = fill * outer;
 		float4 bw = in.f_bw;
 		if (bw.x + bw.y + bw.z + bw.w > 0.0f) {
@@ -244,7 +307,7 @@ fragment float4 fs_main(
 			float2 ihs = max((imax - imin) * 0.5f, float2(0.0f));
 			float2 ic = (imin + imax) * 0.5f;
 			float4 ir = max(in.f_radii - float4(max(bw.w, bw.x), max(bw.y, bw.x), max(bw.y, bw.z), max(bw.w, bw.z)), 0.0f);
-			float di = sd_rrect(in.v_local - ic, ihs, ir) / k;
+			float di = shape == 0 ? sd_rrect(in.v_local - ic, ihs, ir) / k : d + max(max(bw.x, bw.y), max(bw.z, bw.w)) / k;
 			float inner = (ihs.x <= 0.0f || ihs.y <= 0.0f) ? 0.0f : clamp(0.5f - di, 0.0f, 1.0f);
 			float bcov = clamp(outer - inner, 0.0f, 1.0f);
 			int style = int(in.f_params.z);
@@ -256,14 +319,14 @@ fragment float4 fs_main(
 		float sigma = in.f_params.y;
 		float a;
 		if (sigma < 0.5f) {
-			a = clamp(0.5f - sd_rrect(p, hs, in.f_radii) / k, 0.0f, 1.0f);
+			a = clamp(0.5f - sd_shape(p, hs, in.f_radii, shape) / k, 0.0f, 1.0f);
 		} else {
 			float corner = p.x < 0.0f ? (p.y < 0.0f ? in.f_radii.x : in.f_radii.w) : (p.y < 0.0f ? in.f_radii.y : in.f_radii.z);
 			a = box_shadow(float2(0.0f), size, in.v_local, sigma, corner);
 		}
 		col = pm(in.f_fill0) * a;
 	} else if (kind == 2) {
-		float outer = clamp(0.5f - sd_rrect(p, hs, in.f_radii) / k, 0.0f, 1.0f);
+		float outer = clamp(0.5f - sd_shape(p, hs, in.f_radii, shape) / k, 0.0f, 1.0f);
 		if (outer <= 0.0f) {
 			discard_fragment();
 			return float4(0.0f);
@@ -274,6 +337,9 @@ fragment float4 fs_main(
 		float h;
 		if (hsz.x <= 0.0f || hsz.y <= 0.0f) {
 			h = 0.0f;
+		} else if (shape != 0) {
+			float dh = sd_shape(in.v_local - (hole.xy + hsz * 0.5f), hsz * 0.5f, in.f_fill2, shape);
+			h = sigma < 0.5f ? clamp(0.5f - dh / k, 0.0f, 1.0f) : clamp(0.5f - dh / (2.5f * sigma), 0.0f, 1.0f);
 		} else if (sigma < 0.5f) {
 			h = clamp(0.5f - sd_rrect(in.v_local - (hole.xy + hsz * 0.5f), hsz * 0.5f, in.f_fill2) / k, 0.0f, 1.0f);
 		} else {
@@ -338,5 +404,5 @@ fragment float4 fs_main(
 		c = clamp(c, 0.0f, 1.0f);
 		col = float4(c.rgb * c.a, c.a);
 	}
-	return col;
+	return grade(col, kind, in.v_world, fu);
 }

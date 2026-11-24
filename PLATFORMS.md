@@ -4,6 +4,9 @@
 
 <!-- Add a one-line bullet when editing code for the other OS that cannot be run locally; delete it once verified there. -->
 
+- [ ] **Linux** (from macOS, game UI work): verify `corner-*` shapes and `bg-tex-*` textures on Vulkan (`ui.frag.spv` rebuilt) via `./build/showroom --page=game-ui`, and that `vui/gl/loader_linux.odin` (`glXGetProcAddressARB`) loads GL for `vui/gl` / `vui/raylib` hosts.
+- [ ] **Linux** (from macOS): `Frag_Uniforms` gained `grade` / `grade_tint` (std140 vec4s after `u_text_contrast`); verify Vulkan renders the showroom unchanged (grade off) and a host with `ctx.grade = GRADE_PAINTED` shows the grain/mottle grade.
+- [ ] **Web** (from macOS): verify the Game UI page (`game-ui`) in the WebGL2 build; `textureGrad` + corner shapes come from the shared GLSL body.
 - [ ] **Linux** (from macOS commit `85038f0`): Run `./build.sh`, `./build/vui-test tests/e2e/showroom.vt`, and `scripts/check-background.sh` to verify the `platform_linux.odin` / `gpu_vulkan.odin` split and `tools/vui-test/platform_linux.odin`.
 
 ## Platform & Backend Matrix
@@ -29,6 +32,7 @@ Override GPU/backend at runtime with `VUI_BACKEND=metal|vulkan|gl` (or `VUI_HIDD
 | Vulkan GPU shaders | [vui/app/gpu_vulkan.odin](vui/app/gpu_vulkan.odin), `vui/app/shaders/ui.{vert,frag}` + `.spv` |
 | Shared GLSL bodies | `vui/app/shaders/ui_vs_body.glsl`, `vui/app/shaders/ui_fs_body.glsl` |
 | WebGL2 / WASM host | [vui/web/web.odin](vui/web/web.odin), [showroom/web_main.odin](showroom/web_main.odin) |
+| Embedded GL renderer (game hosts) | [vui/gl/gl.odin](vui/gl/gl.odin) + `loader_{darwin,linux,other}.odin`, [vui/raylib/raylib.odin](vui/raylib/raylib.odin) |
 
 ## Quick Verification Commands
 

@@ -24,6 +24,8 @@ layout(set=3, binding=0, std140) uniform FragmentUniforms {
 	vec2 u_atlas_size;
 	float u_text_gamma;
 	float u_text_contrast;
+	vec4 u_grade;
+	vec4 u_grade_tint;
 };
 layout(location=0) out vec4 o_color;
 #include "ui_fs_body.glsl"

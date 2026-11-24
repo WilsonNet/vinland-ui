@@ -610,6 +610,15 @@ paint_node :: proc(ctx: ^Context, ni: i32, parent_origin: [2]f32, pps: ^Paint_St
 }
 
 @(private)
+corner_shape_code :: proc "contextless" (cs: [4]Corner_Shape) -> f32 {
+	code: u32
+	for i in 0 ..< 4 {
+		code |= u32(cs[i]) << u32(3 * i)
+	}
+	return f32(code)
+}
+
+@(private)
 line_style_code :: proc "contextless" (l: Line_Style) -> int {
 	#partial switch l {
 	case .Dashed:
@@ -687,7 +696,7 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 			}
 		}
 	}
-	draw_shadows :: proc(ctx: ^Context, ps: ^Paint_State, r: Rect, radius: [4]f32, set: Shadow_Set, alpha: f32) {
+	draw_shadows :: proc(ctx: ^Context, ps: ^Paint_State, r: Rect, radius: [4]f32, set: Shadow_Set, alpha: f32, shape_code: f32 = 0) {
 		for i := set.count - 1; i >= 0; i -= 1 {
 			sh := set.items[i]
 			if sh.inset || sh.color.a <= 0 {
@@ -706,13 +715,14 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 			c.radii = scaled_radii(ctx, rr, sr.w, sr.h)
 			c.fill0 = col4(sh.color, ps.opacity * alpha)
 			c.params[1] = sh.blur / 2 * ctx.scale
+			c.extra[1] = shape_code
 			emit(ctx, c)
 		}
 	}
 	if prev.count > 0 {
-		draw_shadows(ctx, ps, r, radius, prev, 1 - shadow_mix)
+		draw_shadows(ctx, ps, r, radius, prev, 1 - shadow_mix, corner_shape_code(s.corner_shape))
 	}
-	draw_shadows(ctx, ps, r, radius, shadows, shadow_mix)
+	draw_shadows(ctx, ps, r, radius, shadows, shadow_mix, corner_shape_code(s.corner_shape))
 
 	// drop-shadow filter approximated as box shadow on boxes
 	if s.drop_shadows.count > 0 && (bg.a > 0 || n.kind == .Box) {
@@ -740,6 +750,7 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 			v = max(0, v + ow + rw)
 		}
 		c.radii = scaled_radii(ctx, rads, rr.w, rr.h)
+		c.extra[1] = corner_shape_code(s.corner_shape) // rings follow ornate corners too
 		bw := snap_w(ctx, rw)
 		c.border_w = {bw, bw, bw, bw}
 		c.border_c = col4(ring_c, ps.opacity)
@@ -752,10 +763,26 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 	// background + border
 	border_any := s.border_w != {0, 0, 0, 0} && s.border_style != .None && s.border_style != .Hidden
 	has_grad := s.gradient.kind != .None
-	if bg.a > 0 || border_any || has_grad {
+	tex := s.bg_texture
+	if tex != 0 && (int(tex) > len(ctx.images) || ctx.images[tex - 1].freed) {
+		tex = 0
+	}
+	shape_code := corner_shape_code(s.corner_shape)
+	if bg.a > 0 || border_any || has_grad || tex != 0 {
 		c := base_cmd(ctx, ps, r, .RRect)
 		c.radii = rad
 		c.fill0 = col4(bg, op)
+		c.extra[1] = shape_code
+		if tex != 0 {
+			if bg.a <= 0 && !has_grad {
+				c.fill0 = col4({1, 1, 1, 1}, op)
+			}
+			c.uv = {0, 0, 1, 1}
+			if ctx.images[tex - 1].flip_y {
+				c.uv = {0, 1, 1, -1}
+			}
+			c.extra[2] = s.bg_tile > 0 ? s.bg_tile * ctx.scale : -1
+		}
 		if has_grad {
 			g := &s.gradient
 			if g.kind == .Stripes {
@@ -777,6 +804,7 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 					cb := base_cmd(ctx, ps, r, .RRect)
 					cb.radii = rad
 					cb.fill0 = col4(bg, op)
+					cb.extra[1] = shape_code
 					emit(ctx, cb)
 				}
 			}
@@ -803,13 +831,13 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 					bc = track_color(ctx, &st.tr_border, bc, colors_on, s)
 				}
 				c.border_c = col4(bc, op)
-				emit(ctx, c)
+				emit(ctx, c, tex)
 			} else {
 				// fill first, then each side separately
 				bw := c.border_w
 				c.border_w = {}
 				if bg.a > 0 || has_grad {
-					emit(ctx, c)
+					emit(ctx, c, tex)
 				}
 				for i in 0 ..< 4 {
 					if bw[i] <= 0 {
@@ -817,6 +845,7 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 					}
 					sc := base_cmd(ctx, ps, r, .RRect)
 					sc.radii = rad
+					sc.extra[1] = shape_code
 					sc.border_w[i] = bw[i]
 					sc.border_c = col4(bcs[i], op)
 					sc.params[2] = f32(line_style_code(s.border_style))
@@ -824,7 +853,7 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 				}
 			}
 		} else {
-			emit(ctx, c)
+			emit(ctx, c, tex)
 		}
 	}
 
@@ -837,19 +866,20 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 	}
 	for i := shadows.count - 1; i >= 0; i -= 1 {
 		if shadows.items[i].inset {
-			emit_inset(ctx, ps, r, radius, shadows.items[i])
+			emit_inset(ctx, ps, r, radius, shadows.items[i], shape_code)
 		}
 	}
 	for i := inset.count - 1; i >= 0; i -= 1 {
 		sh := inset.items[i]
 		sh.inset = true
-		emit_inset(ctx, ps, r, radius, sh)
+		emit_inset(ctx, ps, r, radius, sh, shape_code)
 	}
 	if s.inset_ring_w > 0 || (s.ring_w > 0 && s.ring_inset) {
 		w := s.inset_ring_w > 0 ? s.inset_ring_w : s.ring_w
 		ic := s.inset_ring_w > 0 ? (s.inset_ring_color_set ? s.inset_ring_color : s.color) : ring_c
 		c := base_cmd(ctx, ps, r, .RRect)
 		c.radii = rad
+		c.extra[1] = shape_code
 		bw := snap_w(ctx, w)
 		c.border_w = {bw, bw, bw, bw}
 		c.border_c = col4(ic, op)
@@ -858,11 +888,12 @@ paint_box :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 }
 
 @(private)
-emit_inset :: proc(ctx: ^Context, ps: ^Paint_State, r: Rect, radius: [4]f32, sh: Shadow) {
+emit_inset :: proc(ctx: ^Context, ps: ^Paint_State, r: Rect, radius: [4]f32, sh: Shadow, shape_code: f32 = 0) {
 	if sh.color.a <= 0 {
 		return
 	}
 	c := base_cmd(ctx, ps, r, .Inset_Shadow)
+	c.extra[1] = shape_code
 	c.radii = scaled_radii(ctx, radius, r.w, r.h)
 	sc := ctx.scale
 	sp := sh.spread
@@ -1289,6 +1320,9 @@ paint_image :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect) {
 		dst = {box.x + (box.w - w) * s.object_pos.x, box.y + (box.h - h) * s.object_pos.y, w, h}
 	}
 	c := base_cmd(ctx, ps, dst, .Image)
+	if n.image != 0 && int(n.image) <= len(ctx.images) && ctx.images[n.image - 1].flip_y {
+		uv = {uv.x, uv.y + uv.w, uv.z, -uv.w} // bottom-up render target
+	}
 	c.uv = uv
 	c.fill0 = {1, 1, 1, ps.opacity}
 	// clip to the element's rounded box

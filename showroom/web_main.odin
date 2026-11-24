@@ -11,6 +11,9 @@ import js "core:sys/wasm/js"
 import ui "../vui"
 import fonts "../vui/fonts"
 import icons "../vui/icons"
+import game_icons "../vui/icons/game"
+import game_fonts "../vui/fonts/game"
+import materials "../vui/materials"
 import web "../vui/web"
 import "demos"
 
@@ -20,6 +23,9 @@ web_page: int = -1
 
 setup :: proc(ctx: ^ui.Context) {
 	fonts.register(ctx)
+	game_fonts.register(ctx)
+	materials.register(ctx)
+	GI = game_icons.register(ctx)
 	IC = icons.register(ctx)
 	demos.IC = IC
 	LOGO = ui.icon_register(ctx, "vinland-logo", {32, 32}, LOGO_PATHS[:])

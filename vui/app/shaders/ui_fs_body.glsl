@@ -6,7 +6,74 @@ float sd_rrect(vec2 p, vec2 hs, vec4 r) {
 	return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - rad;
 }
 
+// Ornate corner shapes. code packs 3 bits per corner (tl, tr, br, bl):
+// 0 round, 1 bevel, 2 scoop, 3 notch, 4 arch (pointed arch spanning the top or bottom edge;
+// the corner radius is the arch height).
+float sd_shape(vec2 p, vec2 hs, vec4 r, int code) {
+	if (code == 0) return sd_rrect(p, hs, r);
+	int ci = p.x < 0.0 ? (p.y < 0.0 ? 0 : 3) : (p.y < 0.0 ? 1 : 2);
+	int shape = (code >> (3 * ci)) & 7;
+	float rad = ci == 0 ? r.x : (ci == 1 ? r.y : (ci == 2 ? r.z : r.w));
+	if (shape == 0) return sd_rrect(p, hs, r);
+	vec2 q = abs(p) - hs;
+	float box = min(max(q.x, q.y), 0.0) + length(max(q, 0.0));
+	if (shape == 4) {
+		float h = clamp(rad, 1e-3, 2.0 * hs.y);
+		float R = (h * h + hs.x * hs.x) / (2.0 * hs.x);
+		float spring = hs.y - h; // distance of the springline from the centre
+		vec2 a = vec2(abs(p.x), abs(p.y));
+		if (a.y <= spring) return box;
+		return max(box, length(a - vec2(hs.x - R, spring)) - R);
+	}
+	rad = min(rad, min(hs.x, hs.y));
+	if (rad <= 0.0) return box;
+	if (shape == 1) return max(box, (q.x + q.y + rad) * 0.70710678);
+	if (shape == 2) return max(box, rad - length(q));
+	return max(box, min(q.x + rad, q.y + rad));
+}
+
 vec4 pm(vec4 c) { return vec4(c.rgb * c.a, c.a); }
+
+// Colour grade (see vui.Grade). u_grade = saturation, contrast, grain, mottle;
+// u_grade_tint = rgb multiplier, mottle feature size in physical px (0 = grade off).
+float g_hash(vec2 p) {
+	p = fract(p * vec2(123.34, 456.21));
+	p += dot(p, p + 45.32);
+	return fract(p.x * p.y);
+}
+float g_noise(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	f = f * f * (3.0 - 2.0 * f);
+	float a = g_hash(i), b = g_hash(i + vec2(1.0, 0.0));
+	float c = g_hash(i + vec2(0.0, 1.0)), d = g_hash(i + vec2(1.0, 1.0));
+	return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+vec4 grade(vec4 col, int kind) {
+	if (u_grade_tint.w <= 0.0 || col.a <= 0.0) return col;
+	vec3 rgb = col.rgb / col.a;
+	float l = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
+	rgb = mix(vec3(l), rgb, u_grade.x);
+	rgb = (rgb - 0.5) * u_grade.y + 0.5;
+	rgb *= u_grade_tint.rgb;
+	if (kind != 3) {
+		vec2 q = v_world / u_grade_tint.w;
+		float m = g_noise(q) * 0.6 + g_noise(q * 2.7 + 17.0) * 0.4;
+		float n = g_hash(floor(v_world)) - 0.5;
+		rgb *= 1.0 + u_grade.w * (m - 0.5) + u_grade.z * n;
+	}
+	return vec4(clamp(rgb, 0.0, 1.0) * col.a, col.a);
+}
+
+// Texture fill for RRect commands: extra.z > 0 tiles every extra.z physical px, extra.z < 0
+// stretches over the box. uv is the sub-rect of the bound image (normalized).
+vec4 tex_fill(vec4 c) {
+	if (f_extra.z == 0.0) return c;
+	vec2 t = f_extra.z > 0.0 ? (v_local + f_extra.ww) / f_extra.z : v_local / max(f_size.xy, vec2(1e-4));
+	vec2 tc = f_uv.xy + fract(t) * f_uv.zw;
+	vec4 s = textureGrad(u_image, tc, dFdx(t) * f_uv.zw, dFdy(t) * f_uv.zw);
+	return c * vec4(s.rgb * s.a, s.a);
+}
 
 vec2 erf2(vec2 x) {
 	vec2 s = sign(x), a = abs(x);
@@ -115,11 +182,12 @@ void main() {
 	vec2 p = v_local - hs;
 	float k = max(length(vec2(dFdx(v_local.x), dFdy(v_local.x))), 1e-4);
 	vec4 col = vec4(0.0);
+	int shape = int(f_extra.y);
 	if (kind == 0) {
-		float d = sd_rrect(p, hs, f_radii) / k;
+		float d = sd_shape(p, hs, f_radii, shape) / k;
 		float outer = clamp(0.5 - d, 0.0, 1.0);
 		if (outer <= 0.0) discard;
-		vec4 fill = fill_color(p, size);
+		vec4 fill = tex_fill(fill_color(p, size));
 		col = fill * outer;
 		vec4 bw = f_bw;
 		if (bw.x + bw.y + bw.z + bw.w > 0.0) {
@@ -128,7 +196,7 @@ void main() {
 			vec2 ihs = max((imax - imin) * 0.5, vec2(0.0));
 			vec2 ic = (imin + imax) * 0.5;
 			vec4 ir = max(f_radii - vec4(max(bw.w, bw.x), max(bw.y, bw.x), max(bw.y, bw.z), max(bw.w, bw.z)), 0.0);
-			float di = sd_rrect(v_local - ic, ihs, ir) / k;
+			float di = shape == 0 ? sd_rrect(v_local - ic, ihs, ir) / k : d + max(max(bw.x, bw.y), max(bw.z, bw.w)) / k;
 			float inner = (ihs.x <= 0.0 || ihs.y <= 0.0) ? 0.0 : clamp(0.5 - di, 0.0, 1.0);
 			float bcov = clamp(outer - inner, 0.0, 1.0);
 			int style = int(f_params.z);
@@ -140,14 +208,14 @@ void main() {
 		float sigma = f_params.y;
 		float a;
 		if (sigma < 0.5) {
-			a = clamp(0.5 - sd_rrect(p, hs, f_radii) / k, 0.0, 1.0);
+			a = clamp(0.5 - sd_shape(p, hs, f_radii, shape) / k, 0.0, 1.0);
 		} else {
 			float corner = p.x < 0.0 ? (p.y < 0.0 ? f_radii.x : f_radii.w) : (p.y < 0.0 ? f_radii.y : f_radii.z);
 			a = box_shadow(vec2(0.0), size, v_local, sigma, corner);
 		}
 		col = pm(f_fill0) * a;
 	} else if (kind == 2) {
-		float outer = clamp(0.5 - sd_rrect(p, hs, f_radii) / k, 0.0, 1.0);
+		float outer = clamp(0.5 - sd_shape(p, hs, f_radii, shape) / k, 0.0, 1.0);
 		if (outer <= 0.0) discard;
 		vec4 hole = f_fill1;
 		vec2 hsz = hole.zw;
@@ -155,6 +223,10 @@ void main() {
 		float h;
 		if (hsz.x <= 0.0 || hsz.y <= 0.0) {
 			h = 0.0;
+		} else if (shape != 0) {
+			// ornate corners: the hole follows the same corner geometry as the box
+			float dh = sd_shape(v_local - (hole.xy + hsz * 0.5), hsz * 0.5, f_fill2, shape);
+			h = sigma < 0.5 ? clamp(0.5 - dh / k, 0.0, 1.0) : clamp(0.5 - dh / (2.5 * sigma), 0.0, 1.0);
 		} else if (sigma < 0.5) {
 			h = clamp(0.5 - sd_rrect(v_local - (hole.xy + hsz * 0.5), hsz * 0.5, f_fill2) / k, 0.0, 1.0);
 		} else {
@@ -221,5 +293,5 @@ void main() {
 		c = clamp(c, 0.0, 1.0);
 		col = vec4(c.rgb * c.a, c.a);
 	}
-	o_color = col;
+	o_color = grade(col, kind);
 }

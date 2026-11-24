@@ -31,6 +31,7 @@ rect_intersect :: proc "contextless" (a, b: Rect) -> Rect {
 }
 
 INF :: f32(1e9)
+ROOT_ID :: Id(0x9e3779b97f4a7c15)
 NO_CLIP :: Rect{-1e9, -1e9, 2e9, 2e9}
 
 Node_Kind :: enum u8 {
@@ -251,6 +252,8 @@ Image_Def :: struct {
 	dirty:    bool,
 	handle:   u64, // backend texture handle
 	freed:    bool,
+	external: bool, // handle owned by the host (e.g. a game render target); never uploaded or freed
+	flip_y:   bool, // external GL render targets are stored bottom-up
 }
 
 Hit :: struct {
@@ -279,6 +282,7 @@ Context :: struct {
 	atlas:        Atlas,
 	icons:        [dynamic]Icon_Def,
 	images:       [dynamic]Image_Def,
+	image_names:  map[string]Image_Id,
 	class_cache:  map[string]^Class_Set,
 	cache_version: u64,
 	states:       map[Id]^Elem_State,
@@ -321,9 +325,35 @@ Context :: struct {
 	clipboard_get: Clipboard_Get,
 	clipboard_set: Clipboard_Set,
 	text_gamma:   f32,
+	grade:        Grade,
 	debug_unknown_classes: bool,
 	last_layout_ms: f32,
 	scroll_requests: [dynamic]Scroll_Request,
+}
+
+// Colour grade applied to every UI pixel in the fragment shader (all backends). Game HUDs use
+// it to sit inside a painted world instead of on top of it: pull saturation and contrast down,
+// warm the tint, and add stable grain and low-frequency mottling so flat fills read as worn
+// material. Text keeps its edges (no grain). Zero value = off.
+Grade :: struct {
+	enabled:    bool,
+	saturation: f32, // 1 = unchanged
+	contrast:   f32, // 1 = unchanged, around mid grey
+	grain:      f32, // fine per-pixel noise amplitude (0..0.2)
+	mottle:     f32, // low-frequency blotch amplitude (0..0.3)
+	tint:       [3]f32, // multiplier, {1,1,1} = unchanged
+	scale:      f32, // mottle feature size in logical px (default 48)
+}
+
+GRADE_PAINTED :: Grade{enabled = true, saturation = 0.78, contrast = 0.94, grain = 0.06, mottle = 0.16, tint = {1.0, 0.95, 0.86}, scale = 46}
+
+// Packs the grade for the shader uniforms u_grade / u_grade_tint.
+grade_uniforms :: proc "contextless" (g: Grade, px_scale: f32) -> (grade, tint: [4]f32) {
+	if !g.enabled {
+		return {1, 1, 0, 0}, {1, 1, 1, 0}
+	}
+	sc := g.scale > 0 ? g.scale : 48
+	return {g.saturation, g.contrast, g.grain, g.mottle}, {g.tint[0], g.tint[1], g.tint[2], sc * max(px_scale, 1)}
 }
 
 Scroll_Request :: struct {
@@ -392,6 +422,10 @@ destroy :: proc(ctx: ^Context) {
 		delete(img.pixels)
 	}
 	delete(ctx.images)
+	for k in ctx.image_names {
+		delete(k)
+	}
+	delete(ctx.image_names)
 	delete(ctx.hits)
 	delete(ctx.scroll_requests)
 	draw_list_destroy(&ctx.draw)
@@ -497,7 +531,7 @@ begin_frame :: proc(ctx: ^Context, input: Input, viewport: [2]f32, scale: f32, t
 
 	// root
 	root := Node{
-		id     = Id(0x9e3779b97f4a7c15),
+		id     = ROOT_ID,
 		kind   = .Box,
 		parent = -1,
 		first  = -1,
@@ -1136,6 +1170,42 @@ image_register :: proc(ctx: ^Context, rgba: []u8, w, h: int) -> Image_Id {
 	copy(pix, rgba)
 	append(&ctx.images, Image_Def{w = w, h = h, pixels = pix, dirty = true})
 	return Image_Id(len(ctx.images))
+}
+
+// Registers a texture the host already owns on the GPU (a game render target, a minimap
+// texture). vui samples it but never uploads, mip-maps or frees it. Call image_external_update
+// when the host recreates the texture.
+image_register_external :: proc(ctx: ^Context, handle: u64, w, h: int, flip_y := false) -> Image_Id {
+	append(&ctx.images, Image_Def{w = w, h = h, handle = handle, external = true, flip_y = flip_y})
+	return Image_Id(len(ctx.images))
+}
+
+image_external_update :: proc(ctx: ^Context, img: Image_Id, handle: u64, w, h: int) {
+	if img == 0 || int(img) > len(ctx.images) {
+		return
+	}
+	d := &ctx.images[img - 1]
+	d.handle = handle
+	d.w = w
+	d.h = h
+}
+
+// Names an image so classes can reference it: `bg-tex-<name>` paints it as a textured fill.
+image_name :: proc(ctx: ^Context, name: string, img: Image_Id) {
+	if _, ok := ctx.image_names[name]; ok {
+		ctx.image_names[name] = img
+		return
+	}
+	ctx.image_names[strings.clone(name)] = img
+}
+
+@(private)
+image_lookup :: proc(name: string) -> Image_Id {
+	ctx := g_ctx
+	if ctx == nil {
+		return 0
+	}
+	return ctx.image_names[name]
 }
 
 image_size :: proc(ctx: ^Context, img: Image_Id) -> [2]f32 {

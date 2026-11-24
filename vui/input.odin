@@ -306,3 +306,31 @@ move_focus :: proc(ctx: ^Context, forward: bool) {
 	}
 	set_focus(ctx, order[next], true)
 }
+
+// True when the pointer rests on an element that takes pointer events (last processed frame).
+// Hosts that draw a world under the UI (games, map views) route clicks to the world only when
+// this is false: lay the HUD out with `pointer-events-none` on full-screen wrappers and
+// `pointer-events-auto` on the panels that should catch the mouse.
+pointer_over_ui :: proc {
+	pointer_over_ui_hover,
+	pointer_over_ui_at,
+}
+
+// Hover-based: the element under the pointer when the last frame began.
+pointer_over_ui_hover :: proc(ctx: ^Context) -> bool {
+	if ctx.press_id != 0 && ctx.press_id != ROOT_ID {
+		return true // a press that started on UI keeps the pointer captured until release
+	}
+	return ctx.hover_id != 0 && ctx.hover_id != ROOT_ID
+}
+
+// Position-based: hit-tests p against the last laid-out frame. Use this when the host decides
+// where a click goes *before* it builds this frame's UI (a game that builds its HUD after the
+// camera update, so world-anchored labels never lag a frame).
+pointer_over_ui_at :: proc(ctx: ^Context, p: [2]f32) -> bool {
+	if ctx.press_id != 0 && ctx.press_id != ROOT_ID {
+		return true
+	}
+	top := hit_at(ctx, p)
+	return top >= 0 && ctx.hits[top].id != ROOT_ID
+}

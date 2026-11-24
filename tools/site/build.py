@@ -6,7 +6,7 @@ is captured by the showroom itself (light and dark, 2x) through the control port
 
     python3 tools/site/build.py [out_dir] [--pages slug,slug] [--no-shots]
 
-Requires: build/showroom and build/vui-ctl (./build.sh release), ImageMagick (`magick`).
+Requires: build/showroom and build/vui-ctl (./build.sh release), ImageMagick (`magick`) or cwebp (+ sips on macOS).
 """
 import html
 import json
@@ -40,6 +40,22 @@ def ctl(cmd: dict, timeout=60):
     if not res.get("ok", True):
         raise RuntimeError(f"{cmd}: {res}")
     return res
+
+
+def to_webp(png: str, webp: str):
+    """Lossless WebP via ImageMagick, or cwebp when magick is not installed."""
+    if shutil.which("magick"):
+        to_webp(png, webp)
+    else:
+        subprocess.run(["cwebp", "-quiet", "-lossless", png, "-o", webp], check=True)
+
+
+def resize_png(src: str, width: int, dst: str):
+    """Width-constrained resize via ImageMagick, or sips (macOS) when magick is not installed."""
+    if shutil.which("magick"):
+        subprocess.run(["magick", src, "-resize", f"{width}x", dst], check=True)
+    else:
+        subprocess.run(["sips", "--resampleWidth", str(width), src, "--out", dst], check=True, stdout=subprocess.DEVNULL)
 
 
 # --------------------------------------------------------------------------- Odin highlighting
@@ -157,7 +173,7 @@ def capture(out_dir: str, only: set, shots: bool):
                         png = os.path.join(img_dir, f"{slug}-{k}-{mode}.png")
                         ctl({"cmd": "screenshot", "path": png, "x": x, "y": y, "w": w, "h": h})
                         webp = png[:-4] + ".webp"
-                        subprocess.run(["magick", png, "-define", "webp:lossless=true", webp], check=True)
+                        to_webp(png, webp)
                         os.remove(png)
                         b["size"] = [w, h]
                     ctl({"cmd": "scroll_content", "y": 0})
@@ -380,7 +396,7 @@ def build(out_dir: str, only: set, shots: bool):
         shutil.copy(os.path.join(ROOT, "assets/fonts", f), os.path.join(fdir, f))
     og = os.path.join(ROOT, "docs/showroom-light.png")
     if shots and os.path.exists(og):
-        subprocess.run(["magick", og, "-resize", "1200x", os.path.join(out_dir, "img/og.png")], check=True)
+        resize_png(og, 1200, os.path.join(out_dir, "img/og.png"))
     with open(os.path.join(out_dir, "search.json"), "w") as f:
         json.dump([{"slug": p["slug"], "title": p["title"], "group": p["group"]} for p in pages], f)
     with open(os.path.join(out_dir, "sitemap.xml"), "w") as f:

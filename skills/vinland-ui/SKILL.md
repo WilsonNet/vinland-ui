@@ -239,6 +239,27 @@ follow `ctx.input.mouse` while `.Left in ctx.input.buttons`.
 
 Colors: `ui.oklch(l, c, h)` and `"oklch(...)"` in JSON themes, same space as Tailwind v4.
 
+## Game UI and embedding in a game
+
+- Geometry: `corner-{bevel,scoop,notch,arch}` (per corner: `corner-tl-scoop`, `corner-t-arch`); the
+  size comes from `rounded-*`. An arch's `rounded-t-[h]` is its height (more than half the width =
+  pointed). Borders, rings, insets and hard shadows follow the shape.
+- Textures: `vui/materials.register(&ctx)` adds tileable `hammered brushed grain stone parchment
+  weave` (relief: multiply the bg colour/gradient) and `khatam interlace studs` (alpha masks: tint
+  with a bg colour). Use `bg-tex-<name> bg-tile-<px>`. Any image named with `ui.image_name(ctx,
+  name, img)` works too, including host textures from `ui.image_register_external`.
+- Fonts/icons: `vui/fonts/game.register` (`font-display` Cinzel Decorative, `font-game` Alegreya
+  Sans), `vui/icons/game.register` (attack, move, patrol, stop, follow, scroll, khatam, heart, helm).
+- In a raylib game: `vui/raylib` (`init`, `input`, `begin`/`end`, `render` after the world,
+  `pointer_over_ui(host, mouse)` to route world clicks, `texture_image` for minimaps and render
+  targets). Other GL hosts use `vui/gl` directly. Build the HUD after the camera update so
+  world-anchored labels never lag.
+- Decorative absolute overlays (patterns, friezes) must be `pointer-events-none`: positioned
+  elements paint and hit-test above in-flow siblings.
+- Leaf boxes are `ui.el(...)`; `ui.div(...)` without `if` nests everything after it.
+- Per-frame dynamic geometry (positions, bar widths): set `ui.style()` / `ui.last_style()` fields
+  instead of formatting class strings, so the class cache does not grow every frame.
+
 ## Performance rules
 
 vinland-ui must beat a webview, so keep frames cheap: the loop idles when nothing changes

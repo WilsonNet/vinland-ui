@@ -44,6 +44,10 @@ first in the renderer and hands the second to a vocabulary people already know.
   (`draw_line`, `draw_polyline`, `draw_arc`, `draw_area`, `draw_circle`), anti-aliased by SDF.
 - **Fast.** Idle apps sleep; one instanced draw call per frame; a full mixing-desk UI renders in
   about 2 ms.
+- **Game UI.** Ornate geometry (`corner-bevel`, `corner-scoop`, `corner-notch`, `corner-t-arch`),
+  textured fills (`bg-tex-hammered bg-tile-96`) from procedural materials (`vui/materials`), a game
+  icon set and display fonts, and an embeddable GL renderer plus a raylib bridge
+  (`vui/gl`, `vui/raylib`) so a HUD runs inside a game that owns its window and frame loop.
 - **Agent-drivable.** Apps expose a local control port; `vui-ctl` clicks, types, scrolls, resizes,
   toggles dark mode, dumps the element tree and takes screenshots. An agent skill ships in
   [`skills/vinland-ui`](skills/vinland-ui/SKILL.md) (symlinked at `.agents/skills/vinland-ui`).

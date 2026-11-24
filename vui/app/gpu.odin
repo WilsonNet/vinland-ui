@@ -41,6 +41,8 @@ Frag_Uniforms :: struct {
 	atlas_size: [2]f32,
 	gamma:      f32,
 	contrast:   f32,
+	grade:      [4]f32,
+	grade_tint: [4]f32,
 }
 
 TARGET_FORMAT :: sdl.GPUTextureFormat.R8G8B8A8_UNORM
@@ -150,7 +152,7 @@ gpu_destroy :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context) {
 	gpu_wait_frame(r)
 	_ = sdl.WaitForGPUIdle(dev)
 	for &img in ctx.images {
-		if img.handle != 0 {
+		if img.handle != 0 && !img.external {
 			sdl.ReleaseGPUTexture(dev, cast(^sdl.GPUTexture)uintptr(img.handle))
 			img.handle = 0
 		}
@@ -379,6 +381,7 @@ gpu_render :: proc(r: ^Gpu_Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w,
 		fu.atlas_size = {f32(ctx.atlas.w), f32(ctx.atlas.h)}
 		fu.gamma = ctx.text_gamma > 0 ? ctx.text_gamma : 1
 		fu.contrast = 1
+		fu.grade, fu.grade_tint = vui.grade_uniforms(ctx.grade, ctx.scale)
 		sdl.PushGPUFragmentUniformData(cmd, 0, &fu, size_of(fu))
 		for b in d.batches {
 			if b.count <= 0 || int(b.first) >= n {

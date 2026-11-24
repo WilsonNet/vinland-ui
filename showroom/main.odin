@@ -11,6 +11,9 @@ import ui "../vui"
 import "../vui/app"
 import "../vui/fonts"
 import icons "../vui/icons"
+import game_icons "../vui/icons/game"
+import game_fonts "../vui/fonts/game"
+import materials "../vui/materials"
 import "demos"
 
 main :: proc() {
@@ -18,6 +21,9 @@ main :: proc() {
 	ui.init(&ctx)
 	defer ui.destroy(&ctx)
 	fonts.register(&ctx)
+	game_fonts.register(&ctx)
+	materials.register(&ctx)
+	GI = game_icons.register(&ctx)
 	IC = icons.register(&ctx)
 	demos.IC = IC
 	LOGO = ui.icon_register(&ctx, "vinland-logo", {32, 32}, LOGO_PATHS[:])

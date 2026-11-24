@@ -46,6 +46,8 @@ uniform mat4 u_filters[16];
 uniform vec4 u_filter_off[16];
 uniform float u_text_gamma;
 uniform float u_text_contrast;
+uniform vec4 u_grade;
+uniform vec4 u_grade_tint;
 out vec4 o_color;
 `
 
@@ -68,7 +70,7 @@ Surface :: struct {
 	white:     gl.Texture,
 	images:    [dynamic]gl.Texture,
 	u:         struct {
-		viewport, atlas, image, atlas_size, gamma, contrast, filter_off: i32,
+		viewport, atlas, image, atlas_size, gamma, contrast, filter_off, grade, grade_tint: i32,
 		filters: [16]i32,
 	},
 	// input
@@ -140,6 +142,8 @@ mount :: proc(id: string, build: proc()) -> bool {
 	s.u.atlas_size = gl.GetUniformLocation(s.program, "u_atlas_size")
 	s.u.gamma = gl.GetUniformLocation(s.program, "u_text_gamma")
 	s.u.contrast = gl.GetUniformLocation(s.program, "u_text_contrast")
+	s.u.grade = gl.GetUniformLocation(s.program, "u_grade")
+	s.u.grade_tint = gl.GetUniformLocation(s.program, "u_grade_tint")
 	s.u.filter_off = gl.GetUniformLocation(s.program, "u_filter_off")
 	for i in 0 ..< 16 {
 		name := strings.concatenate({"u_filters[", digits(i), "]"}, context.temp_allocator)
@@ -444,6 +448,9 @@ render :: proc(s: ^Surface, d: ^vui.Draw_List) {
 	gl.Uniform1i(s.u.image, 1)
 	gl.Uniform1f(s.u.gamma, ctx.text_gamma > 0 ? ctx.text_gamma : 1)
 	gl.Uniform1f(s.u.contrast, 1)
+	gr, gt := vui.grade_uniforms(ctx.grade, ctx.scale)
+	gl.Uniform4f(s.u.grade, gr[0], gr[1], gr[2], gr[3])
+	gl.Uniform4f(s.u.grade_tint, gt[0], gt[1], gt[2], gt[3])
 	offs: [16][4]f32
 	for i in 0 ..< min(len(d.filters), 16) {
 		gl.UniformMatrix4fv(s.u.filters[i], d.filters[i].m)

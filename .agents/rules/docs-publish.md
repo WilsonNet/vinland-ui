@@ -19,8 +19,9 @@ description: >-
    - Check out `gh-pages` in a temporary worktree (`git worktree add /tmp/vinland-gh-pages gh-pages`).
    - Run `python3 tools/site/build.py /tmp/vinland-gh-pages --no-shots` (across all pages so nav/sitemap/prev-next links stay consistent while `img/`, `demos.wasm`, and `odin.js` remain untouched).
    - Verify preview `<img>` tags on `index.html` and `showcase.html`, commit, push `origin gh-pages`, and remove the worktree.
-4. **Full image + WASM rebuild (Linux)**:
+4. **Full image + WASM rebuild**:
    ```bash
    ./build.sh release
    python3 tools/site/build.py <out_dir>
    ```
+   On macOS: `wasm-ld` ships with Homebrew `lld` (`PATH=/opt/homebrew/opt/lld@22/bin:$PATH odin build showroom -target:js_wasm32 -o:size -out:website/public/vui.wasm`), and `build.py` falls back to `cwebp` + `sips` when ImageMagick is missing. Astro needs Node >= 22.23 (`/opt/homebrew/bin/node`). After a full capture, keep only images whose pixels really changed (animation frames vary between runs).

@@ -103,6 +103,9 @@ Prop :: enum u16 {
 	Grad_To_Pos,
 	Bg_Stripes,
 	Bg_None,
+	Bg_Texture,
+	Bg_Tile,
+	Corner_Shape,
 	Border_W,
 	Border_Color,
 	Border_Current,
@@ -1900,11 +1903,65 @@ parse_utility :: proc(b: ^Builder, u: string, neg: bool) -> bool {
 		prop: Prop = head == "from" ? .Grad_From : head == "via" ? .Grad_Via : .Grad_To
 		return color_rule(b, prop, rest)
 	}
+	// textured fills: bg-tex-<name> (image registered with ui.image_name), bg-tile-<px>
+	if strings.has_prefix(u, "bg-tex-") {
+		push(b, {prop = .Bg_Texture, s = strings.clone(u[7:])})
+		return true
+	}
+	if strings.has_prefix(u, "bg-tile-") {
+		rest := u[8:]
+		v: f32
+		if a, aok := arbitrary(rest); aok {
+			lv, lok := parse_length(a)
+			if !lok {
+				return false
+			}
+			v = lv
+		} else {
+			n, nok := strconv.parse_f32(rest)
+			if !nok {
+				return false
+			}
+			v = n
+		}
+		push(b, {prop = .Bg_Tile, f = {v, 0, 0, 0}})
+		return true
+	}
 	if strings.has_prefix(u, "bg-") {
 		rest := u[3:]
 		return color_rule(b, .Bg_Color, rest)
 	}
 
+	// corner-<shape> / corner-<t|r|b|l|tl|tr|br|bl>-<shape>: round, bevel, scoop, notch, arch
+	if strings.has_prefix(u, "corner-") {
+		rest := u[7:]
+		corner := ""
+		if dash := strings.index_byte(rest, '-'); dash > 0 {
+			corner = rest[:dash]
+			rest = rest[dash + 1:]
+		}
+		mask, mok := corner_mask(corner)
+		if !mok {
+			return false
+		}
+		shape: Corner_Shape
+		switch rest {
+		case "round":
+			shape = .Round
+		case "bevel":
+			shape = .Bevel
+		case "scoop":
+			shape = .Scoop
+		case "notch":
+			shape = .Notch
+		case "arch":
+			shape = .Arch
+		case:
+			return false
+		}
+		push(b, {prop = .Corner_Shape, mask = mask, i = i32(shape)})
+		return true
+	}
 	// borders
 	if strings.has_prefix(u, "rounded-") {
 		rest := u[8:]
@@ -2629,6 +2686,17 @@ apply_rule :: proc(s: ^Style, r: ^Rule, cs: ^Class_Set, dark: bool) {
 	case .Bg_None:
 		s.gradient = {}
 		s.bg_image = 0
+		s.bg_texture = 0
+	case .Bg_Texture:
+		s.bg_texture = image_lookup(r.s)
+	case .Bg_Tile:
+		s.bg_tile = r.f[0]
+	case .Corner_Shape:
+		for i in 0 ..< 4 {
+			if r.mask & (1 << u8(i)) != 0 {
+				s.corner_shape[i] = Corner_Shape(r.i)
+			}
+		}
 	case .Border_W:
 		for i in 0 ..< 4 {
 			if r.mask & (1 << u8(i)) != 0 {

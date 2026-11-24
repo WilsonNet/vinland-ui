@@ -1,0 +1,36 @@
+# Game UI page: ornate shapes, textured materials, medallion and orb interaction.
+# Run: ./build/vui-test tests/e2e/game-ui.vt
+app ../../build/showroom
+size 1440x900
+scale 1
+baselines baselines
+threshold 0.004
+
+test "game ui page renders"
+  click "Game UI"
+  wait 3
+  expect-text "What the renderer adds for games"
+  expect-text "An RTS command console"
+  expect-frame-ms 40
+
+test "arming a medallion fills it with gold inlay"
+  click "Game UI"
+  wait 3
+  raw {"cmd":"scroll_content","y":"1180"}
+  wait 4
+  click "Patrol"
+  wait 3
+  screenshot game-console
+
+test "orb gauge reacts"
+  click "Game UI"
+  wait 3
+  raw {"cmd":"scroll_content","y":"5300"}
+  wait 4
+  click "Take a hit"
+  wait 3
+  expect-text "270 / 500"
+  click "Quaff potion"
+  wait 3
+  expect-text "420 / 500"
+  screenshot game-orbs

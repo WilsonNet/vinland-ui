@@ -207,6 +207,16 @@ Object_Fit :: enum u8 {
 	Scale_Down,
 }
 
+// Ornate corner geometry (vinland-ui extension, mirrors CSS `corner-shape`). `Arch` turns
+// the two corners of an edge into a pointed (or, at height == half width, round) arch.
+Corner_Shape :: enum u8 {
+	Round,
+	Bevel,
+	Scoop,
+	Notch,
+	Arch,
+}
+
 Gradient_Kind :: enum u8 {
 	None,
 	Linear,
@@ -319,6 +329,9 @@ Style :: struct {
 	gradient:        Gradient,
 	bg_image:        Image_Id,
 	bg_size:         Object_Fit,
+	bg_texture:      Image_Id, // textured fill, multiplied with the background colour/gradient
+	bg_tile:         f32, // texture tile size in logical px; 0 = stretch over the box
+	corner_shape:    [4]Corner_Shape, // tl tr br bl
 	border_w:        [4]f32,
 	border_color:    [4]Color,
 	border_color_set: bool, // false = currentColor

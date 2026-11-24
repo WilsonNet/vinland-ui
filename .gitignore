@@ -12,3 +12,4 @@ website/node_modules/
 website/dist/
 website/.astro/
 !tests/e2e/baselines/*.png
+vui-test-results/

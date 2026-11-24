@@ -31,6 +31,8 @@ Renderer :: struct {
 	u_filter_off: i32,
 	u_text_gamma: i32,
 	u_text_contrast: i32,
+	u_grade:         i32,
+	u_grade_tint:    i32,
 	white_tex:   u32,
 	// fence of the previous frame: at most one frame in flight (mirrors the GPU backend),
 	// so orphaned instance buffers cannot pile up when nothing (no swap) throttles us
@@ -70,6 +72,8 @@ uniform mat4 u_filters[16];
 uniform vec4 u_filter_off[16];
 uniform float u_text_gamma;
 uniform float u_text_contrast;
+uniform vec4 u_grade;
+uniform vec4 u_grade_tint;
 out vec4 o_color;
 
 ` + #load("shaders/ui_fs_body.glsl", string)
@@ -121,6 +125,8 @@ renderer_init :: proc(r: ^Renderer) -> bool {
 	r.u_filter_off = gl.GetUniformLocation(r.program, "u_filter_off")
 	r.u_text_gamma = gl.GetUniformLocation(r.program, "u_text_gamma")
 	r.u_text_contrast = gl.GetUniformLocation(r.program, "u_text_contrast")
+	r.u_grade = gl.GetUniformLocation(r.program, "u_grade")
+	r.u_grade_tint = gl.GetUniformLocation(r.program, "u_grade_tint")
 
 	gl.GenVertexArrays(1, &r.vao)
 	gl.BindVertexArray(r.vao)
@@ -283,6 +289,9 @@ render :: proc(r: ^Renderer, ctx: ^vui.Context, d: ^vui.Draw_List, fb_w, fb_h: i
 	gl.Uniform1i(r.u_image, 1)
 	gl.Uniform1f(r.u_text_gamma, ctx.text_gamma > 0 ? ctx.text_gamma : 1)
 	gl.Uniform1f(r.u_text_contrast, 1)
+	gr, gt := vui.grade_uniforms(ctx.grade, ctx.scale)
+	gl.Uniform4f(r.u_grade, gr[0], gr[1], gr[2], gr[3])
+	gl.Uniform4f(r.u_grade_tint, gt[0], gt[1], gt[2], gt[3])
 	// filters
 	mats: [MAX_FILTERS]matrix[4, 4]f32
 	offs: [MAX_FILTERS][4]f32
