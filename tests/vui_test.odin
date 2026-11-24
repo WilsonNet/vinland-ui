@@ -15,9 +15,17 @@ frame :: proc(ctx: ^ui.Context, build: proc(), vp := [2]f32{800, 600}, input := 
 }
 
 @(private)
-setup :: proc(ctx: ^ui.Context) {
+setup :: proc() -> ^ui.Context {
+	ctx := new(ui.Context)
 	ui.init(ctx)
 	fonts.register(ctx)
+	return ctx
+}
+
+@(private)
+teardown :: proc(ctx: ^ui.Context) {
+	ui.destroy(ctx)
+	free(ctx)
 }
 
 @(private)
@@ -83,19 +91,18 @@ unknown_utilities_reported :: proc(t: ^testing.T) {
 
 @(test)
 flex_grow_distributes_space :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("flex w-[600px] gap-4") {
 			ui.el("a w-[100px] flex-none")
 			ui.el("b flex-1")
 			ui.el("c flex-1")
 		}
 	})
-	a := find(&ctx, "a w-[100px] flex-none")
-	b := find(&ctx, "b flex-1")
-	c := find(&ctx, "c flex-1")
+	a := find(ctx, "a w-[100px] flex-none")
+	b := find(ctx, "b flex-1")
+	c := find(ctx, "c flex-1")
 	testing.expect_value(t, a.size.x, 100)
 	// 600 - 100 - 2 gaps of 16 = 468, split evenly
 	testing.expect_value(t, b.size.x, 234)
@@ -105,17 +112,16 @@ flex_grow_distributes_space :: proc(t: ^testing.T) {
 
 @(test)
 flex_justify_and_align :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("flex h-[200px] w-[400px] items-center justify-between") {
 			ui.el("x size-10")
 			ui.el("y size-20")
 		}
 	})
-	x := find(&ctx, "x size-10")
-	y := find(&ctx, "y size-20")
+	x := find(ctx, "x size-10")
+	y := find(ctx, "y size-20")
 	testing.expect_value(t, x.rect.x, 0)
 	testing.expect_value(t, x.rect.y, 80)
 	testing.expect_value(t, y.rect.x, 320)
@@ -124,19 +130,18 @@ flex_justify_and_align :: proc(t: ^testing.T) {
 
 @(test)
 grid_columns_and_spans :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("grid w-[320px] grid-cols-3 gap-4") {
 			ui.el("g1 h-10")
 			ui.el("g2 col-span-2 h-10")
 			ui.el("g3 col-span-3 h-10")
 		}
 	})
-	g1 := find(&ctx, "g1 h-10")
-	g2 := find(&ctx, "g2 col-span-2 h-10")
-	g3 := find(&ctx, "g3 col-span-3 h-10")
+	g1 := find(ctx, "g1 h-10")
+	g2 := find(ctx, "g2 col-span-2 h-10")
+	g3 := find(ctx, "g3 col-span-3 h-10")
 	testing.expect_value(t, g1.size.x, 96)
 	testing.expect_value(t, g2.rect.x, 112)
 	testing.expect_value(t, g2.size.x, 208)
@@ -146,17 +151,16 @@ grid_columns_and_spans :: proc(t: ^testing.T) {
 
 @(test)
 block_stretch_and_auto_margins :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("w-[500px] p-5") {
 			ui.el("s1 h-4")
 			ui.el("s2 mx-auto h-4 w-[100px]")
 		}
 	})
-	s1 := find(&ctx, "s1 h-4")
-	s2 := find(&ctx, "s2 mx-auto h-4 w-[100px]")
+	s1 := find(ctx, "s1 h-4")
+	s2 := find(ctx, "s2 mx-auto h-4 w-[100px]")
 	testing.expect_value(t, s1.size.x, 460)
 	testing.expect_value(t, s2.rect.x, 200)
 	testing.expect_value(t, s2.rect.y, 36)
@@ -164,17 +168,16 @@ block_stretch_and_auto_margins :: proc(t: ^testing.T) {
 
 @(test)
 absolute_positioning :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("relative ml-[50px] h-[200px] w-[300px]") {
 			ui.el("abs absolute right-4 bottom-2 size-8")
 			ui.el("fill absolute inset-0")
 		}
 	})
-	a := find(&ctx, "abs absolute right-4 bottom-2 size-8")
-	f := find(&ctx, "fill absolute inset-0")
+	a := find(ctx, "abs absolute right-4 bottom-2 size-8")
+	f := find(ctx, "fill absolute inset-0")
 	testing.expect_value(t, a.rect.x, 50 + 300 - 16 - 32)
 	testing.expect_value(t, a.rect.y, 200 - 8 - 32)
 	testing.expect_value(t, f.size, [2]f32{300, 200})
@@ -182,15 +185,14 @@ absolute_positioning :: proc(t: ^testing.T) {
 
 @(test)
 text_wraps_and_min_content :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("w-[120px]") {
 			ui.text("The quick brown fox jumps over the lazy dog", "tx text-sm/5")
 		}
 	})
-	n := find(&ctx, "tx text-sm/5")
+	n := find(ctx, "tx text-sm/5")
 	testing.expect(t, n.size.y >= 60, "text wraps onto several 20px lines")
 	testing.expect(t, int(n.size.y) % 20 == 0, "height is a multiple of the line height")
 	pr := &ctx.paras[n.para]
@@ -200,38 +202,36 @@ text_wraps_and_min_content :: proc(t: ^testing.T) {
 
 @(test)
 truncate_adds_ellipsis :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
-	frame(&ctx, proc() {
+	ctx := setup()
+	defer teardown(ctx)
+	frame(ctx, proc() {
 		if ui.div("w-[100px]") {
 			ui.text("A long single line that cannot fit", "tr truncate")
 		}
 	})
-	n := find(&ctx, "tr truncate")
+	n := find(ctx, "tr truncate")
 	testing.expect_value(t, n.size.y, 24)
 	testing.expect(t, ctx.paras[n.para].has_ellipsis, "ellipsis placed")
 }
 
 @(test)
 click_detection_across_frames :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
+	ctx := setup()
+	defer teardown(ctx)
 	@(static) clicks := 0
 	build :: proc() {
 		if ui.button("Press", "btn absolute top-[10px] left-[10px] h-10 w-24") {
 			clicks += 1
 		}
 	}
-	frame(&ctx, build)
-	frame(&ctx, build, input = {mouse = {40, 30}, mouse_inside = true})
-	frame(&ctx, build, input = {mouse = {40, 30}, mouse_inside = true, buttons = {.Left}, pressed = {.Left}})
-	frame(&ctx, build, input = {mouse = {40, 30}, mouse_inside = true, released = {.Left}})
+	frame(ctx, build)
+	frame(ctx, build, input = {mouse = {40, 30}, mouse_inside = true})
+	frame(ctx, build, input = {mouse = {40, 30}, mouse_inside = true, buttons = {.Left}, pressed = {.Left}})
+	frame(ctx, build, input = {mouse = {40, 30}, mouse_inside = true, released = {.Left}})
 	testing.expect_value(t, clicks, 1)
 	// a press outside does not click
-	frame(&ctx, build, input = {mouse = {400, 300}, mouse_inside = true, buttons = {.Left}, pressed = {.Left}})
-	frame(&ctx, build, input = {mouse = {400, 300}, mouse_inside = true, released = {.Left}})
+	frame(ctx, build, input = {mouse = {400, 300}, mouse_inside = true, buttons = {.Left}, pressed = {.Left}})
+	frame(ctx, build, input = {mouse = {400, 300}, mouse_inside = true, released = {.Left}})
 	testing.expect_value(t, clicks, 1)
 }
 
@@ -300,16 +300,16 @@ draw_probe :: proc(ctx: ^ui.Context, r: ui.Rect, data: rawptr) {
 
 @(test)
 canvas_primitives_emit_instances :: proc(t: ^testing.T) {
-	ctx: ui.Context
-	setup(&ctx)
-	defer ui.destroy(&ctx)
+	ctx := setup()
+	defer teardown(ctx)
 	calls := 0
 	@(static) g_calls: ^int
 	g_calls = &calls
+	defer g_calls = nil
 	build :: proc() {
 		ui.canvas("h-20 w-40", draw_probe, g_calls)
 	}
-	frame(&ctx, build)
+	frame(ctx, build)
 	testing.expect_value(t, calls, 1)
 	kinds: [8]int
 	for c in ctx.draw.cmds {

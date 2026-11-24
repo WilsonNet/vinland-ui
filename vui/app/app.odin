@@ -111,9 +111,6 @@ Wait_Request :: struct {
 	frames: int,
 }
 
-@(private)
-g_app: ^App
-
 // Runs a clipboard helper and returns its stdout. Public so apps and tests can
 // use the same fallback path; no shell is involved.
 clipboard_from_argv :: proc(argv: []string, allocator: mem.Allocator) -> (string, bool) {
@@ -184,7 +181,6 @@ clipboard_set :: proc(s: string) {
 init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	app.cfg = config
 	app.ctx = ctx
-	g_app = app
 	// environment overrides (handy for agents and CI)
 	if v := os.get_env("VUI_HIDDEN", context.temp_allocator); v == "1" || v == "true" {
 		app.cfg.hidden = true

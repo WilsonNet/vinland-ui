@@ -61,7 +61,7 @@ main :: proc() {
 	}
 	for k in 0 ..< MAX_EXAMPLES {
 		nb: [8]u8
-		id := strings.concatenate({"vex-", strconv.itoa(nb[:], k)})
+		id := strings.concatenate({"vex-", strconv.write_int(nb[:], i64(k), 10)})
 		if web.mount(id, build_example) {
 			js.set_element_style(id, "display", "block")
 		}
