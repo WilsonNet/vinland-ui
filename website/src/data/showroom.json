@@ -66,6 +66,11 @@
    "group": "Core concepts"
   },
   {
+   "slug": "game-ui",
+   "title": "Game UI",
+   "group": "Core concepts"
+  },
+  {
    "slug": "text-rendering",
    "title": "Text rendering",
    "group": "Core concepts"
@@ -2212,6 +2217,209 @@
     {
      "kind": "Note",
      "text": "Draw procedures run during painting. Keep them allocation-free or use context.temp_allocator, which is reset after each frame."
+    }
+   ]
+  },
+  {
+   "ok": true,
+   "slug": "game-ui",
+   "title": "Game UI",
+   "group": "Core concepts",
+   "desc": "Skeuomorphic HUDs for games: ornate corner shapes, textured materials, orb gauges and inventories, embeddable in a game's own GL context.",
+   "content_bottom": 9205.0,
+   "blocks": [
+    {
+     "kind": "Para",
+     "text": "Skeuomorphic HUDs for games: ornate corner shapes, textured materials, orb gauges and inventories, embeddable in a game's own GL context."
+    },
+    {
+     "kind": "Para",
+     "text": "Games ask for a different register than tools: bevelled metal, carved frames, textured grounds, glowing orbs. vinland-ui draws them with the same one-instance-per-box renderer, so a full RTS console costs a few hundred instances and one draw call per texture, and it can be embedded in a game that owns its own window and GL context (vinland:vui/gl)."
+    },
+    {
+     "kind": "H2",
+     "text": "What the renderer adds for games"
+    },
+    {
+     "kind": "Table",
+     "rows": [
+      [
+       "corner-bevel / corner-scoop / corner-notch",
+       "cut, concave or stepped corners; size comes from rounded-*; per corner with corner-tl-*, corner-t-*, ..."
+      ],
+      [
+       "corner-t-arch rounded-t-[h]",
+       "pointed arch over the top edge, h is the arch height; half the width gives a round arch"
+      ],
+      [
+       "bg-tex-<name>",
+       "textured fill, multiplied with the background colour or gradient"
+      ],
+      [
+       "bg-tile-<px>",
+       "tile the texture every <px> logical pixels (default: stretch over the box)"
+      ],
+      [
+       "materials.register(&ctx)",
+       "procedural tileable textures: hammered, brushed, grain, stone, parchment, weave; masks khatam, interlace, studs"
+      ],
+      [
+       "ui.image_register_external(ctx, handle, w, h)",
+       "show a texture the game owns (minimap, render target) inside the layout"
+      ],
+      [
+       "ui.pointer_over_ui(ctx)",
+       "true when the mouse is over UI: route clicks to the world only when it is false"
+      ]
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "An RTS command console"
+    },
+    {
+     "kind": "Para",
+     "text": "The band of an inlaid brass basin: hammered brass rim, bitumen-black field, silver interlace frieze, roundels for the map and the portrait, and command medallions. Click a medallion to arm it: the armed one fills with gold inlay."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"relative h-[420px] w-full overflow-hidden bg-[#0a0d0c]\") {\n    // battlefield stand-in\n    ui.el(\"absolute inset-0 bg-radial from-[#5f8a3a] via-[#2b4420] to-[#0a0d0c]\")\n    // top cartouche\n    if ui.div(\"absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-5 whitespace-nowrap rounded-b-xl corner-b-bevel bg-[#16130f] px-6 py-1.5 font-game text-sm font-bold uppercase tracking-widest text-[#cfd3d6] ring-2 ring-[#b08a4a]\") {\n        ui.text(\"Through the Woods\", \"text-[#e3c98a]\")\n        ui.text(\"Waypoint 0 / 8\", \"tabular-nums\")\n        ui.text(\"Fog 97.9%\", \"tabular-nums\")\n    }\n    // console band\n    if ui.div(\"absolute inset-x-0 bottom-0 h-[188px] bg-linear-to-b from-[#e3c98a] via-[#b08a4a] to-[#6e5428] bg-tex-hammered bg-tile-96 pt-2.5\") {\n        ui.el(\"absolute inset-x-0 top-[10px] h-4 bg-[#cfd3d6]/70 bg-tex-interlace bg-tile-16\")\n        if ui.div(\"mt-4 flex h-[162px] items-center gap-4 bg-[#16130f] px-4 inset-shadow-sm inset-shadow-black/80\") {\n            // minimap roundel\n            if ui.div(\"size-[112px] shrink-0 rounded-full bg-[#b08a4a] bg-tex-hammered p-1.5 ring-2 ring-[#cfd3d6] shadow-lg shadow-black/60\") {\n                ui.canvas(\"size-full rounded-full bg-[#14200f] overflow-hidden\", minimap_demo)\n            }\n            // portrait roundel + vitals\n            if ui.div(\"flex min-w-0 grow items-center gap-4\") {\n                if ui.div(\"size-[72px] shrink-0 rounded-full bg-[#b08a4a] bg-tex-hammered p-1 ring-2 ring-[#6e5428]\") {\n                    if ui.div(\"flex size-full items-center justify-center rounded-full bg-radial from-[#3d63b0] to-[#1b2f5c]\") {\n                        ui.icon(GI.helm, \"size-9 text-[#e3c98a]\")\n                    }\n                }\n                if ui.div(\"flex min-w-0 grow flex-col gap-1.5\") {\n                    ui.text(\"Hero \u00b7 Emir's Vanguard\", \"truncate font-game text-xs font-bold uppercase tracking-widest text-[#cfd3d6]\")\n                    ui.text(\"Liiroy, the Bold\", \"truncate font-display text-xl font-bold text-[#e3c98a]\")\n                    if ui.div(\"h-3.5 rounded-full bg-[#2a0f0c] p-0.5 ring-2 ring-[#b08a4a]\") {\n                        ui.el(\"h-full w-[86%] rounded-full bg-linear-to-b from-[#d0574a] to-[#8f2f22] inset-shadow-xs inset-shadow-white/40\")\n                    }\n                    if ui.div(\"flex gap-3 font-game text-sm font-bold uppercase tracking-wider whitespace-nowrap text-[#cfd3d6]\") {\n                        ui.text(\"HP 430\", \"tabular-nums\")\n                        ui.text(\"ATK 35\", \"tabular-nums\")\n                        ui.text(\"ARM 5\", \"tabular-nums\")\n                        ui.text(\"+4 / s\", \"tabular-nums text-[#9fcf8a]\")\n                    }\n                }\n            }\n            // command medallions\n            if ui.div(\"grid shrink-0 grid-cols-2 gap-x-3 gap-y-1\") {\n                CMDS := [4]string{\"Move\", \"Attack\", \"Patrol\", \"Stop\"}\n                KEYS := [4]string{\"M\", \"A\", \"P\", \"S\"}\n                ics := [4]ui.Icon{GI.move, GI.attack, GI.patrol, GI.stop}\n                for name, i in CMDS {\n                    ui.push_id(i)\n                    armed := G.armed == i\n                    if ui.button_box(\"group flex flex-col items-center gap-0.5\") {\n                        if ui.div(armed ? \"relative flex size-11 items-center justify-center rounded-full bg-radial from-[#fff1c4] via-[#e3c98a] to-[#9b7433] ring-2 ring-[#cfd3d6] shadow-lg shadow-[#e3c98a]/40\" : \"relative flex size-11 items-center justify-center rounded-full bg-radial from-[#3d63b0] to-[#1b2f5c] ring-2 ring-[#b08a4a] transition group-hover:ring-[#e3c98a]\") {\n                            ui.icon(ics[i], armed ? \"size-6 text-[#2a1a08]\" : \"size-6 text-[#cfd3d6]\")\n                            ui.text(KEYS[i], \"absolute -right-1 -bottom-1 rounded-sm corner-bevel bg-[#16130f] px-1 font-game text-[11px] font-extrabold text-[#e3c98a] ring-1 ring-[#b08a4a]\")\n                        }\n                        ui.text(name, armed ? \"font-game text-[11px] font-extrabold uppercase tracking-wider text-[#e3c98a]\" : \"font-game text-[11px] font-bold uppercase tracking-wider text-[#cfd3d6]\")\n                        if ui.clicked() {\n                            G.armed = i\n                        }\n                    }\n                    ui.pop_id()\n                }\n            }\n        }\n    }\n}",
+     "rect": [
+      356.0,
+      1300.0,
+      608.0,
+      420.0
+     ],
+     "size": [
+      608.0,
+      420.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Corner shapes"
+    },
+    {
+     "kind": "Para",
+     "text": "corner-* changes the geometry of a corner and rounded-* its size. Borders, rings, inset shadows and hard shadows follow the shape. Arches take the height of the arch."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"flex w-full flex-wrap items-end justify-center gap-6\") {\n    SHAPES := [5]string{\n        \"corner-bevel rounded-xl\",\n        \"corner-scoop rounded-xl\",\n        \"corner-notch rounded-lg\",\n        \"corner-t-arch rounded-t-[64px]\",\n        \"corner-tl-scoop corner-br-scoop corner-tr-bevel corner-bl-bevel rounded-xl\",\n    }\n    LABELS := [5]string{\"bevel\", \"scoop\", \"notch\", \"arch\", \"mixed\"}\n    for cls, i in SHAPES {\n        ui.push_id(i)\n        if ui.div(\"flex flex-col items-center gap-2\") {\n            ui.el(ui.cx(\"h-28 w-24 border-2 border-[#e3c98a] bg-linear-to-b from-[#3d63b0] to-[#1b2f5c] inset-shadow-sm inset-shadow-white/30\", cls))\n            ui.text(LABELS[i], \"font-game text-sm font-bold uppercase tracking-widest text-[#cfd3d6]\")\n        }\n        ui.pop_id()\n    }\n}",
+     "rect": [
+      356.0,
+      3468.0,
+      608.0,
+      368.0
+     ],
+     "size": [
+      608.0,
+      368.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Materials"
+    },
+    {
+     "kind": "Para",
+     "text": "Relief textures are light grey and multiply the background colour or gradient, so one texture serves every metal, wood and stone. Mask textures carry the pattern in alpha: tint them with a colour to inlay a pattern on any ground."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"grid w-full grid-cols-5 gap-4\") {\n    ui.el(\"h-20 rounded-lg bg-[#b08a4a] bg-tex-hammered bg-tile-96 ring-1 ring-black/40\")\n    ui.el(\"h-20 rounded-lg bg-linear-to-b from-[#e7e9ec] to-[#7d828a] bg-tex-brushed ring-1 ring-black/40\")\n    ui.el(\"h-20 rounded-lg bg-[#7a4e2b] bg-tex-grain bg-tile-128 ring-1 ring-black/40\")\n    ui.el(\"h-20 rounded-lg bg-[#9c968a] bg-tex-stone bg-tile-128 ring-1 ring-black/40\")\n    ui.el(\"h-20 rounded-lg bg-[#e9dcbc] bg-tex-parchment ring-1 ring-black/40\")\n    ui.el(\"h-20 rounded-lg bg-[#2b4a8c] bg-tex-weave bg-tile-48 ring-1 ring-black/40\")\n    if ui.div(\"h-20 rounded-lg bg-[#16130f] ring-1 ring-black/40\") {\n        ui.el(\"size-full rounded-lg bg-[#cfd3d6] bg-tex-khatam bg-tile-40\")\n    }\n    if ui.div(\"h-20 rounded-lg bg-[#16130f] ring-1 ring-black/40\") {\n        ui.el(\"size-full rounded-lg bg-[#e3c98a] bg-tex-interlace bg-tile-32\")\n    }\n    if ui.div(\"h-20 rounded-lg bg-[#3b2616] bg-tex-grain ring-1 ring-black/40\") {\n        ui.el(\"size-full rounded-lg bg-[#c9a35a] bg-tex-studs bg-tile-20\")\n    }\n    ui.el(\"h-20 rounded-lg bg-radial from-[#e3c98a] to-[#6e5428] bg-tex-hammered bg-tile-64 ring-1 ring-black/40\")\n}",
+     "rect": [
+      356.0,
+      4528.0,
+      608.0,
+      240.0
+     ],
+     "size": [
+      608.0,
+      240.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Orb gauges"
+    },
+    {
+     "kind": "Para",
+     "text": "A health orb is a round frame with a clipped liquid level, a glass highlight on top and a brass ring. The level is a percentage height, so it animates with transition-all."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"flex items-center gap-10\") {\n    orb(f32(G.hp) / 500, \"from-[#e0584a] to-[#6f1a14]\", \"Life\", fmt.tprintf(\"%d / 500\", G.hp))\n    if ui.div(\"flex flex-col gap-2\") {\n        if ui.button(\"Take a hit\", \"rounded-md corner-bevel bg-[#8f2f22] px-4 py-2 font-game text-sm font-bold uppercase tracking-wider text-[#f3e6c8] ring-1 ring-[#e3c98a] hover:bg-[#a63a2c]\") {\n            G.hp = max(25, G.hp - 90)\n        }\n        if ui.button(\"Quaff potion\", \"rounded-md corner-bevel bg-[#2b4a8c] px-4 py-2 font-game text-sm font-bold uppercase tracking-wider text-[#f3e6c8] ring-1 ring-[#e3c98a] hover:bg-[#355aa8]\") {\n            G.hp = min(500, G.hp + 150)\n            G.mana = min(200, G.mana + 40)\n        }\n    }\n    orb(f32(G.mana) / 200, \"from-[#5b86e0] to-[#14275c]\", \"Faith\", fmt.tprintf(\"%d / 200\", G.mana))\n}",
+     "rect": [
+      356.0,
+      5460.0,
+      608.0,
+      268.0
+     ],
+     "size": [
+      608.0,
+      268.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Inventory and tooltips"
+    },
+    {
+     "kind": "Para",
+     "text": "Notched slots with rarity rims, a selected slot lit in gold, and a parchment tooltip with scooped corners."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"flex items-start gap-8\") {\n    if ui.div(\"grid grid-cols-4 gap-2 rounded-xl corner-bevel bg-[#2a221b] bg-tex-grain p-3 ring-2 ring-[#6e5428]\") {\n        RIMS := [8]string{\"ring-[#6e5428]\", \"ring-[#cfd3d6]\", \"ring-[#3d6fd6]\", \"ring-[#6e5428]\", \"ring-[#e3c98a]\", \"ring-[#6e5428]\", \"ring-[#9b59d0]\", \"ring-[#6e5428]\"}\n        ITEMS := [8]ui.Icon{GI.attack, GI.stop, GI.helm, 0, GI.khatam, GI.scroll, GI.heart, 0}\n        for rim, i in RIMS {\n            ui.push_id(i)\n            sel := G.slot == i\n            if ui.button_box(ui.cx(\"flex size-14 items-center justify-center rounded-md corner-notch bg-[#16130f] inset-shadow-sm inset-shadow-black ring-2\", sel ? \"ring-[#fff1c4] bg-[#3a2c14]\" : rim)) {\n                if ITEMS[i] != 0 {\n                    ui.icon(ITEMS[i], sel ? \"size-8 text-[#fff1c4]\" : \"size-8 text-[#cfd3d6]\")\n                }\n                if ui.clicked() {\n                    G.slot = i\n                }\n            }\n            ui.pop_id()\n        }\n    }\n    if ui.div(\"w-64 rounded-2xl corner-scoop bg-[#e9dcbc] bg-tex-parchment p-5 ring-2 ring-[#6e5428] shadow-xl shadow-black/60\") {\n        ui.text(\"Astrolabe Seal\", \"font-display text-lg font-bold text-[#5a3a12]\")\n        ui.text(\"Relic \u00b7 Unique\", \"font-game text-xs font-bold uppercase tracking-widest text-[#8f2f22]\")\n        ui.el(\"my-3 h-2 bg-[#6e5428]/60 bg-tex-interlace bg-tile-8\")\n        ui.text(\"+2 vision at every kindled waypoint stone. Carried by the Emir's First Captain through the Whispering March.\", \"font-game text-sm/5 font-medium text-[#3b2a16]\")\n    }\n}",
+     "rect": [
+      356.0,
+      6272.0,
+      608.0,
+      260.0
+     ],
+     "size": [
+      608.0,
+      260.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Dialogue under an arch"
+    },
+    {
+     "kind": "Para",
+     "text": "A pointed arch, a parchment field and an inscriptional face carry the narrative moments; the controls inside stay standard buttons."
+    },
+    {
+     "kind": "Example",
+     "code": "if ui.div(\"w-[420px] rounded-t-[290px] corner-t-arch bg-[#b08a4a] bg-tex-hammered p-2 pb-2 rounded-b-lg shadow-2xl shadow-black\") {\n    if ui.div(\"flex flex-col items-center gap-3 rounded-t-[282px] corner-t-arch rounded-b-md bg-[#e9dcbc] bg-tex-parchment px-10 pt-36 pb-6\") {\n        ui.icon(GI.khatam, \"size-10 text-[#8f2f22]\")\n        ui.text(\"The Challenge Horn\", \"font-display text-2xl font-bold text-[#3b2a16]\")\n        ui.text(\"A Luk Soldier spots Liiroy, the Bold! Steel rings in the mist; he will charge in four heartbeats.\", \"text-center font-game text-base/6 font-medium text-[#3b2a16]\")\n        if ui.div(\"mt-2 flex gap-3\") {\n            ui.button(\"Hold the line\", \"rounded-md corner-bevel bg-[#2b4a8c] px-4 py-2 font-game text-sm font-bold uppercase tracking-wider text-[#f3e6c8] ring-1 ring-[#6e5428] hover:bg-[#355aa8]\")\n            ui.button(\"Strike first\", \"rounded-md corner-bevel bg-[#8f2f22] px-4 py-2 font-game text-sm font-bold uppercase tracking-wider text-[#f3e6c8] ring-1 ring-[#6e5428] hover:bg-[#a63a2c]\")\n        }\n    }\n}",
+     "rect": [
+      356.0,
+      7364.0,
+      608.0,
+      448.0
+     ],
+     "size": [
+      608.0,
+      448.0
+     ]
+    },
+    {
+     "kind": "H2",
+     "text": "Embedding in a game"
+    },
+    {
+     "kind": "Para",
+     "text": "When a game owns the window, vinland:vui/raylib bridges it: sample input, build the HUD, and render it over the finished world. It draws into the bound framebuffer without clearing it and restores the GL state it touched. Other GL hosts (GLFW, SDL_GL) use vinland:vui/gl directly."
+    },
+    {
+     "kind": "Code",
+     "code": "import ui \"vinland:vui\"\nimport vrl \"vinland:vui/raylib\"\n\nhost: vrl.Host\nvrl.init(&host, &ctx)                     // after rl.InitWindow\nminimap := vrl.texture_image(&host, minimap_tex)\n\nfor !rl.WindowShouldClose() {\n    if !vrl.pointer_over_ui(&host) { handle_world_clicks() }\n    update_world(); update_camera()\n\n    vrl.begin(&host, vrl.input())         // after the camera: labels never lag\n    draw_hud()                            // ui.div(...), ui.image(minimap, ...)\n    vrl.end(&host)\n\n    rl.BeginDrawing()\n    draw_world()\n    vrl.render(&host)                     // flushes rlgl, one draw per texture batch\n    rl.EndDrawing()\n}"
+    },
+    {
+     "kind": "Note",
+     "text": "Keyboard is left out of vrl.input() by default so game hotkeys (Space, letters) never activate a focused button; pass keyboard = true for menus with text fields."
     }
    ]
   },
