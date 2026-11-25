@@ -7,7 +7,8 @@
 - [ ] **Linux** (from macOS, game UI work): verify `corner-*` shapes and `bg-tex-*` textures on Vulkan (`ui.frag.spv` rebuilt) via `./build/showroom --page=game-ui`, and that `vui/gl/loader_linux.odin` (`glXGetProcAddressARB`) loads GL for `vui/gl` / `vui/raylib` hosts.
 - [ ] **Linux** (from macOS): `Frag_Uniforms` gained `grade` / `grade_tint` (std140 vec4s after `u_text_contrast`); verify Vulkan renders the showroom unchanged (grade off) and a host with `ctx.grade = GRADE_PAINTED` shows the grain/mottle grade.
 - [ ] **Web** (from macOS): verify the Game UI page (`game-ui`) in the WebGL2 build; `textureGrad` + corner shapes come from the shared GLSL body.
-- [ ] **Linux** (from macOS commit `85038f0`): Run `./build.sh`, `./build/vui-test tests/e2e/showroom.vt`, and `scripts/check-background.sh` to verify the `platform_linux.odin` / `gpu_vulkan.odin` split and `tools/vui-test/platform_linux.odin`.
+- [ ] **Linux** (from macOS commit `85038f0`): Run `./build.sh`, `./build/vui-test tests/e2e/showroom.vt`, and `scripts/check-background.sh` to verify the `platform_linux.odin` split and `tools/vui-test/platform_linux.odin`.
+- [ ] **Linux** (from macOS, SDL GPU refactor): `vui/app/gpu.odin` now delegates to `vui/sdlgpu` (shaders picked at runtime from the device's formats; `gpu_metal*.odin` / `gpu_vulkan.odin` removed). Verify Vulkan: `./build.sh && ./build/vui-test tests/e2e/showroom.vt && ./build/vui-test tests/e2e/game-ui.vt`, and that a host embedding `vui/sdlgpu` with a depth attachment draws (dreamcraft on Linux).
 
 ## Platform & Backend Matrix
 
@@ -28,8 +29,7 @@ Override GPU/backend at runtime with `VUI_BACKEND=metal|vulkan|gl` (or `VUI_HIDD
 | Linux host hooks | [vui/app/platform_linux.odin](vui/app/platform_linux.odin), [tools/vui-test/platform_linux.odin](tools/vui-test/platform_linux.odin) |
 | macOS host hooks | [vui/app/platform_darwin.odin](vui/app/platform_darwin.odin), [tools/vui-test/platform_darwin.odin](tools/vui-test/platform_darwin.odin) |
 | Other OS fallback hooks | [vui/app/platform_other.odin](vui/app/platform_other.odin), [tools/vui-test/platform_other.odin](tools/vui-test/platform_other.odin) |
-| Metal GPU shaders | [vui/app/gpu_metal.odin](vui/app/gpu_metal.odin) (`#+build darwin`), [vui/app/gpu_metal_stub.odin](vui/app/gpu_metal_stub.odin) (`#+build !darwin`), [vui/app/shaders/ui.metal](vui/app/shaders/ui.metal) |
-| Vulkan GPU shaders | [vui/app/gpu_vulkan.odin](vui/app/gpu_vulkan.odin), `vui/app/shaders/ui.{vert,frag}` + `.spv` |
+| SDL GPU renderer (shared by `vui/app` and embedding hosts) | [vui/sdlgpu/sdlgpu.odin](vui/sdlgpu/sdlgpu.odin): MSL ([vui/app/shaders/ui.metal](vui/app/shaders/ui.metal)) or SPIR-V (`vui/app/shaders/ui.{vert,frag}` + `.spv`) chosen from the device's shader formats |
 | Shared GLSL bodies | `vui/app/shaders/ui_vs_body.glsl`, `vui/app/shaders/ui_fs_body.glsl` |
 | WebGL2 / WASM host | [vui/web/web.odin](vui/web/web.odin), [showroom/web_main.odin](showroom/web_main.odin) |
 | Embedded GL renderer (game hosts) | [vui/gl/gl.odin](vui/gl/gl.odin) + `loader_{darwin,linux,other}.odin`, [vui/raylib/raylib.odin](vui/raylib/raylib.odin) |

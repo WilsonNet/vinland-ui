@@ -254,6 +254,7 @@ Image_Def :: struct {
 	freed:    bool,
 	external: bool, // handle owned by the host (e.g. a game render target); never uploaded or freed
 	flip_y:   bool, // external GL render targets are stored bottom-up
+	nearest:  bool, // sample without filtering (pixel maps such as a minimap); GPU backends
 }
 
 Hit :: struct {
@@ -1174,9 +1175,10 @@ image_register :: proc(ctx: ^Context, rgba: []u8, w, h: int) -> Image_Id {
 
 // Registers a texture the host already owns on the GPU (a game render target, a minimap
 // texture). vui samples it but never uploads, mip-maps or frees it. Call image_external_update
-// when the host recreates the texture.
-image_register_external :: proc(ctx: ^Context, handle: u64, w, h: int, flip_y := false) -> Image_Id {
-	append(&ctx.images, Image_Def{w = w, h = h, handle = handle, external = true, flip_y = flip_y})
+// when the host recreates the texture. `nearest` samples without filtering on the SDL GPU
+// backends (GL samples with the texture's own parameters).
+image_register_external :: proc(ctx: ^Context, handle: u64, w, h: int, flip_y := false, nearest := false) -> Image_Id {
+	append(&ctx.images, Image_Def{w = w, h = h, handle = handle, external = true, flip_y = flip_y, nearest = nearest})
 	return Image_Id(len(ctx.images))
 }
 

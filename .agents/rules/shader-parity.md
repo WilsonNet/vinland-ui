@@ -20,4 +20,4 @@ Any change to `vui.Draw_Cmd`, `Frag_Uniforms`, draw primitive `kind`s, or blendi
 - **2-arg atan**: GLSL `atan(y, x)` is `atan2(y, x)` in MSL.
 - **Derivatives & discard**: use `dfdx`/`dfdy` (not `dFdx`/`dFdy`) and `discard_fragment(); return float4(0.0f);`.
 - **SDL3 GPU Metal bindings**: vertex/fragment uniform buffers both bind at `[[buffer(0)]]`; vertex buffers use `[[stage_in]]`; sampled textures use `[[texture(n)]]` + `[[sampler(n)]]`.
-- **Uniform struct padding**: `VertexUniforms` is 16-byte aligned (`float2 u_viewport; float2 _pad;`); `FragmentUniforms` must match `Frag_Uniforms` in `vui/app/gpu.odin` (16x `float4x4` + 16x `float4` + `float2` + `2x float`).
+- **Uniform struct padding**: `VertexUniforms` is 16-byte aligned (`float2 u_viewport; float2 _pad;`); `FragmentUniforms` must match `Frag_Uniforms` in `vui/sdlgpu/sdlgpu.odin` (16x `float4x4` + 16x `float4` + `float2` + `2x float`).

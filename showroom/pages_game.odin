@@ -238,6 +238,21 @@ for !rl.WindowShouldClose() {
     rl.EndDrawing()
 }`)
 	note("Keyboard is left out of vrl.input() by default so game hotkeys (Space, letters) never activate a focused button; pass keyboard = true for menus with text fields.")
+	para("A game that renders with SDL3 GPU (Metal or Vulkan) embeds vinland:vui/sdlgpu instead: the HUD is recorded into the game's own command buffer and drawn inside its render pass, with no second device or swapchain. prepare uploads instances, glyphs and images before any render pass begins; draw runs inside the pass. External images are the game's SDL_GPUTexture pointers.")
+	code(`import ui "vinland:vui"
+import vsg "vinland:vui/sdlgpu"
+
+r: vsg.Renderer
+vsg.init(&r, device, color_format, depth_format)   // the formats of the pass the HUD draws in
+minimap := ui.image_register_external(&ctx, u64(uintptr(minimap_tex)), 80, 50, nearest = true)
+
+// every frame, after building the HUD (ui.begin_frame ... ui.end_frame -> draw_list)
+cmd := sdl.AcquireGPUCommandBuffer(device)
+vsg.prepare(&r, &ctx, draw_list, cmd)             // copy pass: before any render pass
+pass := sdl.BeginGPURenderPass(cmd, &color, 1, &depth)
+draw_world(pass)
+vsg.draw(&r, &ctx, draw_list, cmd, pass, fb_w, fb_h)
+sdl.EndGPURenderPass(pass)`)
 }
 
 @(private = "file")

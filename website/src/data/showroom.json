@@ -1003,7 +1003,7 @@
    "title": "Introduction",
    "group": "Getting started",
    "desc": "vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density.",
-   "content_bottom": 2209.0,
+   "content_bottom": 2265.0,
    "blocks": [
     {
      "kind": "Para",
@@ -1029,7 +1029,7 @@
     },
     {
      "kind": "Para",
-     "text": "A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons."
+     "text": "A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/sdlgpu` draws vui inside another program's SDL3 GPU render pass (games), and `vui/gl` + `vui/raylib` do the same for OpenGL/raylib hosts. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons."
     },
     {
      "kind": "Para",
@@ -2226,7 +2226,7 @@
    "title": "Game UI",
    "group": "Core concepts",
    "desc": "Skeuomorphic HUDs for games: ornate corner shapes, textured materials, orb gauges and inventories, embeddable in a game's own GL context.",
-   "content_bottom": 9205.0,
+   "content_bottom": 9761.0,
    "blocks": [
     {
      "kind": "Para",
@@ -2420,6 +2420,14 @@
     {
      "kind": "Note",
      "text": "Keyboard is left out of vrl.input() by default so game hotkeys (Space, letters) never activate a focused button; pass keyboard = true for menus with text fields."
+    },
+    {
+     "kind": "Para",
+     "text": "A game that renders with SDL3 GPU (Metal or Vulkan) embeds vinland:vui/sdlgpu instead: the HUD is recorded into the game's own command buffer and drawn inside its render pass, with no second device or swapchain. prepare uploads instances, glyphs and images before any render pass begins; draw runs inside the pass. External images are the game's SDL_GPUTexture pointers."
+    },
+    {
+     "kind": "Code",
+     "code": "import ui \"vinland:vui\"\nimport vsg \"vinland:vui/sdlgpu\"\n\nr: vsg.Renderer\nvsg.init(&r, device, color_format, depth_format)   // the formats of the pass the HUD draws in\nminimap := ui.image_register_external(&ctx, u64(uintptr(minimap_tex)), 80, 50, nearest = true)\n\n// every frame, after building the HUD (ui.begin_frame ... ui.end_frame -> draw_list)\ncmd := sdl.AcquireGPUCommandBuffer(device)\nvsg.prepare(&r, &ctx, draw_list, cmd)             // copy pass: before any render pass\npass := sdl.BeginGPURenderPass(cmd, &color, 1, &depth)\ndraw_world(pass)\nvsg.draw(&r, &ctx, draw_list, cmd, pass, fb_w, fb_h)\nsdl.EndGPURenderPass(pass)"
     }
    ]
   },

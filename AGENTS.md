@@ -4,7 +4,7 @@
 
 - Never add `when ODIN_OS` conditionals inside shared host/runner files (`vui/app/app.odin`, `vui/app/control.odin`, `vui/app/gpu.odin`, `tools/vui-test/main.odin`).
 - Put OS-specific code in `platform_linux.odin`, `platform_darwin.odin`, and `platform_other.odin` using `#+build` tags.
-- Put GPU shader backend loading in `gpu_metal.odin`, `gpu_metal_stub.odin`, and `gpu_vulkan.odin`.
+- SDL GPU shader selection lives in `vui/sdlgpu/sdlgpu.odin` (MSL vs SPIR-V by the device's shader formats, at runtime; no OS conditionals).
 - When changing any `platform_*` procedure signature or behavior contract, update all three OS implementations (`_linux`, `_darwin`, `_other`) in the same commit.
 
 ## Shader Parity

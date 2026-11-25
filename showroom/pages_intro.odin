@@ -87,7 +87,7 @@ page_introduction :: proc() {
 		}
 	}
 	h2("What it is")
-	para("A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.")
+	para("A small set of Odin packages. `vui` holds the element tree, the utility parser, design tokens, layout, text shaping and painting. `vui/app` is a host built on SDL3 GPU (Metal on macOS, Vulkan on Linux) with an OpenGL 3.3 fallback that owns the window, input and the control server. `vui/sdlgpu` draws vui inside another program's SDL3 GPU render pass (games), and `vui/gl` + `vui/raylib` do the same for OpenGL/raylib hosts. `vui/fonts` embeds Inter, IBM Plex Mono and Source Serif 4, and `vui/icons` ships Heroicons.")
 	para("The core never draws anything on its own. A `ui.div` is an empty box until you give it classes, so the look of an app lives entirely in your code and in your theme.")
 	h2("How it reads")
 	para("Containers open with `if ui.div(\"...\") { }` and close automatically at the end of the block. Leaves such as `ui.text`, `ui.icon` and `ui.el` take a class string. Interaction is queried where you build: `ui.clicked()`, `ui.hovered()` and friends refer to the element you are inside.")

@@ -248,8 +248,12 @@ Colors: `ui.oklch(l, c, h)` and `"oklch(...)"` in JSON themes, same space as Tai
   weave` (relief: multiply the bg colour/gradient) and `khatam interlace studs` (alpha masks: tint
   with a bg colour). Use `bg-tex-<name> bg-tile-<px>`. Any image named with `ui.image_name(ctx,
   name, img)` works too, including host textures from `ui.image_register_external`.
-- Fonts/icons: `vui/fonts/game.register` (`font-display` Cinzel Decorative, `font-game` Alegreya
-  Sans), `vui/icons/game.register` (attack, move, patrol, stop, follow, scroll, khatam, heart, helm).
+- Fonts/icons: `vui/fonts/game.register` (`font-display` Cinzel, `font-decorative` Cinzel Decorative
+  for single words, `font-game` Alegreya Sans), `vui/icons/game.register` (attack, move, patrol, stop, follow, scroll, khatam, heart, helm).
+- In an SDL3 GPU game: `vui/sdlgpu` (`init(&r, dev, color_format, depth_format)`, then per frame
+  `prepare(&r, ctx, draw, cmd)` before any render pass and `draw(&r, ctx, draw, cmd, pass, w, h)`
+  inside the pass that should show the HUD). External images are `SDL_GPUTexture` pointers;
+  `image_register_external(..., nearest = true)` samples pixel maps unfiltered.
 - In a raylib game: `vui/raylib` (`init`, `input`, `begin`/`end`, `render` after the world,
   `pointer_over_ui(host, mouse)` to route world clicks, `texture_image` for minimaps and render
   targets). Other GL hosts use `vui/gl` directly. Build the HUD after the camera update so
