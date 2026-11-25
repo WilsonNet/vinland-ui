@@ -96,6 +96,7 @@ process_input :: proc(ctx: ^Context) {
 				v := clamp(ctx.drag_scroll0 + delta, 0, st.scroll_max[axis])
 				st.scroll_target[axis] = v
 				st.scroll[axis] = v
+				st.scroll_active_t = ctx.time
 			}
 			ctx.cursor = .Default
 			top = -1

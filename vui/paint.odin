@@ -925,15 +925,15 @@ paint_scrollbars :: proc(ctx: ^Context, n: ^Node, ps: ^Paint_State, r: Rect, own
 	vis: f32 = 0
 	if ctx.drag_thumb == n.id {
 		vis = 1
-	} else if since < 0.9 {
+	} else if since >= 0 && since < 0.9 {
 		vis = 1
-	} else if since < 1.3 {
+	} else if since >= 0 && since < 1.3 {
 		vis = 1 - (since - 0.9) / 0.4
 	}
 	if st.hovered {
 		vis = max(vis, 0.6)
 	}
-	if since < 1.3 {
+	if since >= 0 && since < 1.3 {
 		ctx.animating = true
 	}
 	base.a *= vis

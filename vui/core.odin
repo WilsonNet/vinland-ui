@@ -588,6 +588,7 @@ state_get :: proc(ctx: ^Context, id: Id) -> ^Elem_State {
 	st, ok := ctx.states[id]
 	if !ok {
 		st = new(Elem_State)
+		st.scroll_active_t = -1000 // never scrolled yet
 		ctx.states[id] = st
 	}
 	st.last_frame = ctx.frame

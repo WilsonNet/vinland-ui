@@ -19,7 +19,7 @@ test "arming a medallion fills it with gold inlay"
   raw {"cmd":"scroll_content","y":"1180"}
   wait 4
   click "Patrol"
-  wait 3
+  settle
   screenshot game-console
 
 test "orb gauge reacts"
@@ -31,6 +31,6 @@ test "orb gauge reacts"
   wait 3
   expect-text "270 / 500"
   click "Quaff potion"
-  wait 3
+  settle
   expect-text "420 / 500"
   screenshot game-orbs

@@ -329,3 +329,34 @@ clipboard_helper_preserves_text_and_newlines :: proc(t: ^testing.T) {
 	testing.expect(t, strings.contains(text, "clipboard-test"), text)
 	testing.expect(t, strings.contains(text, "\nsecond-line"), text)
 }
+
+@(test)
+unscrolled_container_does_not_animate_scrollbar_at_startup :: proc(t: ^testing.T) {
+	ctx := setup()
+	defer teardown(ctx)
+	build :: proc() {
+		if ui.div("scroll-box h-[100px] w-[200px] overflow-y-auto") {
+			ui.el("h-[400px]")
+		}
+	}
+	// Initial frames at startup (ctx.time < 0.9, mouse outside): no scrollbar animation or visible thumb.
+	frame(ctx, build)
+	testing.expect(t, !ctx.animating, "unscrolled container should not animate at startup")
+	for c in ctx.draw.cmds {
+		testing.expect(t, c.fill0.a == 0, "unscrolled container should not draw a visible scrollbar thumb")
+	}
+
+	// Wheel scrolling activates the overlay scrollbar and animation.
+	frame(ctx, build, input = {mouse = {50, 50}, mouse_inside = true, wheel = {0, 80}})
+	frame(ctx, build, input = {mouse = {50, 50}, mouse_inside = false})
+	n := find(ctx, "scroll-box h-[100px] w-[200px] overflow-y-auto")
+	testing.expect(t, n != nil && n.state != nil, "scroll container state exists")
+	testing.expect(t, ctx.animating, "scrolling activates scrollbar animation")
+	testing.expect(t, n.state.scroll_active_t >= 0, "scrolling records scroll_active_t")
+
+	// Running 120 frames (2.0s at 60fps) settles smooth scrolling and completes the 1.3s fade window.
+	for _ in 0 ..< 120 {
+		frame(ctx, build)
+	}
+	testing.expect(t, !ctx.animating, "scrollbar animation stops after fade window")
+}

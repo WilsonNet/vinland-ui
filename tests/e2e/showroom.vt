@@ -29,7 +29,7 @@ test "search palette filters"
 
 test "dark mode toggle"
   dark on
-  wait 3
+  settle
   screenshot home-dark
   dark off
 
