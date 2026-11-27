@@ -30,6 +30,7 @@ Tailwind's vocabulary and design-token model, inside a native Odin immediate-mod
 
 - Built and run from the terminal (`odin build`, shell scripts). Linux/Hyprland (1.333 fractional scaling on 3440x1440, Vulkan) and macOS (Apple Silicon Retina 2x, Metal): the framework renders at native physical pixels.
 - Agent-driven feedback loop: `vui-ctl` CLI talks to the running app (navigate, click, scroll, type, theme, resize, dump tree, screenshot) with headless (`VUI_HIDDEN=1`) and non-focusable background (`VUI_BACKGROUND=1`) modes; `vui-test` runs Playwright-style e2e suites.
+- Optional hot reload for development: `vui-hot` rebuilds the app as a shared library on save and swaps it into the running window (state kept via `app.run` + `app.keep`, migrated across type changes). Plain `odin build` stays the default path and contains no reload code.
 - References the user named: Quickshell (widgets/animation on Linux), Jetpack Compose (UI in the host language), Flutter (owns its renderer, game-engine-like), Tailwind CSS (utility vocabulary, docs quality bar).
 
 ## Capabilities and Constraints

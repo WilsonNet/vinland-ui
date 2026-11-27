@@ -16,6 +16,13 @@ When changing `Draw_Cmd`, `Frag_Uniforms`, or any rendering primitive, update al
 3. Metal MSL (`vui/app/shaders/ui.metal`)
 4. WebGL2 (`vui/web/web.odin`)
 
+## Hot Reload ABI
+
+- `vui/hot.Host` is shared between the `vui-hot` runner and every app build: bump `HOST_ABI` in `vui/hot/hot.odin` whenever its layout changes (old runners then refuse new builds instead of misreading them).
+- Keep package-level mutable state out of `vui/` and `vui/app/`: each hot build gets fresh globals. Anything that must outlive a reload belongs in `ui.Context`, `App`, or `Hot_Persist`; vendor packages that keep globals (e.g. `vendor:OpenGL` proc pointers) must be re-initialised in `hot_run`'s resume path.
+- `odin build` of an app must not run any hot code: `app.run`/`app.keep` stay plain when `vui-hot` is not the host.
+- Verify with `python3 tests/hot/test_hot.py` (sandboxed) and `odin test tests`.
+
 ## Cross-OS Handoff
 
 - Read `PLATFORMS.md` ("Pending Cross-OS Verification") at the start of a session.
@@ -32,4 +39,4 @@ When changing `Draw_Cmd`, `Frag_Uniforms`, or any rendering primitive, update al
 ## Quick Verification
 
 - **macOS**: `./build.sh && ./build/vui-test tests/e2e/showroom.vt` (plus `VUI_BACKEND=gl VUI_HIDDEN=1 ./build/showroom` when touching GL fallback)
-- **Linux**: `./build.sh && ./build/vui-test tests/e2e/showroom.vt && scripts/check-background.sh`
+- **Linux**: `./build.sh && ./build/vui-test tests/e2e/showroom.vt && scripts/check-background.sh` (plus `python3 tests/hot/test_hot.py` when touching hot reload)

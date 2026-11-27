@@ -10,6 +10,10 @@
 - [ ] **Linux** (from macOS commit `85038f0`): Run `./build.sh`, `./build/vui-test tests/e2e/showroom.vt`, and `scripts/check-background.sh` to verify the `platform_linux.odin` split and `tools/vui-test/platform_linux.odin`.
 - [ ] **Linux** (from macOS, SDL GPU refactor): `vui/app/gpu.odin` now delegates to `vui/sdlgpu` (shaders picked at runtime from the device's formats; `gpu_metal*.odin` / `gpu_vulkan.odin` removed). Verify Vulkan: `./build.sh && ./build/vui-test tests/e2e/showroom.vt && ./build/vui-test tests/e2e/game-ui.vt`, and that a host embedding `vui/sdlgpu` with a depth attachment draws (dreamcraft on Linux).
 
+- [ ] **macOS** (from Linux, hot reload): `./build.sh && python3 tests/hot/test_hot.py` (vui-hot builds `.dylib`; `tools/vui-hot/platform_darwin.odin`, `vui/hot/stat_darwin.odin`), and a visible `./build/vui-hot examples/counter` on Metal swaps without closing the window. CI runs the suite with `continue-on-error` until this is checked.
+- [ ] **Linux** (visible window, GPU): `./build/vui-hot examples/counter` on Vulkan (not sandboxed) swaps without closing the window; only the sandboxed GL path was run (GPU kept free while the user was gaming).
+- [ ] **Windows**: `tools/vui-hot/platform_other.odin` / `vui/hot/stat_other.odin` (`.dll`; Windows locks a loaded DLL, so deleting old builds fails silently until exit) are untested.
+
 ## Platform & Backend Matrix
 
 | Platform | Preferred GPU | Fallback | Headless (`VUI_HIDDEN=1`) | Background (`VUI_BACKGROUND=1`) | Status |
@@ -32,6 +36,7 @@ Override GPU/backend at runtime with `VUI_BACKEND=metal|vulkan|gl` (or `VUI_HIDD
 | SDL GPU renderer (shared by `vui/app` and embedding hosts) | [vui/sdlgpu/sdlgpu.odin](vui/sdlgpu/sdlgpu.odin): MSL ([vui/app/shaders/ui.metal](vui/app/shaders/ui.metal)) or SPIR-V (`vui/app/shaders/ui.{vert,frag}` + `.spv`) chosen from the device's shader formats |
 | Shared GLSL bodies | `vui/app/shaders/ui_vs_body.glsl`, `vui/app/shaders/ui_fs_body.glsl` |
 | WebGL2 / WASM host | [vui/web/web.odin](vui/web/web.odin), [showroom/web_main.odin](showroom/web_main.odin) |
+| Hot reload (`vui-hot`) | [vui/hot/](vui/hot/) (shared ABI, fingerprints, migration, watcher; `stat_{linux,darwin,other}.odin`), [vui/app/program.odin](vui/app/program.odin), [tools/vui-hot/](tools/vui-hot/) (`platform_{linux,darwin,other}.odin`) |
 | Embedded GL renderer (game hosts) | [vui/gl/gl.odin](vui/gl/gl.odin) + `loader_{darwin,linux,other}.odin`, [vui/raylib/raylib.odin](vui/raylib/raylib.odin) |
 
 ## Quick Verification Commands
@@ -51,4 +56,5 @@ VUI_BACKEND=gl VUI_HIDDEN=1 VUI_PORT=7422 ./build/showroom &
 ./build.sh
 ./build/vui-test tests/e2e/showroom.vt
 ./scripts/check-background.sh
+python3 tests/hot/test_hot.py      # when touching vui/hot, vui/app/program.odin or tools/vui-hot
 ```

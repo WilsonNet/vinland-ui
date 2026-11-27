@@ -46,3 +46,10 @@ test "testing docs page"
   expect-text "Writing a suite"
   expect-class "Testing" text-accent
   screenshot testing
+
+test "hot reload docs page"
+  click "Hot reload"
+  expect-text "What survives a reload"
+  expect-text "vui-hot examples/counter"
+  expect-class "Hot reload" text-accent
+  screenshot hot-reload

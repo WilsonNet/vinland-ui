@@ -49,6 +49,11 @@ first in the renderer and hands the second to a vocabulary people already know.
   icon set and display fonts, and embeddable renderers so a HUD runs inside a game that owns
   its window and frame loop: `vui/sdlgpu` (the game's own SDL3 GPU render pass, Metal/Vulkan),
   `vui/gl` and the `vui/raylib` bridge (OpenGL/raylib games).
+- **Optional hot reload.** `vui-hot my_app` rebuilds on save and swaps the code into the running
+  window in about 2 ms on top of the ~1 s compile, keeping the window, widget state and the
+  globals you `app.keep` (migrated field by field when their types change). Compile errors draw
+  over the still-running app; crashes roll back. A plain `odin build` is unchanged and never
+  needs it.
 - **Agent-drivable.** Apps expose a local control port; `vui-ctl` clicks, types, scrolls, resizes,
   toggles dark mode, dumps the element tree and takes screenshots. An agent skill ships in
   [`skills/vinland-ui`](skills/vinland-ui/SKILL.md) (symlinked at `.agents/skills/vinland-ui`).
@@ -63,7 +68,7 @@ Requirements: Odin `dev-2026-11` or newer, SDL3 development files, Metal (macOS)
 ```bash
 git clone https://github.com/WilsonNet/vinland-ui
 cd vinland-ui
-./build.sh            # build/showroom, build/vui-ctl, build/vui-test, build/hello
+./build.sh            # build/showroom, build/vui-ctl, build/vui-test, build/vui-hot, build/hello, build/counter
 ./build/showroom      # the documentation app
 ```
 
@@ -98,6 +103,59 @@ main :: proc() {
 ```bash
 odin build my_app -collection:vinland=path/to/vinland-ui
 ```
+
+The same app can be written as an `app.Program`: `app.run` owns the context, window and loop,
+behaves identically in a normal build, and is what lets hot reload keep the window open:
+
+```odin
+State :: struct { count: int }
+s: State
+
+main :: proc() {
+    app.run({
+        config = {title = "Counter", size = {480, 320}},
+        setup  = proc(a: ^app.App) { fonts.register(a.ctx); app.keep(&s) },   // every load
+        init   = proc(a: ^app.App) { s.count = 0 },                            // once per window
+        frame  = proc(a: ^app.App) {
+            if ui.button(fmt.tprintf("Clicked %d times", s.count), "rounded-lg bg-sky-600 px-4 py-2 text-white") {
+                s.count += 1
+            }
+        },
+    })
+}
+```
+
+## Hot reload (optional)
+
+Odin builds fast, so rebuilding by hand works fine. Hot reload is for when you also want to keep
+what the running app is showing: the page you navigated to, a form, the scroll position, dark mode.
+
+```bash
+./build/vui-hot examples/counter                  # edit examples/counter/main.odin, save
+./build/vui-hot showroom -- --page=colors         # app args after --
+VUI_HIDDEN=1 VUI_PORT=7421 ./build/vui-hot my_app # sandboxed, for agents and tests
+```
+
+`vui-hot` watches the package, every local package it imports and every `#load`-ed file
+(polling with content hashes: atomic saves are coalesced and a save without changes never
+rebuilds), builds the package as a shared library and tells a runner process to swap it in. The
+window, GPU device, `ui.Context` (scroll offsets, focus, text edits, caches) and every
+`app.keep(&global)` survive. When a kept type changes, the value is migrated: fields matched by
+name, sizes of integers and floats converted, new fields defaulted, incompatible ones reset, and
+the result is listed in `vui-ctl info` under `hot.notes`.
+
+When something breaks, the app keeps running: a compile error leaves the previous build live with
+the compiler output drawn over it; a build that crashes right after loading is rolled back; a
+crash loop stops respawning until the next save; an edit during a build cancels the stale compile.
+Old builds stay mapped (live state can point at their string literals and code) but each one
+releases its scratch arenas on hand-off and the kernel may drop its pages.
+
+Measured on the showroom (16 cores, Linux, sandboxed): save to new code live **1.3 to 1.4 s**,
+of which the compile is 1.1 to 1.2 s and the swap **about 2 ms**; a traditional rebuild and
+relaunch takes about 1.35 s and loses the state. Watching costs about 0.4% of one core. Details,
+methodology and the design research: [tools/vui-hot/BENCHMARKS.md](tools/vui-hot/BENCHMARKS.md).
+Tests: `python3 tests/hot/test_hot.py` (37 end-to-end cases, positive and negative) and
+`odin test tests` (fingerprints, migration, watcher, protocol).
 
 ## Website
 
@@ -213,6 +271,9 @@ Measured (tracker, continuous rendering, 1770×1140): GPU 1.1 ms/frame with flat
 | `vui/icons/` | Heroicons (MIT) |
 | `tools/vui-ctl/` | control CLI |
 | `tools/vui-test/` | end-to-end test runner (suites in `tests/e2e/`) |
+| `vui/hot/` | hot reload core shared by the runner and apps: host ABI, type fingerprints, state migration, watcher |
+| `tools/vui-hot/` | hot reload supervisor and runner (`vui-hot`) |
+| `examples/` | `hello` (classic loop), `counter` (`app.Program`, hot-reloadable) |
 | `tools/gen/` | generators for the palette, icons and reference tables |
 | `showroom/` | documentation app |
 | `skills/vinland-ui/` | skill for coding agents |

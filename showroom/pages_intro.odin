@@ -7,6 +7,7 @@ import ui "../vui"
 register_pages :: proc() {
 	page("Getting started", "introduction", "Introduction", "vinland-ui is a utility-first UI framework for Odin. You write UI in Odin, style it with Tailwind-style classes that resolve through design tokens, and a GPU renderer draws it at your display's real pixel density.", page_introduction)
 	page("Getting started", "installation", "Installation", "Add vinland-ui to an Odin project and open your first window.", page_installation)
+	page("Getting started", "hot-reload", "Hot reload", "Optional: edit, save, and the running window picks up the new code in about a second, keeping its state. A plain odin build stays the default.", page_hot_reload)
 	page("Getting started", "agents", "Agent skill & CLI", "Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests.", page_agents)
 	page("Getting started", "testing", "Testing", "Playwright-style end-to-end tests for native apps: click by text, assert on the element tree, diff screenshots against baselines. Headless runs are sandboxed.", page_testing)
 	page("Getting started", "showcase", "Component showcase", "Interfaces assembled from utilities only. Nothing on this page is a built-in widget style.", page_showcase)
@@ -141,8 +142,71 @@ main :: proc() {
         app.end_frame(&a)
     }
 }`)
+	h2("Or describe the app as a Program")
+	para("`app.run` takes the same app as callbacks and owns the context, window and loop. It builds and runs exactly like the loop above, and it is what lets `vui-hot` reload the code without closing the window (see Hot reload).")
+	code(`State :: struct { count: int }
+s: State
+
+main :: proc() {
+    app.run({
+        config = {title = "Counter", size = {480, 320}},
+        setup  = proc(a: ^app.App) { fonts.register(a.ctx); app.keep(&s) },
+        frame  = proc(a: ^app.App) {
+            if ui.button(fmt.tprintf("Clicked %d times", s.count), "rounded-lg bg-sky-600 px-4 py-2 text-white") {
+                s.count += 1
+            }
+        },
+    })
+}`)
 	h2("Bring your own renderer")
 	para("Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; `vui/app/shaders/` (GLSL and MSL) and `vui/app/gl.odin` are the reference implementations of the uber-shader.")
+}
+
+page_hot_reload :: proc() {
+	para("Odin compiles a whole app in about a second, so rebuilding by hand is already fast. What a rebuild loses is the running state: the page you navigated to, a half-filled form, the scroll position, dark mode. `vui-hot` keeps the process and the window alive and swaps only the code, so a save shows its effect in place. It is a development tool and entirely optional: the same package still builds with `odin build` into a normal executable that contains no reload code.")
+	code(`./build.sh                         # builds build/vui-hot too
+./build/vui-hot examples/counter   # edit examples/counter/main.odin and save
+./build/vui-hot showroom -- --page=colors --dark`, "sh")
+	h2("What survives a reload")
+	ref_table({
+		{"window, GPU device, GL context", "never recreated; the swap itself takes about 2 ms"},
+		{"ui.Context", "widget state (scroll offsets, focus, hover, text edits, animations), caches, fonts, icons, images"},
+		{"app.keep(&global)", "your state, carried over and migrated when its type changes"},
+		{"other package globals", "start from their initial values in the new build (setup fills them again)"},
+	})
+	para("An app written as an `app.Program` gets all of the above. `setup` runs on every load (the first start and after each reload): register fonts, icons and lookup tables there (vui's register procs are idempotent by name), call `app.keep` on the globals that hold state, and set `a.on_command`. `init` runs once per window, so initial values are not reapplied after a reload. A classic `for app.next_frame` loop also reloads, but its own defers close the window, so it reopens on every reload (kept globals still carry over).")
+	h2("Changing types while it runs")
+	para("A kept value is copied as-is when its type is unchanged. When the type changed it is migrated instead of thrown away: struct fields are matched by name (recursively), fixed arrays element by element, and integers and floats are converted when only their size changed. New fields keep their default, removed fields are dropped, and a field whose type changed in an incompatible way is reset. A value is never reinterpreted and an integer that does not fit its new type is not wrapped. `vui-hot` prints what happened, and `vui-ctl info` lists it under `hot.notes`.")
+	code(`vui-hot: &s migrated: kept 3, added: theme, reset: spare`, "sh")
+	para("An edit to vui itself that changes the layout of `App` or `ui.Context` cannot be swapped under a live window: the old build closes it, the new build opens a new one in the same process, and kept globals are still restored.")
+	h2("When something goes wrong")
+	ref_table({
+		{"compile error", "the previous build keeps running; the compiler output is drawn over the app and printed in the terminal"},
+		{"crash right after a reload", "the app restarts on the previous good build and shows which build crashed"},
+		{"crash later", "the app restarts on the current build; after 3 crashes in 10 s vui-hot waits for the next change"},
+		{"edit during a build", "the stale compile is cancelled and the newest code is built"},
+		{"vui-hot stops (Ctrl+C, killed)", "the app exits with it; old builds are deleted"},
+	})
+	note("A restart after a crash starts the app fresh: kept state lives in the crashed process. Element ids come from source locations, so an edit that moves lines above a stateful element (a scroll container, a focused input) can reset that element; give it a `ui.key` to pin it.")
+	h2("Options")
+	ref_table({
+		{"-collection:name=dir", "passed to odin and used to follow imports (vinland is found automatically)"},
+		{"-<odin flag>", "any other odin flag, e.g. -o:none or -define:X=1 (default -debug)"},
+		{"--watch <path>", "also watch a file or directory"},
+		{"--out <dir>", "build directory (default build/hot/<package>)"},
+		{"--poll <ms> / --debounce <ms>", "scan interval (100) and quiet period after a change (30)"},
+		{"--no-restart / --quiet", "exit when the app crashes / print only errors"},
+		{"-- <args>", "arguments for the app"},
+		{"VUI_HOT_OVERLAY=0", "hide the in-window build status"},
+	})
+	para("vui-hot watches the package directory, every local package it imports and every file it pulls in with `#load`; it re-reads imports after each edit, so a newly imported package is watched at once. A save that leaves the bytes unchanged never rebuilds. Polling costs well under 1% of one core.")
+	h2("Cost and limits")
+	para("A reload costs the compile (about 1.1 s for the showroom, the same as a normal build) plus about 2 ms to swap the library in. Every previous build stays mapped until the app exits, because live state can still point at its string literals and code; the kernel can drop those pages, and each build releases its scratch arenas when it hands over. For the showroom, private memory grows by a few MB per reload at first and levels off (32 MB at start, 76 MB after 12 reloads, 80 MB after 24). Keep the build directory on disk rather than tmpfs (vui-hot warns), where mapped old builds could never be dropped.")
+	para("Procedure values stored in kept state keep calling the build that created them until they are assigned again, which `setup` usually does. State shared with another thread should be kept through a pointer so both sides see the same object. Hot reload is verified on Linux; macOS and Windows are pending (see PLATFORMS.md).")
+	h2("Driving it from tests and agents")
+	para("Under vui-hot, `vui-ctl info` adds a `hot` object: `generation`, `reloads`, `status` (`Idle`, `Building`, `Error`), `error`, `build_ms`, `swap_ms`, `pid` and `notes`. A script can save a file and poll until `generation` increases. `tests/hot/test_hot.py` runs the whole matrix sandboxed (`VUI_HIDDEN=1`).")
+	code(`VUI_HIDDEN=1 VUI_PORT=7421 ./build/vui-hot examples/counter &
+./build/vui-ctl --port 7421 info | jq .hot`, "sh")
 }
 
 page_agents :: proc() {
@@ -168,7 +232,7 @@ VUI_HIDDEN=1 VUI_SCALE=2 VUI_SIZE=1440x900 ./build/showroom &
 	para("A compositor may refuse to make an existing Wayland surface focusable; the foreground response reports that, and restarting without `VUI_BACKGROUND=1` is the fallback for flows that need native focus.")
 	h2("Commands")
 	ref_table({
-		{"info", "viewport, scale, frame time, backend/driver, focus state, node count, unknown classes"},
+		{"info", "viewport, scale, frame time, backend/driver, focus state, node count, unknown classes, hot reload status (hot)"},
 		{"screenshot <png> [x y w h]", "writes the last frame (optionally cropped)"},
 		{"click <x> <y> [right|double|triple]", "synthetic click in logical px"},
 		{"click-text <text> [nth]", "clicks the element whose text matches"},

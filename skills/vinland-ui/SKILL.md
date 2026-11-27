@@ -4,7 +4,8 @@ description: >-
   Build, style, test, and visually verify native desktop UI in Odin with vinland-ui
   (Tailwind-style utility classes, design tokens, flex/grid layout, SDL3 GPU Metal/Vulkan
   renderer with OpenGL 3.3 fallback), drive running apps with vui-ctl (including headless
-  VUI_HIDDEN=1 and non-focusable VUI_BACKGROUND=1 modes), and run e2e suites with vui-test.
+  VUI_HIDDEN=1 and non-focusable VUI_BACKGROUND=1 modes), run e2e suites with vui-test, and
+  iterate with optional hot reload (vui-hot, app.run Programs, app.keep state).
   Use when writing or editing Odin code that imports vinland-ui (vui, vui/app, vui/fonts,
   vui/icons), porting a Tailwind/HTML design to Odin, or screenshotting/testing a vinland-ui app.
 ---
@@ -25,9 +26,11 @@ Repository layout:
 | `vui/icons/` | Heroicons 20 solid (`icons.register(&ctx)` returns handles) |
 | `tools/vui-ctl/` | CLI that drives a running app |
 | `tools/vui-test/` | Playwright-style e2e test runner (suites in `tests/e2e/`) |
+| `vui/hot/`, `tools/vui-hot/` | optional hot reload: watcher, state migration, supervisor + runner |
 | `showroom/` | documentation app: every utility with live examples (best reference) |
 
-Build: `./build.sh` (outputs `build/showroom`, `build/vui-ctl`, `build/vui-test`, `build/hello`).
+Build: `./build.sh` (outputs `build/showroom`, `build/vui-ctl`, `build/vui-test`, `build/vui-hot`,
+`build/hello`, `build/counter`).
 
 ## The feedback loop (always use it)
 
@@ -135,6 +138,58 @@ main :: proc() {
 ```
 
 Build with `odin build my_app -collection:vinland=path/to/vinland-ui`.
+
+The same app as an `app.Program` (preferred for new apps: identical in a normal build, and it is
+what lets `vui-hot` swap code without closing the window):
+
+```odin
+State :: struct { count: int }
+s: State
+
+main :: proc() {
+	app.run({
+		config = {title = "My app", size = {1100, 720}, control_port = 7420},
+		setup  = proc(a: ^app.App) {          // every load: registration, keeps, hooks
+			fonts.register(a.ctx)               // register procs are idempotent by name
+			app.keep(&s)                        // survives hot reloads (no-op in normal builds)
+			a.on_command = on_command
+		},
+		init   = proc(a: ^app.App) { s.count = 0 },   // once per window, not after reloads
+		frame  = proc(a: ^app.App) {
+			if ui.div("flex h-full flex-col bg-white dark:bg-gray-950") {
+				ui.text("Hello", "p-8 text-2xl font-semibold text-gray-950 dark:text-white")
+			}
+		},
+	})
+}
+```
+
+## Hot reload (optional; never required)
+
+`./build/vui-hot <package-dir> [odin flags] [-- app args]` watches the package, its local imports
+and `#load`-ed files, rebuilds the package as a shared library on each real change (~1 s, same as
+a normal build) and swaps it into the running process in ~2 ms. Window, GPU device,
+`ui.Context` (scroll, focus, hover, text edits) and `app.keep` globals survive; other globals
+restart from their initial values (setup refills them). Kept structs migrate by field name when
+their type changes (new fields default, removed dropped, incompatible ones reset; see
+`hot.notes`). A compile error leaves the old build running and draws the compiler output over the
+window; a crash right after a reload restarts on the previous good build.
+
+Agent loop: run it sandboxed and poll `info.hot.generation` after saving instead of rebuilding
+and relaunching:
+
+```bash
+VUI_HIDDEN=1 VUI_PORT=7421 ./build/vui-hot my_app &        # no window, no GPU (sandboxed)
+./build/vui-ctl --port 7421 info | jq .hot   # generation, reloads, status Idle|Building|Error, error, notes
+# edit + save, then wait until .hot.generation increases and .hot.status == "Idle"
+```
+
+Rules: use `app.run` (a classic `for app.next_frame` loop reloads too but reopens its window);
+put registration and `app.keep(&global)` in `setup`; keep state shared with other threads through
+a pointer (`s: ^State`); procedure values stored in kept state call the old build until
+reassigned; give stateful elements whose lines may shift a `ui.key`. If the app imports vui by a
+relative path into another checkout, pass `-collection:vinland=<that checkout>` (vui-hot refuses
+a mismatch). Keep `--out` on disk, not tmpfs. Tests: `python3 tests/hot/test_hot.py`.
 
 ## Element API (package `vui`, usually imported as `ui`)
 
@@ -273,7 +328,8 @@ many primitives over hundreds of tiny elements. Check `vui-ctl info` → `frame_
 
 ## Host hooks
 
-`app.Config.app_id` sets the Wayland app id / X11 class (window rules). `a.on_event = proc(app, e)
+`app.Config.app_id` sets the Wayland app id / X11 class (window rules); under vui-hot it defaults
+to the package name, so the same rules match hot and normal runs. `a.on_event = proc(app, e)
 -> bool` sees raw SDL events first (return true to consume): use it for global keymaps.
 
 ## Design tokens
@@ -329,3 +385,5 @@ Themes also load from JSON: `ui.theme_load_json(&ctx.theme, "theme.json")` with 
 4. Resize through breakpoints (`vui-ctl resize 640 900`, `1024`, `1440`).
 5. Check `vui-ctl info` for `unknown_classes` and frame time.
 6. For more patterns, read the matching page source in `showroom/pages_*.odin`.
+7. For many small visual iterations, keep the app running under `vui-hot` (sandboxed) and
+   screenshot after each `generation` bump instead of relaunching.
