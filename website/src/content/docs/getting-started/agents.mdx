@@ -2,7 +2,7 @@
 title: "Agent skill & CLI"
 description: "Drive a running app from the terminal: navigate, click, type, and take screenshots. Built for AI agents and tests."
 sidebar:
-  order: 3
+  order: 4
 ---
 
 import Preview from '../../../components/Preview.astro';
@@ -44,7 +44,7 @@ A compositor may refuse to make an existing Wayland surface focusable; the foreg
 
 | Class | Effect |
 | --- | --- |
-| `info` | `viewport, scale, frame time, backend/driver, focus state, node count, unknown classes` |
+| `info` | `viewport, scale, frame time, backend/driver, focus state, node count, unknown classes, hot reload status (hot)` |
 | `screenshot <png> [x y w h]` | `writes the last frame (optionally cropped)` |
 | `click <x> <y> [right\|double\|triple]` | `synthetic click in logical px` |
 | `click-text <text> [nth]` | `clicks the element whose text matches` |

@@ -59,6 +59,27 @@ main :: proc() {
 }
 ```
 
+## Or describe the app as a Program
+
+`app.run` takes the same app as callbacks and owns the context, window and loop. It builds and runs exactly like the loop above, and it is what lets `vui-hot` reload the code without closing the window (see Hot reload).
+
+```odin
+State :: struct { count: int }
+s: State
+
+main :: proc() {
+    app.run({
+        config = {title = "Counter", size = {480, 320}},
+        setup  = proc(a: ^app.App) { fonts.register(a.ctx); app.keep(&s) },
+        frame  = proc(a: ^app.App) {
+            if ui.button(fmt.tprintf("Clicked %d times", s.count), "rounded-lg bg-sky-600 px-4 py-2 text-white") {
+                s.count += 1
+            }
+        },
+    })
+}
+```
+
 ## Bring your own renderer
 
 Games that already own a render loop (raylib, Vulkan, Metal, a custom engine) can skip `vui/app`: call `ui.begin_frame` with your input, build, call `ui.end_frame` and draw the returned `Draw_List`. Each command is one instanced quad; `vui/app/shaders/` (GLSL and MSL) and `vui/app/gl.odin` are the reference implementations of the uber-shader.

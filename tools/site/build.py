@@ -45,7 +45,7 @@ def ctl(cmd: dict, timeout=60):
 def to_webp(png: str, webp: str):
     """Lossless WebP via ImageMagick, or cwebp when magick is not installed."""
     if shutil.which("magick"):
-        to_webp(png, webp)
+        subprocess.run(["magick", png, "-define", "webp:lossless=true", webp], check=True)
     else:
         subprocess.run(["cwebp", "-quiet", "-lossless", png, "-o", webp], check=True)
 
