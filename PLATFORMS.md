@@ -7,10 +7,9 @@
 - [ ] **Linux** (from macOS, game UI work): verify `corner-*` shapes and `bg-tex-*` textures on Vulkan (`ui.frag.spv` rebuilt) via `./build/showroom --page=game-ui`, and that `vui/gl/loader_linux.odin` (`glXGetProcAddressARB`) loads GL for `vui/gl` / `vui/raylib` hosts.
 - [ ] **Linux** (from macOS): `Frag_Uniforms` gained `grade` / `grade_tint` (std140 vec4s after `u_text_contrast`); verify Vulkan renders the showroom unchanged (grade off) and a host with `ctx.grade = GRADE_PAINTED` shows the grain/mottle grade.
 - [ ] **Web** (from macOS): verify the Game UI page (`game-ui`) in the WebGL2 build; `textureGrad` + corner shapes come from the shared GLSL body.
-- [ ] **Linux** (from macOS commit `85038f0`): Run `./build.sh`, `./build/vui-test tests/e2e/showroom.vt`, and `scripts/check-background.sh` to verify the `platform_linux.odin` split and `tools/vui-test/platform_linux.odin`.
 - [ ] **Linux** (from macOS, SDL GPU refactor): `vui/app/gpu.odin` now delegates to `vui/sdlgpu` (shaders picked at runtime from the device's formats; `gpu_metal*.odin` / `gpu_vulkan.odin` removed). Verify Vulkan: `./build.sh && ./build/vui-test tests/e2e/showroom.vt && ./build/vui-test tests/e2e/game-ui.vt`, and that a host embedding `vui/sdlgpu` with a depth attachment draws (dreamcraft on Linux).
 
-- [ ] **macOS** (from Linux, hot reload): `./build.sh && python3 tests/hot/test_hot.py` (vui-hot builds `.dylib`; `tools/vui-hot/platform_darwin.odin`, `vui/hot/stat_darwin.odin`), and a visible `./build/vui-hot examples/counter` on Metal swaps without closing the window. CI runs the suite with `continue-on-error` until this is checked.
+- [ ] **macOS** (visible window): `./build/vui-hot examples/counter` on Metal swaps without closing the window. The headless suite (`python3 tests/hot/test_hot.py`, `.dylib` swaps) passes on macOS CI.
 - [ ] **Linux** (visible window, GPU): `./build/vui-hot examples/counter` on Vulkan (not sandboxed) swaps without closing the window; only the sandboxed GL path was run (GPU kept free while the user was gaming).
 - [ ] **Windows**: `tools/vui-hot/platform_other.odin` / `vui/hot/stat_other.odin` (`.dll`; Windows locks a loaded DLL, so deleting old builds fails silently until exit) are untested.
 

@@ -124,7 +124,7 @@ about 20 ms per swap for no lasting gain over `MADV_COLD`.
 
 ### Reliability matrix
 
-`python3 tests/hot/test_hot.py`: 37 end-to-end cases on sandboxed apps, including state kept
+`python3 tests/hot/test_hot.py`: 37 end-to-end cases on sandboxed apps (Linux and macOS CI), including state kept
 across 6+ reloads in one process, scroll offsets preserved, struct fields added / removed /
 retyped / resized, new files and newly imported packages, `#load` assets, no rebuild for a
 no-op save, bursts of saves coalesced, a stale build cancelled mid-compile, App layout changes

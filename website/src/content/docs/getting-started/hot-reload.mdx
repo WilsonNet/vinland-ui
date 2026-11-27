@@ -71,7 +71,7 @@ vui-hot watches the package directory, every local package it imports and every 
 
 A reload costs the compile (about 1.1 s for the showroom, the same as a normal build) plus about 2 ms to swap the library in. Every previous build stays mapped until the app exits, because live state can still point at its string literals and code; the kernel can drop those pages, and each build releases its scratch arenas when it hands over. For the showroom, private memory grows by a few MB per reload at first and levels off (32 MB at start, 76 MB after 12 reloads, 80 MB after 24). Keep the build directory on disk rather than tmpfs (vui-hot warns), where mapped old builds could never be dropped.
 
-Procedure values stored in kept state keep calling the build that created them until they are assigned again, which `setup` usually does. State shared with another thread should be kept through a pointer so both sides see the same object. Hot reload is verified on Linux; macOS and Windows are pending (see PLATFORMS.md).
+Procedure values stored in kept state keep calling the build that created them until they are assigned again, which `setup` usually does. State shared with another thread should be kept through a pointer so both sides see the same object. Hot reload is tested on Linux and macOS (the end-to-end suite runs on both in CI); Windows is untested (see PLATFORMS.md).
 
 ## Driving it from tests and agents
 

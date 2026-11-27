@@ -1285,7 +1285,7 @@
     },
     {
      "kind": "Para",
-     "text": "Procedure values stored in kept state keep calling the build that created them until they are assigned again, which `setup` usually does. State shared with another thread should be kept through a pointer so both sides see the same object. Hot reload is verified on Linux; macOS and Windows are pending (see PLATFORMS.md)."
+     "text": "Procedure values stored in kept state keep calling the build that created them until they are assigned again, which `setup` usually does. State shared with another thread should be kept through a pointer so both sides see the same object. Hot reload is tested on Linux and macOS (the end-to-end suite runs on both in CI); Windows is untested (see PLATFORMS.md)."
     },
     {
      "kind": "H2",

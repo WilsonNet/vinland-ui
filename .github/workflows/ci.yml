@@ -29,9 +29,7 @@ jobs:
           odin build examples/textcompare -out:build/textcompare -debug
       - name: Run e2e suite (Metal)
         run: ./build/vui-test --out e2e-results tests/e2e/showroom.vt
-      - name: Hot reload suite (vui-hot, sandboxed)
-        # not yet verified on macOS (dylib swaps): report, do not block
-        continue-on-error: true
+      - name: Hot reload suite (vui-hot, hidden window)
         run: python3 tests/hot/test_hot.py
       - name: Upload e2e report on failure
         if: failure()
