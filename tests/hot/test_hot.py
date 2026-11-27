@@ -26,6 +26,12 @@ VUI_HOT = os.path.join(ROOT, "build", "vui-hot")
 FIXTURES = os.path.join(ROOT, "tests", "hot")
 
 
+def is_isolated(info):
+    """Linux: llvmpipe on the offscreen driver (sandboxed). macOS has no Mesa offscreen GL, so
+    a hidden window with SDL_MAC_BACKGROUND_APP is the isolation vui-test accepts there too."""
+    return info.get("sandboxed") is True or (sys.platform == "darwin" and info.get("hidden") is True)
+
+
 def free_port():
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
@@ -138,7 +144,7 @@ class Session:
 
     def wait_ready(self, timeout=60):
         info = self.wait(lambda: self.info(), timeout, "app ready")
-        assert info["sandboxed"] is True, "refusing to test an app that is not sandboxed"
+        assert is_isolated(info), "refusing to test an app that is not sandboxed"
         assert info["hot"] is not None
         return info
 
@@ -469,7 +475,7 @@ class Reload(HotTestCase):
                 except OSError:
                     time.sleep(0.05)
             self.assertIsNotNone(info)
-            self.assertTrue(info["sandboxed"])
+            self.assertTrue(is_isolated(info))
             self.assertIsNone(info["hot"], "a normal build must not run any hot reload code")
             ctl(port, "click_text", text="increment")
             self.assertEqual(ctl(port, "state")["count"], 1)

@@ -32,6 +32,12 @@ BENCH_DIR = os.path.join(ROOT, "build", "bench")
 os.makedirs(BENCH_DIR, exist_ok=True)
 
 
+def is_isolated(info):
+    """Linux: llvmpipe on the offscreen driver (sandboxed). macOS has no Mesa offscreen GL, so
+    a hidden window with SDL_MAC_BACKGROUND_APP is the isolation vui-test accepts there too."""
+    return info.get("sandboxed") is True or (sys.platform == "darwin" and info.get("hidden") is True)
+
+
 def free_port():
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
@@ -112,7 +118,7 @@ def bench_hot(work, pkg, file, needle, runs, poll):
     p = subprocess.Popen([HOT, pkg, "--out", os.path.join(work, "build"), "--poll", str(poll)], cwd=work, env=sandbox_env(port), stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
     try:
         info = wait_port(port)
-        assert info["sandboxed"], "refusing to benchmark a non-sandboxed app"
+        assert is_isolated(info), "refusing to benchmark a non-sandboxed app"
         child = info["hot"]["pid"]
         rss0 = rss_mb(child)
         split0 = rss_split(child)
@@ -160,7 +166,7 @@ def bench_traditional(work, pkg, runs):
         tb = time.perf_counter()
         p = subprocess.Popen([exe], env=sandbox_env(port), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         info = wait_port(port)
-        assert info["sandboxed"]
+        assert is_isolated(info)
         times.append(time.perf_counter() - t0)
         builds.append(tb - t0)
         ctl(port, "quit")
