@@ -11,7 +11,7 @@ import game_icons "../vui/icons/game"
 
 GI: game_icons.Game_Icons
 
-@(private = "file")
+// package-visible so main.setup can app.keep it across hot reloads
 G: struct {
 	armed:    int,
 	slot:     int,

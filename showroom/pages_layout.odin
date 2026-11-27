@@ -7,6 +7,11 @@ import ui "../vui"
 DEMO_IMAGE: ui.Image_Id
 
 make_demo_image :: proc(ctx: ^ui.Context) {
+	// generated once per window: a hot reload re-runs registration, the image is reused by name
+	if existing := ui.image_by_name(ctx, "showroom-demo"); existing != 0 {
+		DEMO_IMAGE = existing
+		return
+	}
 	W :: 960
 	H :: 640
 	pix := make([]u8, W * H * 4, context.temp_allocator)
@@ -52,6 +57,7 @@ make_demo_image :: proc(ctx: ^ui.Context) {
 		}
 	}
 	DEMO_IMAGE = ui.image_register(ctx, pix, W, H)
+	ui.image_name(ctx, "showroom-demo", DEMO_IMAGE)
 }
 
 register_layout_examples :: proc() {

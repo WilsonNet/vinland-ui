@@ -42,9 +42,15 @@ MATERIAL_NAMES := [Material]string {
 SIZE :: 256
 
 // Generates every material, registers it as an image and names it for `bg-tex-<name>`.
+// Materials already registered under their names are reused (setup may run again after a hot
+// reload), so calling this twice costs one map lookup per material.
 register :: proc(ctx: ^ui.Context, seed: u32 = 1) -> (ids: [Material]ui.Image_Id) {
 	pix := make([]u8, SIZE * SIZE * 4, context.temp_allocator)
 	for m in Material {
+		if existing := ui.image_by_name(ctx, MATERIAL_NAMES[m]); existing != 0 {
+			ids[m] = existing
+			continue
+		}
 		generate(m, pix, SIZE, seed)
 		ids[m] = ui.image_register(ctx, pix, SIZE, SIZE)
 		ui.image_name(ctx, MATERIAL_NAMES[m], ids[m])

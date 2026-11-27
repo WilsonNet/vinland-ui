@@ -11,6 +11,7 @@ import gl "vendor:OpenGL"
 import sdl "vendor:sdl3"
 import stbi "vendor:stb/image"
 import vui ".."
+import hot "../hot"
 
 // SDL3 + OpenGL host for vui. Owns the window, translates input, renders and runs the
 // optional control server (see control.odin).
@@ -228,6 +229,10 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	if app.cfg.size == {0, 0} {
 		app.cfg.size = {1280, 800}
 	}
+	if g_hot != nil && !hot_plain_init(app) {
+		return false
+	}
+	cfg = app.cfg
 	if cfg.app_id != "" {
 		_ = sdl.SetHint(sdl.HINT_APP_ID, strings.clone_to_cstring(cfg.app_id, context.temp_allocator))
 	}
@@ -318,6 +323,9 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 	app.start_tick = sdl.GetTicksNS()
 	app.text_buf = strings.builder_make()
 	app.user_event = sdl.RegisterEvents(1)
+	if g_hot != nil && !g_in_run {
+		hot.set_wake(g_hot, hot_wake_proc, rawptr(uintptr(app.user_event)))
+	}
 	ctx.clipboard_get = clipboard_get
 	ctx.clipboard_set = clipboard_set
 	update_metrics(app)
@@ -329,6 +337,9 @@ init :: proc(app: ^App, config: Config, ctx: ^vui.Context) -> bool {
 }
 
 shutdown :: proc(app: ^App) {
+	if g_hot != nil && !g_in_run {
+		hot.set_wake(g_hot, nil, nil)
+	}
 	if app.control != nil {
 		control_stop(app.control)
 	}
@@ -613,6 +624,11 @@ now_seconds :: proc(app: ^App) -> f64 {
 
 // Pumps events and starts a UI frame. Returns false when the app should quit.
 next_frame :: proc(app: ^App) -> bool {
+	if g_hot != nil && (hot.reload_requested(g_hot) || hot.quit_requested(g_hot)) {
+		// vui-hot has a newer build (or is stopping): hand control back to the runner before
+		// this frame starts. One atomic load per frame; nothing in a normal build.
+		return false
+	}
 	ctx := app.ctx
 	app.input.pressed = {}
 	app.input.released = {}

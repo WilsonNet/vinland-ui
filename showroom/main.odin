@@ -17,48 +17,57 @@ import materials "../vui/materials"
 import "demos"
 
 main :: proc() {
-	ctx: ui.Context
-	ui.init(&ctx)
-	defer ui.destroy(&ctx)
-	fonts.register(&ctx)
-	game_fonts.register(&ctx)
-	materials.register(&ctx)
-	GI = game_icons.register(&ctx)
-	IC = icons.register(&ctx)
-	demos.IC = IC
-	LOGO = ui.icon_register(&ctx, "vinland-logo", {32, 32}, LOGO_PATHS[:])
-	GITHUB = ui.icon_register(&ctx, "github", {24, 24}, GITHUB_PATHS[:])
-	theme_setup(&ctx.theme)
+	ok := app.run({
+		config = {title = "vinland-ui", size = {1440, 900}, min_size = {360, 480}, control_port = 7420},
+		setup = setup,
+		init = init_state,
+		frame = proc(a: ^app.App) {frame()},
+	})
+	if !ok {
+		os.exit(1)
+	}
+}
 
+// Runs on every load (and again after each hot reload under vui-hot): registration is
+// idempotent by name, tables of procedures are rebuilt from the new code, and `app.keep`
+// carries the navigation and demo state over.
+setup :: proc(a: ^app.App) {
+	ctx := a.ctx
+	fonts.register(ctx)
+	game_fonts.register(ctx)
+	materials.register(ctx)
+	GI = game_icons.register(ctx)
+	IC = icons.register(ctx)
+	demos.IC = IC
+	LOGO = ui.icon_register(ctx, "vinland-logo", {32, 32}, LOGO_PATHS[:])
+	GITHUB = ui.icon_register(ctx, "github", {24, 24}, GITHUB_PATHS[:])
+	theme_setup(&ctx.theme)
 	register_pages()
+	app.keep(&s)
+	app.keep(&demos.state)
+	app.keep(&G)
+	app.keep(&expanded)
+	a.on_command = on_command
+}
+
+// Once per window: the starting page and theme (from --page= / --dark).
+init_state :: proc(a: ^app.App) {
 	s.page = page_index("introduction")
 	s.demo.slider = 40
 	s.demo.radio = 1
 	if len(os.args) > 1 {
-		for a in os.args[1:] {
-			if strings.has_prefix(a, "--page=") {
-				if i := page_index(a[7:]); i >= 0 {
+		for arg in os.args[1:] {
+			if strings.has_prefix(arg, "--page=") {
+				if i := page_index(arg[7:]); i >= 0 {
 					s.page = i
 				}
 			}
-			if a == "--dark" {
+			if arg == "--dark" {
 				s.theme_mode = 1
 			}
 		}
 	}
 	ui.set_dark(s.theme_mode == 1)
-
-	a: app.App
-	if !app.init(&a, {title = "vinland-ui", size = {1440, 900}, min_size = {360, 480}, control_port = 7420}, &ctx) {
-		os.exit(1)
-	}
-	defer app.shutdown(&a)
-	a.on_command = on_command
-
-	for app.next_frame(&a) {
-		frame()
-		app.end_frame(&a)
-	}
 }
 
 on_command :: proc(a: ^app.App, cmd: string, args: map[string]string) -> string {

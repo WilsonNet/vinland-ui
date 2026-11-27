@@ -379,8 +379,14 @@ reverse_contour_fix :: proc(c: ^Contour) {
 	// handled in reverse_contour: for quads c1 is unused, swap leaves c0 in c1
 }
 
-// Registers an icon from SVG path data in a `viewbox` coordinate system.
+// Registers an icon from SVG path data in a `viewbox` coordinate system. A name that is
+// already registered returns the existing icon (setup code may run again after a hot reload).
 icon_register :: proc(ctx: ^Context, name: string, viewbox: [2]f32, paths: []Icon_Path) -> Icon {
+	if name != "" {
+		if existing := icon_by_name(ctx, name); existing != 0 {
+			return existing
+		}
+	}
 	verts := make([dynamic]stbtt.vertex)
 	contours := make([dynamic]Contour, context.temp_allocator)
 	poly := make([dynamic][2]f32, context.temp_allocator)

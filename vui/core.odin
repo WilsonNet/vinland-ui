@@ -330,6 +330,9 @@ Context :: struct {
 	debug_unknown_classes: bool,
 	last_layout_ms: f32,
 	scroll_requests: [dynamic]Scroll_Request,
+	id_path_ptr:  rawptr, // make_id's cache of the last caller file path hash
+	id_path_len:  int,
+	id_path_hash: u64,
 }
 
 // Colour grade applied to every UI pixel in the fragment shader (all backends). Game HUDs use
@@ -664,7 +667,15 @@ make_id :: proc(ctx: ^Context, parent: ^Node, loc: runtime.Source_Code_Location)
 		ctx.has_pending_key = false
 		return Id(mix64(base, ctx.pending_key))
 	}
-	site := mix64(u64(uintptr(raw_data(loc.file_path))), u64(loc.line) << 16 | u64(loc.column))
+	// Hash the path's bytes, not its address: a hot-reloaded build has its own copy of every
+	// string literal, and ids must survive the swap (scroll offsets, focus, animations). The
+	// one-entry cache makes this a pointer compare for consecutive elements of the same file.
+	if raw_data(loc.file_path) != ctx.id_path_ptr || len(loc.file_path) != ctx.id_path_len {
+		ctx.id_path_ptr = raw_data(loc.file_path)
+		ctx.id_path_len = len(loc.file_path)
+		ctx.id_path_hash = hash_string(loc.file_path)
+	}
+	site := mix64(ctx.id_path_hash, u64(loc.line) << 16 | u64(loc.column))
 	k := mix64(base, site)
 	n := ctx.occ[k]
 	ctx.occ[k] = n + 1
@@ -1105,7 +1116,15 @@ prev_rect :: proc() -> Rect {
 remember :: proc($T: typeid, init: T, loc := #caller_location) -> ^T {
 	ctx := g_ctx
 	parent := cur_node()
-	site := mix64(u64(uintptr(raw_data(loc.file_path))), u64(loc.line) << 16 | u64(loc.column))
+	// Hash the path's bytes, not its address: a hot-reloaded build has its own copy of every
+	// string literal, and ids must survive the swap (scroll offsets, focus, animations). The
+	// one-entry cache makes this a pointer compare for consecutive elements of the same file.
+	if raw_data(loc.file_path) != ctx.id_path_ptr || len(loc.file_path) != ctx.id_path_len {
+		ctx.id_path_ptr = raw_data(loc.file_path)
+		ctx.id_path_len = len(loc.file_path)
+		ctx.id_path_hash = hash_string(loc.file_path)
+	}
+	site := mix64(ctx.id_path_hash, u64(loc.line) << 16 | u64(loc.column))
 	id := Id(mix64(u64(parent.id) ~ 0x7f4a7c159e3779b9, site))
 	st := state_get(ctx, id)
 	if st.user == nil {
@@ -1200,6 +1219,11 @@ image_name :: proc(ctx: ^Context, name: string, img: Image_Id) {
 		return
 	}
 	ctx.image_names[strings.clone(name)] = img
+}
+
+// The image registered under `name` with image_name, or 0.
+image_by_name :: proc(ctx: ^Context, name: string) -> Image_Id {
+	return ctx.image_names[name]
 }
 
 @(private)

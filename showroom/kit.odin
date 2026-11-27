@@ -195,7 +195,7 @@ ref_table :: proc(rows: []Row, loc := #caller_location) {
 	}
 }
 
-@(private = "file")
+// package-visible so main.setup can app.keep it across hot reloads
 expanded: map[string]bool
 
 @(private = "file")

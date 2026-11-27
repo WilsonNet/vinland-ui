@@ -328,7 +328,9 @@ control_handle :: proc(app: ^App, req: ^Control_Request) {
 			}
 			vui.json_str(&sb, u)
 		}
-		strings.write_string(&sb, "]}")
+		strings.write_string(&sb, `],"hot":`)
+		hot_info_json(&sb)
+		strings.write_string(&sb, "}")
 		respond(req, strings.to_string(sb))
 	case "tree":
 		depth := int(arg_f(obj, "depth", 64))

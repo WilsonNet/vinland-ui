@@ -75,7 +75,16 @@ find_table :: proc(d: []u8, tag: string) -> int {
 }
 
 // Registers a TrueType/OpenType (glyf) font. `data` must outlive the context.
+// Registering the same family, weight and style again returns the existing face, so setup code
+// can run more than once (hot reload re-runs `Program.setup` on every load).
 font_register :: proc(fonts: ^Fonts, family: string, data: []u8, weight: u16 = 400, italic := false) -> (Face_Id, bool) {
+	if list, ok := fonts.families[family]; ok {
+		for id in list {
+			if f := &fonts.faces[id]; f.weight == weight && f.italic == italic {
+				return id, true
+			}
+		}
+	}
 	f: Face
 	f.family = strings.clone(family)
 	f.weight = weight

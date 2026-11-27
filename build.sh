@@ -2,6 +2,7 @@
 # Builds everything into ./build
 #   ./build.sh            debug builds
 #   ./build.sh release    optimized builds
+# Hot reload (optional, for development): ./build/vui-hot <package-dir>
 set -euo pipefail
 cd "$(dirname "$0")"
 mode=${1:-debug}
@@ -24,6 +25,8 @@ odin build tools/vui-ctl  -out:build/vui-ctl  $flags
 odin build tools/vui-test -out:build/vui-test $flags
 odin build showroom       -out:build/showroom $flags
 odin build examples/hello -out:build/hello    $flags
+odin build examples/counter -out:build/counter $flags
+odin build tools/vui-hot  -out:build/vui-hot  $flags
 # WebAssembly build of the showroom examples (website); needs wasm-ld (LLVM)
 WASM_LD_DIR=$(dirname "$(command -v wasm-ld 2>/dev/null || ls /usr/lib/llvm*/bin/wasm-ld /opt/homebrew/opt/llvm*/bin/wasm-ld /usr/local/opt/llvm*/bin/wasm-ld 2>/dev/null | tail -1)" 2>/dev/null || true)
 if [ -n "$WASM_LD_DIR" ] && [ -x "$WASM_LD_DIR/wasm-ld" ]; then
@@ -31,4 +34,4 @@ if [ -n "$WASM_LD_DIR" ] && [ -x "$WASM_LD_DIR/wasm-ld" ]; then
   PATH="$WASM_LD_DIR:$PATH" odin build showroom -target:js_wasm32 -o:size -out:build/web/vui.wasm && echo "wasm: build/web/vui.wasm"
 fi
 odin test tests >/dev/null && echo "tests: ok"
-echo "built: build/showroom build/vui-ctl build/vui-test build/hello ($mode)"
+echo "built: build/showroom build/vui-ctl build/vui-test build/vui-hot build/hello build/counter ($mode)"
